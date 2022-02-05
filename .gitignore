@@ -110,4 +110,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### Reveal App ###
+
+RevealServer.xcframework/
+
 # End of https://www.toptal.com/developers/gitignore/api/swift,xcode
