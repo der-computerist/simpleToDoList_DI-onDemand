@@ -1,4 +1,4 @@
-# simpleToDoList_DI-onDemand
+# To Do List
 A sample application of the "on-demand" approach to Dependency Injection.
 
 This is a solution to a programming exercise that consists on creating a simple "To Do List" application.
