@@ -97,9 +97,12 @@ final class ActivityDetailViewController: NiblessViewController {
     private lazy var nameField: UITextField = {
         let field = UITextField()
         field.borderStyle = .roundedRect
-        field.delegate = self
         field.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
         field.setContentCompressionResistancePriority(.defaultHigh - 10, for: .horizontal)
+        if case .existingActivity = flow {
+            field.isEnabled = false
+        }
+        field.delegate = self
         return field
     }()
     
@@ -113,6 +116,9 @@ final class ActivityDetailViewController: NiblessViewController {
         let textView = UITextView()
         textView.layer.borderWidth = 1
         textView.layer.cornerRadius = 5
+        if case .existingActivity = flow {
+            textView.isUserInteractionEnabled = false
+        }
         textView.delegate = self
         return textView
     }()
