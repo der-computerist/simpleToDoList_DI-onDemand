@@ -344,6 +344,7 @@ final class ActivityDetailViewController: NiblessViewController {
         )
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
+        alert.pruneNegativeWidthConstraints()  // workaround to circumvent a UIKit bug
         present(alert, animated: true, completion: nil)
     }
     
