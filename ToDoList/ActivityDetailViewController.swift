@@ -7,6 +7,8 @@
 
 import UIKit
 
+private typealias ActivityDetails = (name: String, description: String)
+
 private struct Constants {
     static let activityNameMaxCharacters = 50
     static let activityDescriptionMaxCharacters = 200
@@ -19,14 +21,18 @@ final class ActivityDetailViewController: NiblessViewController {
     private let flow: ActivityDetailView
     private var activity: Activity
     
-    private var originalActivityName: String
-    private var editedActivityName: String {
+    private var originalActivityDetails: ActivityDetails
+    private var editedActivityDetails: ActivityDetails {
         didSet {
             viewIfLoaded?.setNeedsLayout()
         }
     }
+    
     private var hasChanges: Bool {
-        originalActivityName != editedActivityName
+        originalActivityDetails != editedActivityDetails
+    }
+    private var hasChangesInActivityName: Bool {
+        originalActivityDetails.name != editedActivityDetails.name
     }
     
     private lazy var cancelButton: UIBarButtonItem = {
@@ -107,6 +113,7 @@ final class ActivityDetailViewController: NiblessViewController {
         let textView = UITextView()
         textView.layer.borderWidth = 1
         textView.layer.cornerRadius = 5
+        textView.delegate = self
         return textView
     }()
     
@@ -114,8 +121,8 @@ final class ActivityDetailViewController: NiblessViewController {
     public init(for flow: ActivityDetailView) {
         self.flow = flow
         activity = flow.activity
-        originalActivityName = activity.name
-        editedActivityName = originalActivityName
+        originalActivityDetails = (activity.name, activity.activityDescription ?? "")
+        editedActivityDetails = originalActivityDetails
         super.init()
         
         switch flow {
@@ -154,9 +161,11 @@ final class ActivityDetailViewController: NiblessViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        // If there are unsaved changes, enable the Save button and disable the ability to
-        // dismiss using the pull-down gesture.
-        saveButton.isEnabled = hasChanges
+        // If there are unsaved changes to the activity name, enable the Save button.
+        saveButton.isEnabled = hasChangesInActivityName
+        
+        // If there are unsaved changes overall, disable the ability to dismiss using
+        // the pull-down gesture.
         isModalInPresentation = hasChanges
     }
     
@@ -360,13 +369,22 @@ extension ActivityDetailViewController: UITextFieldDelegate {
         }
         
         let newText = oldText.replacingCharacters(in: Range(range, in: oldText)!, with: string)
-        editedActivityName = newText
+        editedActivityDetails.name = newText
         return true
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+// MARK: - UITextViewDelegate
+
+extension ActivityDetailViewController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        editedActivityDetails.description = textView.text
     }
 }
 
