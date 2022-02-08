@@ -127,7 +127,7 @@ final class ActivityDetailViewController: NiblessViewController {
     public init(for flow: ActivityDetailView) {
         self.flow = flow
         activity = flow.activity
-        originalActivityDetails = (activity.name, activity.activityDescription ?? "")
+        originalActivityDetails = (activity.name, activity.description ?? "")
         editedActivityDetails = originalActivityDetails
         super.init()
         
@@ -155,7 +155,7 @@ final class ActivityDetailViewController: NiblessViewController {
         super.viewWillAppear(animated)
         
         nameField.text = activity.name
-        descriptionTextView.text = activity.activityDescription
+        descriptionTextView.text = activity.description
         
         // For user convenience, when creating a new activity, present the keyboard as
         // soon as the view begins appearing.
@@ -350,7 +350,7 @@ final class ActivityDetailViewController: NiblessViewController {
     
     private func saveAndDismiss() {
         activity.name = nameField.text ?? ""
-        activity.activityDescription = descriptionTextView.text
+        activity.description = descriptionTextView.text
         presentingViewController?.dismiss(animated: true, completion: onDismiss)
     }
     

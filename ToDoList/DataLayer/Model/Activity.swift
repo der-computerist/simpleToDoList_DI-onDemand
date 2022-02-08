@@ -14,14 +14,14 @@ public class Activity: Codable {
     // MARK: - Properties
     public let id: ActivityID
     public var name: String
-    public var activityDescription: String?
+    public var description: String?
     public let dateCreated: Date
     
     // MARK: - Methods
     public init(name: String, description: String? = nil) {
         id = UUID().uuidString
         self.name = name
-        activityDescription = description
+        self.description = description
         dateCreated = Date()
     }
 
@@ -37,15 +37,15 @@ extension Activity: Equatable {
     }
 }
 
-extension Activity: CustomStringConvertible {
+extension Activity: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
         let referenceType = type(of: self)
         let properties: [String: Any] =
             [
                 "id": id,
                 "name": name,
-                "activityDescription": activityDescription ?? "",
+                "description": description ?? "",
                 "dateCreated": String(describing: dateCreated)
             ]
         return "<\(referenceType): \(properties as AnyObject)>"
