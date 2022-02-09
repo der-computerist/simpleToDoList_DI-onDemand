@@ -7,3 +7,7 @@ It applies the following technologies and patterns:
 * Dependency Injection / On-Demand approach
 * UIKit
 * iOS 13 and later
+
+## Demo
+
+![](demo.gif)
