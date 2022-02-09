@@ -9,10 +9,10 @@ import UIKit
 
 extension UIViewController {
     
-    public func present(errorMessage: ErrorMessage) {
+    public func presentErrorAlert(title: String?, message: String?) {
         let errorAlertController = UIAlertController(
-            title: errorMessage.title,
-            message: errorMessage.message,
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
         let okAction = UIAlertAction(title: "OK", style: .default)

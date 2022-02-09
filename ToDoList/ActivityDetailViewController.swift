@@ -181,10 +181,11 @@ final class ActivityDetailViewController: NiblessViewController {
         do {
             try validateInputs()
             confirmSave()
-        } catch let error as ErrorMessage {
-            present(errorMessage: error)
         } catch {
-            assertionFailure("Unexpected error during input validation: \(error)")
+            presentErrorAlert(
+                title: ActivityCreationError.title,
+                message: error.localizedDescription
+            )
         }
     }
     
@@ -294,28 +295,20 @@ final class ActivityDetailViewController: NiblessViewController {
     
     private func validateInputs() throws {
         guard let activityName = nameField.text else {
-            let errorMessage = ErrorMessage(
-                title: "Activity Creation Error",
-                message: "Activity name can't be empty."
-            )
-            throw errorMessage
+            throw ActivityCreationError.nameEmpty
         }
         
         let activityDescription = descriptionTextView.text ?? ""
         
         if activityName.count > Constants.activityNameMaxCharacters {
-            let errorMessage = ErrorMessage(
-                title: "Activity Creation Error",
-                message: "Activity name exceeds max characters (50)."
+            throw ActivityCreationError.nameTooLong(
+                maxCharacters: Constants.activityNameMaxCharacters
             )
-            throw errorMessage
 
         } else if activityDescription.count > Constants.activityDescriptionMaxCharacters {
-            let errorMessage = ErrorMessage(
-                title: "Activity Creation Error",
-                message: "Activity description exceeds max characters (200)."
+            throw ActivityCreationError.descriptionTooLong(
+                maxCharacters: Constants.activityDescriptionMaxCharacters
             )
-            throw errorMessage
         }
     }
     
