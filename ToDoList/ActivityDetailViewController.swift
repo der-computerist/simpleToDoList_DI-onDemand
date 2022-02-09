@@ -116,6 +116,22 @@ final class ActivityDetailViewController: NiblessViewController {
         let textView = UITextView()
         textView.layer.borderWidth = 1
         textView.layer.cornerRadius = 5
+        textView.backgroundColor = UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return UIColor.black
+            default:
+                return UIColor.white
+            }
+        }
+        textView.layer.borderColor = UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return UIColor.systemGray4
+            default:
+                return UIColor.systemGray3
+            }
+        }.cgColor
         if case .existingActivity = flow {
             textView.isUserInteractionEnabled = false
         }
@@ -148,7 +164,6 @@ final class ActivityDetailViewController: NiblessViewController {
         view = rootView
         constructViewHierarchy()
         activateConstraints()
-        styleDescriptionTextView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -195,18 +210,6 @@ final class ActivityDetailViewController: NiblessViewController {
             confirmCancel()
         } else {
             dismissWithoutSaving()
-        }
-    }
-    
-    // MARK: Dark mode
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        
-        let newUserInterfaceStyle = traitCollection.userInterfaceStyle
-        let previousUserInterfaceStyle = previousTraitCollection?.userInterfaceStyle
-        
-        if newUserInterfaceStyle != previousUserInterfaceStyle {
-            styleDescriptionTextView()
         }
     }
     
@@ -281,16 +284,6 @@ final class ActivityDetailViewController: NiblessViewController {
         )
         
         NSLayoutConstraint.activate([leading, height])
-    }
-    
-    private func styleDescriptionTextView() {
-        if traitCollection.userInterfaceStyle == .dark {
-            descriptionTextView.layer.borderColor = UIColor.systemGray4.cgColor
-            descriptionTextView.layer.backgroundColor = UIColor.black.cgColor
-        } else {
-            descriptionTextView.layer.borderColor = UIColor.systemGray3.cgColor
-            descriptionTextView.layer.backgroundColor = UIColor.white.cgColor
-        }
     }
     
     private func validateInputs() throws {
