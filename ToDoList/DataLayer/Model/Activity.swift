@@ -33,7 +33,7 @@ public class Activity: Codable {
 extension Activity: Equatable {
     
     public static func == (lhs: Activity, rhs: Activity) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }
 

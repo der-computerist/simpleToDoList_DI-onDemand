@@ -12,14 +12,14 @@ public class FileActivityDataStore: ActivityDataStore {
     // MARK: - Properties
     private(set) public var allActivities = [Activity]()
     private var docsURL: URL? {
-        return FileManager.default.urls(
+        FileManager.default.urls(
             for: .documentDirectory,
             in: .userDomainMask
         )
         .first
     }
     private var activitiesArchiveURL: URL? {
-        return docsURL?.appendingPathComponent("activities.plist")
+        docsURL?.appendingPathComponent("activities.plist")
     }
     
     public init() {
