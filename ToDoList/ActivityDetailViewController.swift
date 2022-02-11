@@ -230,16 +230,11 @@ final class ActivityDetailViewController: NiblessViewController {
         let leading = formStackView.leadingAnchor.constraint(equalTo: margins.leadingAnchor)
         let trailing = formStackView.trailingAnchor.constraint(equalTo: margins.trailingAnchor)
         let top = formStackView.topAnchor.constraint(equalTo: margins.topAnchor)
-        let height = NSLayoutConstraint(
-            item: formStackView,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: view,
-            attribute: .height,
-            multiplier: 1.0/3,
-            constant: 0
+        let height = formStackView.heightAnchor.constraint(
+            equalTo: view.heightAnchor,
+            multiplier: 1.0/3
         )
-        
+
         NSLayoutConstraint.activate([leading, trailing, top, height])
     }
     
