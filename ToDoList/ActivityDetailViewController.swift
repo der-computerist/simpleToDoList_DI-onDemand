@@ -57,6 +57,7 @@ final class ActivityDetailViewController: NiblessViewController {
     private lazy var rootView: UIView = {
         let view = UIView()
         view.backgroundColor = Color.background
+        view.accessibilityIdentifier = "rootView"
         
         // Layout margins
         var customMargins = view.layoutMargins
@@ -70,6 +71,7 @@ final class ActivityDetailViewController: NiblessViewController {
         let stackView = UIStackView(arrangedSubviews: [nameStackView, descriptionStackView])
         stackView.axis = .vertical
         stackView.spacing = 8
+        stackView.accessibilityIdentifier = "formStackView"
         return stackView
     }()
     
@@ -77,6 +79,7 @@ final class ActivityDetailViewController: NiblessViewController {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, nameField])
         stackView.axis = .horizontal
         stackView.spacing = 16
+        stackView.accessibilityIdentifier = "nameStackView"
         return stackView
     }()
     
@@ -85,12 +88,14 @@ final class ActivityDetailViewController: NiblessViewController {
         stackView.axis = .horizontal
         stackView.spacing = 16
         stackView.alignment = .top
+        stackView.accessibilityIdentifier = "descriptionStackView"
         return stackView
     }()
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Name"
+        label.accessibilityIdentifier = "nameLabel"
         return label
     }()
     
@@ -102,6 +107,7 @@ final class ActivityDetailViewController: NiblessViewController {
         if case .existingActivity = flow {
             field.isEnabled = false
         }
+        field.accessibilityIdentifier = "nameField"
         field.delegate = self
         return field
     }()
@@ -109,6 +115,7 @@ final class ActivityDetailViewController: NiblessViewController {
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Description"
+        label.accessibilityIdentifier = "descriptionLabel"
         return label
     }()
     
@@ -135,6 +142,7 @@ final class ActivityDetailViewController: NiblessViewController {
         if case .existingActivity = flow {
             textView.isUserInteractionEnabled = false
         }
+        textView.accessibilityIdentifier = "descriptionTextView"
         textView.delegate = self
         return textView
     }()
@@ -227,15 +235,22 @@ final class ActivityDetailViewController: NiblessViewController {
         formStackView.translatesAutoresizingMaskIntoConstraints = false
         
         let margins = view.layoutMarginsGuide
-        let leading = formStackView.leadingAnchor.constraint(equalTo: margins.leadingAnchor)
-        let trailing = formStackView.trailingAnchor.constraint(equalTo: margins.trailingAnchor)
-        let top = formStackView.topAnchor.constraint(equalTo: margins.topAnchor)
-        let height = formStackView.heightAnchor.constraint(
+        let formToLeading = formStackView.leadingAnchor.constraint(equalTo: margins.leadingAnchor)
+        let formToTrailing = formStackView.trailingAnchor.constraint(
+            equalTo: margins.trailingAnchor
+        )
+        let formToTop = formStackView.topAnchor.constraint(equalTo: margins.topAnchor)
+        let formHeight = formStackView.heightAnchor.constraint(
             equalTo: view.heightAnchor,
             multiplier: 1.0/3
         )
+        
+        formToLeading.identifier = "formToLeading"
+        formToTrailing.identifier = "formToTrailing"
+        formToTop.identifier = "formToTop"
+        formHeight.identifier = "formHeight"
 
-        NSLayoutConstraint.activate([leading, trailing, top, height])
+        NSLayoutConstraint.activate([formToLeading, formToTrailing, formToTop, formHeight])
     }
     
     private func activateConstraintsDescriptionTextView() {
@@ -271,14 +286,19 @@ final class ActivityDetailViewController: NiblessViewController {
          */
         descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
         
-        let leading = descriptionTextView.leadingAnchor.constraint(
+        let descriptionTextViewLeadingAlignment = descriptionTextView.leadingAnchor.constraint(
             equalTo: nameField.leadingAnchor
         )
-        let height = descriptionTextView.heightAnchor.constraint(
+        let descriptionTextViewHeight = descriptionTextView.heightAnchor.constraint(
             equalTo: descriptionStackView.heightAnchor
         )
         
-        NSLayoutConstraint.activate([leading, height])
+        descriptionTextViewLeadingAlignment.identifier = "descriptionTextViewLeadingAlignment"
+        descriptionTextViewHeight.identifier = "descriptionTextViewHeight"
+        
+        NSLayoutConstraint.activate(
+            [descriptionTextViewLeadingAlignment, descriptionTextViewHeight]
+        )
     }
     
     private func validateInputs() throws {

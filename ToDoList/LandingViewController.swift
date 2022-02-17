@@ -24,6 +24,7 @@ final class LandingViewController: NiblessViewController {
     private lazy var rootView: UIView = {
         let view = UIView()
         view.backgroundColor = Color.background
+        view.accessibilityIdentifier = "rootView"
         
         // Layout margins
         var customMargins = view.layoutMargins
@@ -36,11 +37,14 @@ final class LandingViewController: NiblessViewController {
     private lazy var activitiesCountLabel: UILabel = {
         let label = UILabel()
         label.text = "Total: 0"
+        label.accessibilityIdentifier = "activitiesCountLabel"
         return label
     }()
     
     private lazy var activitiesContainerView: UIView = {
-        UIView()
+        let view = UIView()
+        view.accessibilityIdentifier = "activitiesContainerView"
+        return view
     }()
     
     // MARK: - Methods
@@ -134,28 +138,42 @@ final class LandingViewController: NiblessViewController {
         activitiesCountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let margins = view.layoutMarginsGuide
-        let top = activitiesCountLabel.topAnchor.constraint(equalTo: margins.topAnchor)
-        let trailing = activitiesCountLabel.trailingAnchor.constraint(
+        let labelToTop = activitiesCountLabel.topAnchor.constraint(equalTo: margins.topAnchor)
+        let labelToTrailing = activitiesCountLabel.trailingAnchor.constraint(
             equalTo: margins.trailingAnchor
         )
         
-        NSLayoutConstraint.activate([top, trailing])
+        labelToTop.identifier = "labelToTop"
+        labelToTrailing.identifier = "labelToTrailing"
+        
+        NSLayoutConstraint.activate([labelToTop, labelToTrailing])
     }
     
     private func activateConstraintsActivitiesContainerView() {
         activitiesContainerView.translatesAutoresizingMaskIntoConstraints = false
         
-        let top = activitiesContainerView.topAnchor.constraint(
+        let containerToTop = activitiesContainerView.topAnchor.constraint(
             equalTo: activitiesCountLabel.bottomAnchor,
             constant: 8
         )
-        let leading = activitiesContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
-        let trailing = activitiesContainerView.trailingAnchor.constraint(
+        let containerToLeading = activitiesContainerView.leadingAnchor.constraint(
+            equalTo: view.leadingAnchor
+        )
+        let containerToTrailing = activitiesContainerView.trailingAnchor.constraint(
             equalTo: view.trailingAnchor
         )
-        let bottom = activitiesContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        let containerToBottom = activitiesContainerView.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor
+        )
         
-        NSLayoutConstraint.activate([top, leading, trailing, bottom])
+        containerToTop.identifier = "containerToTop"
+        containerToLeading.identifier = "containerToLeading"
+        containerToTrailing.identifier = "containerToTrailing"
+        containerToBottom.identifier = "containerToBottom"
+        
+        NSLayoutConstraint.activate(
+            [containerToTop, containerToLeading, containerToTrailing, containerToBottom]
+        )
     }
     
     private func updateActivitiesCountLabel() {
