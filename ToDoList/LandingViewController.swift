@@ -12,6 +12,15 @@ final class LandingViewController: NiblessViewController {
     // MARK: - Properties
     private let activitiesViewController: ActivitiesViewController
     
+    private lazy var addButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addNewActivity(_:))
+        )
+        return button
+    }()
+    
     private lazy var rootView: UIView = {
         let view = UIView()
         view.backgroundColor = Color.background
@@ -38,15 +47,8 @@ final class LandingViewController: NiblessViewController {
     public init(activitiesViewController: ActivitiesViewController) {
         self.activitiesViewController = activitiesViewController
         super.init()
-        
         navigationItem.title = "To Do List"
-        
-        let addNewActivityItem = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addNewActivity(_:))
-        )
-        navigationItem.rightBarButtonItem = addNewActivityItem
+        navigationItem.rightBarButtonItem = addButton
     }
     
     // MARK: View lifecycle
