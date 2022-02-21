@@ -52,6 +52,7 @@ final class LandingViewController: NiblessViewController {
         self.activitiesViewController = activitiesViewController
         super.init()
         navigationItem.title = "To Do List"
+        navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButton
     }
     
@@ -90,6 +91,12 @@ final class LandingViewController: NiblessViewController {
             
             self.present(navController, animated: true)
         }
+    }
+    
+    @objc
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        activitiesViewController.setEditing(editing, animated: animated)
     }
     
     // MARK: Private
