@@ -41,6 +41,22 @@ final class ActivitiesViewController: NiblessTableViewController {
         return cell
     }
     
+    override func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
+        if editingStyle == .delete {
+            let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
+            
+            // Remove the activity from the store
+            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
+            
+            // Remove that row from the table view with an animation
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
