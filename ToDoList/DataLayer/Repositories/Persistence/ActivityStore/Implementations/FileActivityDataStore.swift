@@ -47,10 +47,8 @@ public class FileActivityDataStore: ActivityDataStore {
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)? = nil) {
-        for (index, element) in allActivities.enumerated() {
-            if element == activity {
-                allActivities.remove(at: index)
-            }
+        if let index = allActivities.firstIndex(of: activity) {
+            allActivities.remove(at: index)
         }
         print("Activity deleted")
         completion?(activity)
