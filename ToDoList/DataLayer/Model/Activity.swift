@@ -9,6 +9,11 @@ import Foundation
 
 public typealias ActivityID = String
 
+public enum ActivityStatus: Int, Codable {
+    case pending
+    case done
+}
+
 public class Activity: Codable {
     
     // MARK: - Properties
@@ -16,6 +21,7 @@ public class Activity: Codable {
     public var name: String
     public var description: String?
     public let dateCreated: Date
+    public var status: ActivityStatus
     
     // MARK: - Methods
     public init(name: String, description: String? = nil) {
@@ -23,6 +29,7 @@ public class Activity: Codable {
         self.name = name
         self.description = description
         dateCreated = Date()
+        status = .pending
     }
 
     public convenience init() {
