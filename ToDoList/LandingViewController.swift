@@ -81,8 +81,9 @@ final class LandingViewController: NiblessViewController {
                 for: .newActivity(activity: createdActivity)
             )
             detailViewController.onDismiss = { [weak self] in
-                self?.activitiesViewController.tableView.reloadData()
-                self?.updateActivitiesCountLabel()
+                guard let self = self else { return }
+                self.activitiesViewController.tableView.reloadData()
+                self.updateActivitiesCountLabel()
             }
             let navController = NiblessNavigationController(
                 rootViewController: detailViewController
