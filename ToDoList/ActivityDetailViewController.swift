@@ -68,7 +68,9 @@ final class ActivityDetailViewController: NiblessViewController {
     }()
     
     private lazy var formStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameStackView, descriptionStackView])
+        let stackView = UIStackView(
+            arrangedSubviews: [nameStackView, descriptionStackView, statusStackView]
+        )
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.accessibilityIdentifier = "formStackView"
@@ -89,6 +91,14 @@ final class ActivityDetailViewController: NiblessViewController {
         stackView.spacing = 16
         stackView.alignment = .top
         stackView.accessibilityIdentifier = "descriptionStackView"
+        return stackView
+    }()
+    
+    private lazy var statusStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [doneLabel, doneSwitch])
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.accessibilityIdentifier = "statusStackView"
         return stackView
     }()
     
@@ -145,6 +155,20 @@ final class ActivityDetailViewController: NiblessViewController {
         textView.accessibilityIdentifier = "descriptionTextView"
         textView.delegate = self
         return textView
+    }()
+    
+    private lazy var doneLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Done"
+        label.accessibilityIdentifier = "doneLabel"
+        return label
+    }()
+    
+    private lazy var doneSwitch: UISwitch = {
+        let `switch` = UISwitch()
+        `switch`.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
+        `switch`.accessibilityIdentifier = "doneSwitch"
+        return `switch`
     }()
     
     // MARK: - Methods
@@ -249,12 +273,17 @@ final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: Private
     private func constructViewHierarchy() {
+        if case .newActivity = flow {
+            statusStackView.isHidden = true
+        }
         view.addSubview(formStackView)
     }
     
     private func activateConstraints() {
         activateConstraintsFormStackView()
+        activateConstraintsNameField()
         activateConstraintsDescriptionTextView()
+        activateConstraintsDoneSwitch()
     }
     
     private func activateConstraintsFormStackView() {
@@ -279,52 +308,37 @@ final class ActivityDetailViewController: NiblessViewController {
         NSLayoutConstraint.activate([formToLeading, formToTrailing, formToTop, formHeight])
     }
     
+    private func activateConstraintsNameField() {
+        nameField.translatesAutoresizingMaskIntoConstraints = false
+        
+        let nameFieldLeadingAlignment = nameField.leadingAnchor.constraint(
+            equalTo: descriptionTextView.leadingAnchor
+        )
+        
+        nameFieldLeadingAlignment.identifier = "nameFieldLeadingAlignment"
+        nameFieldLeadingAlignment.isActive = true
+    }
+    
     private func activateConstraintsDescriptionTextView() {
-        /*
-         (Describe what you want the view to look like independent of screen size.)
-         
-         I want the `descriptionTextView` to be:
-             * 16 points from the right edge of the `descriptionLabel`
-             * 16 point from the right edge of the screen
-             * aligned with the `descriptionLabel` on its first baseline
-             * as tall as 1/3 of the screen height
-         —————————————————————————————————————————————
-         (Turn the description into constraints.)
-         
-         Constraints for the `descriptionTextView`:
-             * The text view's left edge should be 16 points away from its nearest neighbor.
-             * The text view's right edge should be 16 points away from its superview.
-             * The text view's first baseline should be aligned with the first baseline of
-                its nearest left neighbor.
-             * The text view's height should be equal to 1/3 of the height of its superview.
-         —————————————————————————————————————————————
-        (Express constraints in terms of anchors.)
-         
-         Constraints for the `descriptionTextView`:
-             * The first baseline anchor of the text view should be aligned with the first
-                baseline anchor of the `descriptionLabel`.
-             * The leading anchor of the text view should be 16 points away from the trailing
-                anchor of the `descriptionLabel`.
-             * The trailing anchor of the text view should be 16 points away from the
-                trailing anchor of its superview.
-             * The height attribute of the text view should be equal to 1/3 of the height
-                of its superview.
-         */
         descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
         
-        let descriptionTextViewLeadingAlignment = descriptionTextView.leadingAnchor.constraint(
-            equalTo: nameField.leadingAnchor
-        )
         let descriptionTextViewHeight = descriptionTextView.heightAnchor.constraint(
             equalTo: descriptionStackView.heightAnchor
         )
         
-        descriptionTextViewLeadingAlignment.identifier = "descriptionTextViewLeadingAlignment"
         descriptionTextViewHeight.identifier = "descriptionTextViewHeight"
+        descriptionTextViewHeight.isActive = true
+    }
+    
+    private func activateConstraintsDoneSwitch() {
+        doneSwitch.translatesAutoresizingMaskIntoConstraints = false
         
-        NSLayoutConstraint.activate(
-            [descriptionTextViewLeadingAlignment, descriptionTextViewHeight]
+        let doneSwitchLeadingAlignment = doneSwitch.leadingAnchor.constraint(
+            equalTo: descriptionTextView.leadingAnchor
         )
+        
+        doneSwitchLeadingAlignment.identifier = "doneSwitchLeadingAlignment"
+        doneSwitchLeadingAlignment.isActive = true
     }
     
     private func validateInputs() throws {
