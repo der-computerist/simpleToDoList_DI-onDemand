@@ -164,6 +164,7 @@ final class ActivityDetailViewController: NiblessViewController {
         case .existingActivity:
             navigationItem.title = "Details"
             navigationItem.leftBarButtonItem = cancelButton
+            navigationItem.rightBarButtonItem = editButtonItem
         }
     }
     
@@ -190,11 +191,21 @@ final class ActivityDetailViewController: NiblessViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        // If there are unsaved changes to the activity name, enable the Save button.
+        // "New activity" flow: If there are unsaved changes to the activity name,
+        // enable the Save button.
         saveButton.isEnabled = hasChangesInActivityName
         
-        // If there are unsaved changes overall, disable the ability to dismiss using
-        // the pull-down gesture.
+        /*
+          "Existing activity" flow:
+              * While out of editing mode, the "Edit/Done" button item always remains enabled.
+              * After entering editing mode, the "Edit/Done" button will remain disabled as long
+                as there are no edits. As soon as edits are made, it will become enabled. It will
+                disable itself again if the activity name becomes empty.
+         */
+        editButtonItem.isEnabled = !isEditing || (hasChanges != editedActivityDetails.name.isEmpty)
+
+        // Both flows: If there are unsaved changes overall, disable the ability to dismiss
+        // using the pull-down gesture.
         isModalInPresentation = hasChanges
     }
     
@@ -218,6 +229,22 @@ final class ActivityDetailViewController: NiblessViewController {
             confirmCancel()
         } else {
             dismissWithoutSaving()
+        }
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        if editing {
+            nameField.isEnabled = true
+            descriptionTextView.isUserInteractionEnabled = true
+            editButtonItem.isEnabled = false
+            nameField.becomeFirstResponder()
+            
+        } else {
+            nameField.isEnabled = false
+            descriptionTextView.isUserInteractionEnabled = false
+            save(editButtonItem)
         }
     }
     

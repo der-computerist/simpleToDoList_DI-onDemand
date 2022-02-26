@@ -67,9 +67,13 @@ final class ActivitiesViewController: NiblessTableViewController {
         let detailViewController = ActivityDetailViewController(
             for: .existingActivity(activity: selectedActivity)
         )
+        detailViewController.onDismiss = { [weak self] in
+            self?.tableView.reloadData()
+        }
         let navController = NiblessNavigationController(
             rootViewController: detailViewController
         )
+        navController.presentationController?.delegate = detailViewController
         
         present(navController, animated: true)
     }
