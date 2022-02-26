@@ -242,8 +242,7 @@ final class ActivityDetailViewController: NiblessViewController {
             nameField.becomeFirstResponder()
             
         } else {
-            nameField.isEnabled = false
-            descriptionTextView.isUserInteractionEnabled = false
+            isEditing = true  // do not exit editing mode until the save is successful
             save(editButtonItem)
         }
     }
