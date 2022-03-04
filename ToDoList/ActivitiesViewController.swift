@@ -67,14 +67,33 @@ final class ActivitiesViewController: NiblessTableViewController {
         let detailViewController = ActivityDetailViewController(
             for: .existingActivity(activity: selectedActivity)
         )
-        detailViewController.onDismiss = { [weak self] in
-            self?.tableView.reloadData()
-        }
         let navController = NiblessNavigationController(
             rootViewController: detailViewController
         )
         navController.presentationController?.delegate = detailViewController
+        detailViewController.delegate = self
         
         present(navController, animated: true)
+    }
+}
+
+extension ActivitiesViewController: ActivityDetailViewControllerDelegate {
+    
+    func activityDetailViewControllerDidCancel(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        dismiss(animated: true) {
+            // Even though the user canceled the edition, they might have changed the status of
+            // the activity via the "Done" switch. So we have to reload the table.
+            self.tableView.reloadData()
+        }
+    }
+    
+    func activityDetailViewControllerDidFinish(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        dismiss(animated: true) {
+            self.tableView.reloadData()
+        }
     }
 }

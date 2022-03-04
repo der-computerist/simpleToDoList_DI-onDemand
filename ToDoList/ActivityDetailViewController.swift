@@ -27,7 +27,6 @@ protocol ActivityDetailViewControllerDelegate: AnyObject {
 final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
-    public var onDismiss: (() -> Void)?
     let flow: ActivityDetailView
     var activity: Activity
     weak var delegate: ActivityDetailViewControllerDelegate?
