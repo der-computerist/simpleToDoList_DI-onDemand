@@ -367,8 +367,8 @@ final class ActivityDetailViewController: NiblessViewController {
             preferredStyle: .alert
         )
         
-        alert.addAction(UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
-            self?.saveAndDismiss()
+        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+            self.saveAndDismiss()
         })
         alert.addAction(UIAlertAction(title: "No", style: .cancel))
         
@@ -379,8 +379,8 @@ final class ActivityDetailViewController: NiblessViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         alert.addAction(
-            UIAlertAction(title: "Discard Changes", style: .destructive) { [weak self] _ in
-                self?.dismissWithoutSaving()
+            UIAlertAction(title: "Discard Changes", style: .destructive) { _ in
+                self.dismissWithoutSaving()
             }
         )
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
