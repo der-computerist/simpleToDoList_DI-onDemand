@@ -14,12 +14,23 @@ private struct Constants {
     static let activityDescriptionMaxCharacters = 200
 }
 
+protocol ActivityDetailViewControllerDelegate: AnyObject {
+    
+    func activityDetailViewControllerDidCancel(
+        _ activityDetailViewController: ActivityDetailViewController
+    )
+    func activityDetailViewControllerDidFinish(
+        _ activityDetailViewController: ActivityDetailViewController
+    )
+}
+
 final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
     public var onDismiss: (() -> Void)?
-    private let flow: ActivityDetailView
-    private var activity: Activity
+    let flow: ActivityDetailView
+    var activity: Activity
+    weak var delegate: ActivityDetailViewControllerDelegate?
     
     private var originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
@@ -250,9 +261,11 @@ final class ActivityDetailViewController: NiblessViewController {
     @objc
     func cancel(_ sender: UIBarButtonItem) {
         if hasChanges {
+            // The user tapped Cancel with unsaved changes. Confirm that it's OK to lose the changes.
             confirmCancel()
         } else {
-            dismissWithoutSaving()
+            // There are no unsaved changes; ask the delegate to dismiss immediately.
+            delegate?.activityDetailViewControllerDidCancel(self)
         }
     }
     
@@ -378,11 +391,9 @@ final class ActivityDetailViewController: NiblessViewController {
     private func confirmCancel() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        alert.addAction(
-            UIAlertAction(title: "Discard Changes", style: .destructive) { _ in
-                self.dismissWithoutSaving()
-            }
-        )
+        alert.addAction(UIAlertAction(title: "Discard Changes", style: .destructive) { _ in
+            self.delegate?.activityDetailViewControllerDidCancel(self)
+        })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         alert.pruneNegativeWidthConstraints()  // workaround to circumvent a UIKit bug
@@ -392,13 +403,6 @@ final class ActivityDetailViewController: NiblessViewController {
     private func saveAndDismiss() {
         activity.name = nameField.text ?? ""
         activity.description = descriptionTextView.text
-        presentingViewController?.dismiss(animated: true, completion: onDismiss)
-    }
-    
-    private func dismissWithoutSaving() {
-        if case .newActivity = flow {
-            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
-        }
         presentingViewController?.dismiss(animated: true, completion: onDismiss)
     }
 }
@@ -452,6 +456,6 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
         // A user-initiated attempt to dismiss the view was allowed because
         // there were no unsaved changes. Do not preserve the created activity.
         // (It's OK to dismiss programmatically here. No side effects.)
-        dismissWithoutSaving()
+        delegate?.activityDetailViewControllerDidCancel(self)
     }
 }

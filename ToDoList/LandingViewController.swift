@@ -80,15 +80,11 @@ final class LandingViewController: NiblessViewController {
             let detailViewController = ActivityDetailViewController(
                 for: .newActivity(activity: createdActivity)
             )
-            detailViewController.onDismiss = { [weak self] in
-                guard let self = self else { return }
-                self.activitiesViewController.tableView.reloadData()
-                self.updateActivitiesCountLabel()
-            }
             let navController = NiblessNavigationController(
                 rootViewController: detailViewController
             )
             navController.presentationController?.delegate = detailViewController
+            detailViewController.delegate = self
             
             self.present(navController, animated: true)
         }
@@ -198,5 +194,32 @@ final class LandingViewController: NiblessViewController {
         text.removeSubrange(text.index(after: indexOfSpace)...)
         text.append(String(activitiesCount))
         activitiesCountLabel.text = text
+    }
+}
+
+// MARK: - ActivityDetailViewControllerDelegate
+
+extension LandingViewController: ActivityDetailViewControllerDelegate {
+    
+    func activityDetailViewControllerDidCancel(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        let flow = activityDetailViewController.flow
+        let activity = activityDetailViewController.activity
+        
+        if case .newActivity = flow {
+            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
+        }
+        
+        dismiss(animated: true) {
+            self.activitiesViewController.tableView.reloadData()
+            self.updateActivitiesCountLabel()
+        }
+    }
+    
+    func activityDetailViewControllerDidFinish(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        fatalError("pending implementation")
     }
 }
