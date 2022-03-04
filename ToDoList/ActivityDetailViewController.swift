@@ -403,7 +403,8 @@ final class ActivityDetailViewController: NiblessViewController {
     private func saveAndDismiss() {
         activity.name = nameField.text ?? ""
         activity.description = descriptionTextView.text
-        presentingViewController?.dismiss(animated: true, completion: onDismiss)
+        
+        delegate?.activityDetailViewControllerDidFinish(self)
     }
 }
 

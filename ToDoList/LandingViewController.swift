@@ -220,6 +220,9 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        fatalError("pending implementation")
+        dismiss(animated: true) {
+            self.activitiesViewController.tableView.reloadData()
+            self.updateActivitiesCountLabel()
+        }
     }
 }
