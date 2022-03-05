@@ -38,6 +38,14 @@ final class ActivitiesViewController: NiblessTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell", for: indexPath)
         let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
         cell.textLabel?.text = activity.name
+
+        switch activity.status {
+        case .pending:
+            cell.imageView?.image = UIImage(named: "Unchecked")
+        case .done:
+            cell.imageView?.image = UIImage(named: "Checked")
+        }
+        
         return cell
     }
     

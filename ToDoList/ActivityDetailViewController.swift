@@ -177,6 +177,7 @@ final class ActivityDetailViewController: NiblessViewController {
     private lazy var doneSwitch: UISwitch = {
         let `switch` = UISwitch()
         `switch`.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
+        `switch`.addTarget(self, action: #selector(toggleStatus(_:)), for: .valueChanged)
         `switch`.accessibilityIdentifier = "doneSwitch"
         return `switch`
     }()
@@ -214,7 +215,8 @@ final class ActivityDetailViewController: NiblessViewController {
         
         nameField.text = activity.name
         descriptionTextView.text = activity.description
-        
+        doneSwitch.isOn = activity.status == .done ? true : false
+
         // For user convenience, when creating a new activity, present the keyboard as
         // soon as the view begins appearing.
         if case .newActivity = flow {
@@ -243,7 +245,7 @@ final class ActivityDetailViewController: NiblessViewController {
         isModalInPresentation = hasChanges
     }
     
-    // MARK: Button actions
+    // MARK: Target-action pairs
     @objc
     func save(_ sender: UIBarButtonItem) {
         do {
@@ -268,6 +270,12 @@ final class ActivityDetailViewController: NiblessViewController {
         }
     }
     
+    @objc
+    func toggleStatus(_ sender: UISwitch) {
+        activity.status = sender.isOn ? .done : .pending
+    }
+    
+    // MARK: Editing Mode
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
