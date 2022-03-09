@@ -7,7 +7,7 @@
 
 import UIKit
 
-private typealias ActivityDetails = (name: String, description: String)
+private typealias ActivityDetails = (name: String, description: String, status: ActivityStatus)
 
 private struct Constants {
     static let activityNameMaxCharacters = 50
@@ -178,6 +178,7 @@ final class ActivityDetailViewController: NiblessViewController {
         let `switch` = UISwitch()
         `switch`.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
         `switch`.addTarget(self, action: #selector(toggleStatus(_:)), for: .valueChanged)
+        `switch`.isEnabled = false
         `switch`.accessibilityIdentifier = "doneSwitch"
         return `switch`
     }()
@@ -186,7 +187,7 @@ final class ActivityDetailViewController: NiblessViewController {
     public init(for flow: ActivityDetailView) {
         self.flow = flow
         activity = flow.activity
-        originalActivityDetails = (activity.name, activity.description ?? "")
+        originalActivityDetails = (activity.name, activity.description ?? "", activity.status)
         editedActivityDetails = originalActivityDetails
         super.init()
         
@@ -272,7 +273,7 @@ final class ActivityDetailViewController: NiblessViewController {
     
     @objc
     func toggleStatus(_ sender: UISwitch) {
-        activity.status = sender.isOn ? .done : .pending
+        editedActivityDetails.status = sender.isOn ? .done : .pending
     }
     
     // MARK: Editing Mode
@@ -282,6 +283,7 @@ final class ActivityDetailViewController: NiblessViewController {
         if editing {
             nameField.isEnabled = true
             descriptionTextView.isUserInteractionEnabled = true
+            doneSwitch.isEnabled = true
             editButtonItem.isEnabled = false
             nameField.becomeFirstResponder()
             
@@ -408,8 +410,9 @@ final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        activity.name = nameField.text ?? ""
-        activity.description = descriptionTextView.text
+        activity.name = editedActivityDetails.name
+        activity.description = editedActivityDetails.description
+        activity.status = editedActivityDetails.status
         
         delegate?.activityDetailViewControllerDidFinish(self)
     }
