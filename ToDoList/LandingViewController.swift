@@ -204,13 +204,19 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidCancel(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        let flow = activityDetailViewController.flow
-        let activity = activityDetailViewController.activity
-        
-        if case .newActivity = flow {
-            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
+        guard case .newActivity = activityDetailViewController.flow else {
+            assertionFailure("""
+            Incorrect flow on received Activity Detail view controller: expected .newActivity, \
+            got \(activityDetailViewController.flow) instead
+            """)
+            return
         }
-        
+
+        GlobalToDoListActivityRepository.delete(
+            activity: activityDetailViewController.activity,
+            completion: nil
+        )
+
         dismiss(animated: true) {
             self.activitiesViewController.tableView.reloadData()
             self.updateActivitiesCountLabel()
@@ -220,6 +226,14 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
+        guard case .newActivity = activityDetailViewController.flow else {
+            assertionFailure("""
+            Incorrect flow on received Activity Detail view controller: expected .newActivity, \
+            got \(activityDetailViewController.flow) instead
+            """)
+            return
+        }
+
         dismiss(animated: true) {
             self.activitiesViewController.tableView.reloadData()
             self.updateActivitiesCountLabel()
