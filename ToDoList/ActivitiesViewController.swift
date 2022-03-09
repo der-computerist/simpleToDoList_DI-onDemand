@@ -90,11 +90,7 @@ extension ActivitiesViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidCancel(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        dismiss(animated: true) {
-            // Even though the user canceled the edition, they might have changed the status of
-            // the activity via the "Done" switch. So we have to reload the table.
-            self.tableView.reloadData()
-        }
+        dismiss(animated: true)
     }
     
     func activityDetailViewControllerDidFinish(
