@@ -7,8 +7,8 @@
 
 public enum ActivityDetailView {
     
-    case newActivity(activity: Activity)
-    case existingActivity(activity: Activity)
+    case newActivity(Activity)
+    case existingActivity(Activity)
     
     var activity: Activity {
         switch self {

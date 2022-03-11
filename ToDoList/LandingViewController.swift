@@ -78,7 +78,7 @@ final class LandingViewController: NiblessViewController {
     func addNewActivity(_ sender: UIBarButtonItem) {
         GlobalToDoListActivityRepository.createActivity() { createdActivity in
             let detailViewController = ActivityDetailViewController(
-                for: .newActivity(activity: createdActivity)
+                for: .newActivity(createdActivity)
             )
             let navController = NiblessNavigationController(
                 rootViewController: detailViewController

@@ -73,7 +73,7 @@ final class ActivitiesViewController: NiblessTableViewController {
         let selectedActivity = activities[indexPath.row]
         
         let detailViewController = ActivityDetailViewController(
-            for: .existingActivity(activity: selectedActivity)
+            for: .existingActivity(selectedActivity)
         )
         let navController = NiblessNavigationController(
             rootViewController: detailViewController
