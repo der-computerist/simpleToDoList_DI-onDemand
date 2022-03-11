@@ -463,11 +463,4 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
         // there were unsaved changes. Ask the user to confirm their intention.
         confirmCancel()
     }
-    
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        // A user-initiated attempt to dismiss the view was allowed because
-        // there were no unsaved changes. Do not preserve the created activity.
-        // (It's OK to dismiss programmatically here. No side effects.)
-        delegate?.activityDetailViewControllerDidCancel(self)
-    }
 }
