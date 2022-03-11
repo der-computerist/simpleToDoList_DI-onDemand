@@ -84,7 +84,7 @@ final class LandingViewController: NiblessViewController {
         let navController = NiblessNavigationController(rootViewController: detailViewController)
         navController.presentationController?.delegate = detailViewController
 
-        self.present(navController, animated: true)
+        present(navController, animated: true)
     }
     
     @objc
@@ -209,15 +209,7 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
             return
         }
 
-        GlobalToDoListActivityRepository.delete(
-            activity: activityDetailViewController.activity,
-            completion: nil
-        )
-
-        dismiss(animated: true) {
-            self.activitiesViewController.tableView.reloadData()
-            self.updateActivitiesCountLabel()
-        }
+        dismiss(animated: true)
     }
     
     func activityDetailViewControllerDidFinish(

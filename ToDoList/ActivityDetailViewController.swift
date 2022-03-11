@@ -413,7 +413,9 @@ final class ActivityDetailViewController: NiblessViewController {
         activity.description = editedActivityDetails.description
         activity.status = editedActivityDetails.status
         
-        delegate?.activityDetailViewControllerDidFinish(self)
+        GlobalToDoListActivityRepository.save(activity: activity) { _ in
+            self.delegate?.activityDetailViewControllerDidFinish(self)
+        }
     }
 }
 
