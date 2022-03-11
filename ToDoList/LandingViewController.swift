@@ -201,28 +201,12 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidCancel(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        guard case .newActivity = activityDetailViewController.flow else {
-            assertionFailure("""
-            Incorrect flow on received Activity Detail view controller: expected .newActivity, \
-            got \(activityDetailViewController.flow) instead
-            """)
-            return
-        }
-
         dismiss(animated: true)
     }
     
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        guard case .newActivity = activityDetailViewController.flow else {
-            assertionFailure("""
-            Incorrect flow on received Activity Detail view controller: expected .newActivity, \
-            got \(activityDetailViewController.flow) instead
-            """)
-            return
-        }
-
         dismiss(animated: true) {
             self.activitiesViewController.tableView.reloadData()
             self.updateActivitiesCountLabel()

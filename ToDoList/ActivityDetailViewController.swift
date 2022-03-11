@@ -27,9 +27,9 @@ protocol ActivityDetailViewControllerDelegate: AnyObject {
 final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
-    let flow: ActivityDetailView
     var activity: Activity
     weak var delegate: ActivityDetailViewControllerDelegate?
+    private let flow: ActivityDetailView
     
     private var originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
