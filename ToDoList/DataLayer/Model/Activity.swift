@@ -14,7 +14,7 @@ public enum ActivityStatus: Int, Codable {
     case done = 1
 }
 
-public class Activity: Codable {
+public struct Activity: Codable {
     
     // MARK: - Properties
     public let id: ActivityID
@@ -32,7 +32,7 @@ public class Activity: Codable {
         status = .pending
     }
 
-    public convenience init() {
+    public init() {
         self.init(name: "")
     }
 }
@@ -41,20 +41,5 @@ extension Activity: Equatable {
     
     public static func == (lhs: Activity, rhs: Activity) -> Bool {
         lhs.id == rhs.id
-    }
-}
-
-extension Activity: CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        let referenceType = type(of: self)
-        let properties: [String: Any] =
-            [
-                "id": id,
-                "name": name,
-                "description": description ?? "",
-                "dateCreated": String(describing: dateCreated)
-            ]
-        return "<\(referenceType): \(properties as AnyObject)>"
     }
 }
