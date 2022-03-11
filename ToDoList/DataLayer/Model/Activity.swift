@@ -10,8 +10,8 @@ import Foundation
 public typealias ActivityID = String
 
 public enum ActivityStatus: Int, Codable {
-    case pending
-    case done
+    case pending = 0
+    case done = 1
 }
 
 public class Activity: Codable {
