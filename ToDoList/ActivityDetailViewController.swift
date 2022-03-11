@@ -194,14 +194,13 @@ final class ActivityDetailViewController: NiblessViewController {
         switch flow {
         case .newActivity:
             navigationItem.title = "New Activity"
-            navigationItem.leftBarButtonItem = cancelButton
             navigationItem.rightBarButtonItem = saveButton
             
         case .existingActivity:
             navigationItem.title = "Details"
-            navigationItem.leftBarButtonItem = cancelButton
             navigationItem.rightBarButtonItem = editButtonItem
         }
+        navigationItem.leftBarButtonItem = cancelButton
     }
     
     // MARK: View lifecycle

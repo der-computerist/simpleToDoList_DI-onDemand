@@ -12,9 +12,8 @@ public enum ActivityDetailView {
     
     var activity: Activity {
         switch self {
-        case let .newActivity(activity):
-            return activity
-        case let .existingActivity(activity):
+        case let .newActivity(activity),
+             let .existingActivity(activity):
             return activity
         }
     }
