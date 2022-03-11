@@ -41,7 +41,13 @@ public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Methods
     public func save(activity: Activity, completion: ((Activity) -> Void)? = nil) {
-        allActivities.append(activity)
+        if let index = allActivities.firstIndex(of: activity) {
+            // If the activity already exists, update it
+            allActivities[index] = activity
+        } else {
+            // Otherwise, add to the end of the array
+            allActivities.append(activity)
+        }
         print("Activity saved!")
         completion?(activity)
     }
