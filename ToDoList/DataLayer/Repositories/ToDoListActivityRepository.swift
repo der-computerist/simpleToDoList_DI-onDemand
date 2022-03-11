@@ -18,6 +18,9 @@ public class ToDoListActivityRepository: ActivityRepository {
     public var allActivities: [Activity] {
         dataStore.allActivities
     }
+    public var emptyActivity: Activity {
+        Activity()
+    }
     private let dataStore: ActivityDataStore
     
     // MARK: - Methods
@@ -25,9 +28,8 @@ public class ToDoListActivityRepository: ActivityRepository {
         self.dataStore = dataStore
     }
     
-    public func createActivity(completion: ((Activity) -> Void)?) {
-        let newActivity = Activity()
-        dataStore.save(activity: newActivity, completion: completion)
+    public func save(activity: Activity, completion: ((Activity) -> Void)?) {
+        dataStore.save(activity: activity, completion: completion)
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {

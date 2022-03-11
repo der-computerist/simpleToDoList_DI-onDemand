@@ -76,18 +76,15 @@ final class LandingViewController: NiblessViewController {
     // MARK: Button actions
     @objc
     func addNewActivity(_ sender: UIBarButtonItem) {
-        GlobalToDoListActivityRepository.createActivity() { createdActivity in
-            let detailViewController = ActivityDetailViewController(
-                for: .newActivity(createdActivity)
-            )
-            let navController = NiblessNavigationController(
-                rootViewController: detailViewController
-            )
-            navController.presentationController?.delegate = detailViewController
-            detailViewController.delegate = self
-            
-            self.present(navController, animated: true)
-        }
+        let detailViewController = ActivityDetailViewController(
+            for: .newActivity(GlobalToDoListActivityRepository.emptyActivity)
+        )
+        detailViewController.delegate = self
+        
+        let navController = NiblessNavigationController(rootViewController: detailViewController)
+        navController.presentationController?.delegate = detailViewController
+
+        self.present(navController, animated: true)
     }
     
     @objc

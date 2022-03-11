@@ -10,7 +10,8 @@ import Foundation
 public protocol ActivityRepository {
     
     var allActivities: [Activity] { get }
-    func createActivity(completion: ((Activity) -> Void)?)
+    var emptyActivity: Activity { get }
+    func save(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
     func saveChanges() -> Bool
 }
