@@ -29,6 +29,7 @@ final class ActivityDetailViewController: NiblessViewController {
     // MARK: - Properties
     var activity: Activity
     weak var delegate: ActivityDetailViewControllerDelegate?
+    var onSave: (() -> Void)?
     private let flow: ActivityDetailView
     
     private var originalActivityDetails: ActivityDetails
@@ -414,6 +415,7 @@ final class ActivityDetailViewController: NiblessViewController {
         activity.status = editedActivityDetails.status
         
         GlobalToDoListActivityRepository.save(activity: activity) { _ in
+            self.onSave?()
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
     }

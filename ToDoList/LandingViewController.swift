@@ -79,6 +79,10 @@ final class LandingViewController: NiblessViewController {
         let detailViewController = ActivityDetailViewController(
             for: .newActivity(GlobalToDoListActivityRepository.emptyActivity)
         )
+        detailViewController.onSave = {
+            self.activitiesViewController.tableView.reloadData()
+            self.updateActivitiesCountLabel()
+        }
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
@@ -207,9 +211,6 @@ extension LandingViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        dismiss(animated: true) {
-            self.activitiesViewController.tableView.reloadData()
-            self.updateActivitiesCountLabel()
-        }
+        dismiss(animated: true)
     }
 }
