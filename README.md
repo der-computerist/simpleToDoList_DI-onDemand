@@ -10,11 +10,11 @@ It applies the following technologies and patterns:
 
 ## Screenshots
 
-![](1.gif)
-![](2.gif)
-![](3.gif)
-![](4.gif)
-![](5.gif)
-![](6.gif)
-![](7.gif)
-![](8.gif)
+![](img/1.png)
+![](img/2.png)
+![](img/3.png)
+![](img/4.png)
+![](img/5.png)
+![](img/6.png)
+![](img/7.png)
+![](img/8.png)
