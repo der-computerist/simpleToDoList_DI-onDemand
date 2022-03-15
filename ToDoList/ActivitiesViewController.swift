@@ -9,6 +9,9 @@ import UIKit
 
 final class ActivitiesViewController: NiblessTableViewController {
     
+    // MARK: - Properties
+    var onDelete: (() -> Void)?
+    
     // MARK: - Methods
     public init() {
         super.init(style: .plain)
@@ -58,7 +61,9 @@ final class ActivitiesViewController: NiblessTableViewController {
             let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
             
             // Remove the activity from the store
-            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
+            GlobalToDoListActivityRepository.delete(activity: activity) { _ in
+                self.onDelete?()
+            }
             
             // Remove that row from the table view with an animation
             tableView.deleteRows(at: [indexPath], with: .automatic)

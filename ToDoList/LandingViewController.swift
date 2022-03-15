@@ -54,6 +54,10 @@ final class LandingViewController: NiblessViewController {
         navigationItem.title = "To Do List"
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButton
+        
+        activitiesViewController.onDelete = { [weak self] in
+            self?.updateActivitiesCountLabel()
+        }
     }
     
     // MARK: View lifecycle
