@@ -34,10 +34,6 @@ public final class MainViewController: NiblessNavigationController {
         let detailViewController = ActivityDetailViewController(
             for: .newActivity(GlobalToDoListActivityRepository.emptyActivity)
         )
-        detailViewController.onSave = {
-            self.landingViewController.activitiesViewController.tableView.reloadData()
-            self.landingViewController.updateActivitiesCountLabel()
-        }
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
@@ -49,9 +45,6 @@ public final class MainViewController: NiblessNavigationController {
     
     private func presentActivityUpdateScreen(activity: Activity) {
         let detailViewController = ActivityDetailViewController(for: .existingActivity(activity))
-        detailViewController.onSave = {
-            self.landingViewController.activitiesViewController.tableView.reloadData()
-        }
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
@@ -81,6 +74,13 @@ extension MainViewController: ActivitiesViewControllerDelegate {
     ) {
         presentActivityUpdateScreen(activity: activity)
     }
+    
+    func activitiesViewController(
+        _ activitiesViewController: ActivitiesViewController,
+        didDeleteActivity _: Activity
+    ) {
+        landingViewController.updateActivitiesCountLabel()
+    }
 }
 
 // MARK: - ActivityDetailViewControllerDelegate
@@ -96,6 +96,11 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
+        if case .newActivity = activityDetailViewController.flow {
+            landingViewController.updateActivitiesCountLabel()
+        }
+        landingViewController.activitiesViewController.tableView.reloadData()
+
         dismiss(animated: true)
     }
 }

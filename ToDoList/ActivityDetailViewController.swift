@@ -27,11 +27,10 @@ protocol ActivityDetailViewControllerDelegate: AnyObject {
 final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
+    let flow: ActivityDetailView
     var activity: Activity
     weak var delegate: ActivityDetailViewControllerDelegate?
-    var onSave: (() -> Void)?
-    private let flow: ActivityDetailView
-    
+
     private let originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
         didSet {
@@ -415,7 +414,6 @@ final class ActivityDetailViewController: NiblessViewController {
         activity.status = editedActivityDetails.status
         
         GlobalToDoListActivityRepository.save(activity: activity) { _ in
-            self.onSave?()
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
     }

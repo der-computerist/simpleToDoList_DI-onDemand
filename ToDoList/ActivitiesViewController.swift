@@ -13,12 +13,15 @@ protocol ActivitiesViewControllerDelegate: AnyObject {
         _ activitiesViewController: ActivitiesViewController,
         didSelectActivity activity: Activity
     )
+    func activitiesViewController(
+        _ activitiesViewController: ActivitiesViewController,
+        didDeleteActivity activity: Activity
+    )
 }
 
 public final class ActivitiesViewController: NiblessTableViewController {
     
     // MARK: - Properties
-    var onDelete: (() -> Void)?
     weak var delegate: ActivitiesViewControllerDelegate?
     
     // MARK: - Methods
@@ -68,8 +71,8 @@ public final class ActivitiesViewController: NiblessTableViewController {
             let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
             
             // Remove the activity from the store
-            GlobalToDoListActivityRepository.delete(activity: activity) { _ in
-                self.onDelete?()
+            GlobalToDoListActivityRepository.delete(activity: activity) { activity in
+                self.delegate?.activitiesViewController(self, didDeleteActivity: activity)
             }
             
             // Remove that row from the table view with an animation
