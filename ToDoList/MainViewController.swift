@@ -59,7 +59,7 @@ public final class MainViewController: NiblessNavigationController {
 
 extension MainViewController: LandingViewControllerDelegate {
     
-    func landingViewControllerShouldCreateActivity(_ landingViewController: LandingViewController) {
+    func landingViewControllerShouldCreateActivity(_ _: LandingViewController) {
         presentActivityCreationScreen()
     }
 }
@@ -69,16 +69,13 @@ extension MainViewController: LandingViewControllerDelegate {
 extension MainViewController: ActivitiesViewControllerDelegate {
     
     func activitiesViewController(
-        _ activitiesViewController: ActivitiesViewController,
+        _ _: ActivitiesViewController,
         didSelectActivity activity: Activity
     ) {
         presentActivityUpdateScreen(activity: activity)
     }
     
-    func activitiesViewController(
-        _ activitiesViewController: ActivitiesViewController,
-        didDeleteActivity _: Activity
-    ) {
+    func activitiesViewController(_ _: ActivitiesViewController, didDeleteActivity _: Activity) {
         landingViewController.updateActivitiesCountLabel()
     }
 }
@@ -87,9 +84,7 @@ extension MainViewController: ActivitiesViewControllerDelegate {
 
 extension MainViewController: ActivityDetailViewControllerDelegate {
     
-    func activityDetailViewControllerDidCancel(
-        _ activityDetailViewController: ActivityDetailViewController
-    ) {
+    func activityDetailViewControllerDidCancel(_ _: ActivityDetailViewController) {
         dismiss(animated: true)
     }
     

@@ -456,9 +456,7 @@ extension ActivityDetailViewController: UITextViewDelegate {
 
 extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate {
     
-    func presentationControllerDidAttemptToDismiss(
-        _ presentationController: UIPresentationController
-    ) {
+    func presentationControllerDidAttemptToDismiss(_ _: UIPresentationController) {
         // A user-initiated attempt to dismiss the view was prevented because
         // there were unsaved changes. Ask the user to confirm their intention.
         confirmCancel()
