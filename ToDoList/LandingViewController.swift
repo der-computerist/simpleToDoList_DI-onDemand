@@ -7,10 +7,16 @@
 
 import UIKit
 
-final class LandingViewController: NiblessViewController {
+protocol LandingViewControllerDelegate: AnyObject {
+    
+    func landingViewControllerShouldCreateActivity(_ landingViewController: LandingViewController)
+}
+
+public final class LandingViewController: NiblessViewController {
     
     // MARK: - Properties
-    private let activitiesViewController: ActivitiesViewController
+    let activitiesViewController: ActivitiesViewController
+    weak var delegate: LandingViewControllerDelegate?
     
     private lazy var addButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -61,18 +67,18 @@ final class LandingViewController: NiblessViewController {
     }
     
     // MARK: View lifecycle
-    override func loadView() {
+    public override func loadView() {
         view = rootView
         constructViewHierarchy()
         activateConstraints()
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         add(childViewController: activitiesViewController, over: activitiesContainerView)
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateActivitiesCountLabel()
     }
@@ -80,25 +86,29 @@ final class LandingViewController: NiblessViewController {
     // MARK: Button actions
     @objc
     func addNewActivity(_ sender: UIBarButtonItem) {
-        let detailViewController = ActivityDetailViewController(
-            for: .newActivity(GlobalToDoListActivityRepository.emptyActivity)
-        )
-        detailViewController.onSave = {
-            self.activitiesViewController.tableView.reloadData()
-            self.updateActivitiesCountLabel()
-        }
-        detailViewController.delegate = self
-        
-        let navController = NiblessNavigationController(rootViewController: detailViewController)
-        navController.presentationController?.delegate = detailViewController
-
-        present(navController, animated: true)
+        delegate?.landingViewControllerShouldCreateActivity(self)
     }
     
     @objc
-    override func setEditing(_ editing: Bool, animated: Bool) {
+    public override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         activitiesViewController.setEditing(editing, animated: animated)
+    }
+    
+    public func updateActivitiesCountLabel() {
+        guard var text = activitiesCountLabel.text else {
+            return
+        }
+        guard let indexOfSpace = text.lastIndex(of: " ") else {
+            assertionFailure("The Activities count label must use a space as delimiter")
+            return
+        }
+
+        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
+        
+        text.removeSubrange(text.index(after: indexOfSpace)...)
+        text.append(String(activitiesCount))
+        activitiesCountLabel.text = text
     }
     
     // MARK: Private
@@ -183,38 +193,5 @@ final class LandingViewController: NiblessViewController {
         NSLayoutConstraint.activate(
             [containerToTop, containerToLeading, containerToTrailing, containerToBottom]
         )
-    }
-    
-    private func updateActivitiesCountLabel() {
-        guard var text = activitiesCountLabel.text else {
-            return
-        }
-        guard let indexOfSpace = text.lastIndex(of: " ") else {
-            assertionFailure("The Activities count label must use a space as delimiter")
-            return
-        }
-
-        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
-        
-        text.removeSubrange(text.index(after: indexOfSpace)...)
-        text.append(String(activitiesCount))
-        activitiesCountLabel.text = text
-    }
-}
-
-// MARK: - ActivityDetailViewControllerDelegate
-
-extension LandingViewController: ActivityDetailViewControllerDelegate {
-    
-    func activityDetailViewControllerDidCancel(
-        _ activityDetailViewController: ActivityDetailViewController
-    ) {
-        dismiss(animated: true)
-    }
-    
-    func activityDetailViewControllerDidFinish(
-        _ activityDetailViewController: ActivityDetailViewController
-    ) {
-        dismiss(animated: true)
     }
 }

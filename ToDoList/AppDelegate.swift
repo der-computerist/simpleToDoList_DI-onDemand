@@ -22,13 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let landingViewController = LandingViewController(
             activitiesViewController: activitiesViewController
         )
-        
-        let navController = NiblessNavigationController(
-            rootViewController: landingViewController
-        )
+
+        let mainViewController = MainViewController(landingViewController: landingViewController)
+        landingViewController.delegate = mainViewController
+        activitiesViewController.delegate = mainViewController
         
         window = UIWindow()
-        window?.rootViewController = navController
+        window?.rootViewController = mainViewController
         
         window?.makeKeyAndVisible()
         return true

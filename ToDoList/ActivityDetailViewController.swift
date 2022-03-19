@@ -32,7 +32,7 @@ final class ActivityDetailViewController: NiblessViewController {
     var onSave: (() -> Void)?
     private let flow: ActivityDetailView
     
-    private var originalActivityDetails: ActivityDetails
+    private let originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
         didSet {
             viewIfLoaded?.setNeedsLayout()

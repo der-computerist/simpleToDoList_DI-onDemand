@@ -1,0 +1,101 @@
+//
+//  MainViewController.swift
+//  ToDoList
+//
+//  Created by Enrique Aliaga on 3/17/22.
+//
+
+import Foundation
+
+public final class MainViewController: NiblessNavigationController {
+    
+    // MARK: - Properties
+    private let landingViewController: LandingViewController
+    private var activityDetailViewController: ActivityDetailViewController?
+    
+    // MARK: - Methods
+    public init(landingViewController: LandingViewController) {
+        self.landingViewController = landingViewController
+        super.init()
+    }
+    
+    // MARK: View lifecycle
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        presentActivityList()
+    }
+    
+    // MARK: Private
+    private func presentActivityList() {
+        pushViewController(landingViewController, animated: false)
+    }
+    
+    private func presentActivityCreationScreen() {
+        let detailViewController = ActivityDetailViewController(
+            for: .newActivity(GlobalToDoListActivityRepository.emptyActivity)
+        )
+        detailViewController.onSave = {
+            self.landingViewController.activitiesViewController.tableView.reloadData()
+            self.landingViewController.updateActivitiesCountLabel()
+        }
+        detailViewController.delegate = self
+        
+        let navController = NiblessNavigationController(rootViewController: detailViewController)
+        navController.presentationController?.delegate = detailViewController
+        
+        present(navController, animated: true)
+        activityDetailViewController = detailViewController
+    }
+    
+    private func presentActivityUpdateScreen(activity: Activity) {
+        let detailViewController = ActivityDetailViewController(for: .existingActivity(activity))
+        detailViewController.onSave = {
+            self.landingViewController.activitiesViewController.tableView.reloadData()
+        }
+        detailViewController.delegate = self
+        
+        let navController = NiblessNavigationController(rootViewController: detailViewController)
+        navController.presentationController?.delegate = detailViewController
+        
+        present(navController, animated: true)
+        activityDetailViewController = detailViewController
+    }
+}
+
+// MARK: - LandingViewControllerDelegate
+
+extension MainViewController: LandingViewControllerDelegate {
+    
+    func landingViewControllerShouldCreateActivity(_ landingViewController: LandingViewController) {
+        presentActivityCreationScreen()
+    }
+}
+
+// MARK: - ActivitiesViewControllerDelegate
+
+extension MainViewController: ActivitiesViewControllerDelegate {
+    
+    func activitiesViewController(
+        _ activitiesViewController: ActivitiesViewController,
+        didSelectActivity activity: Activity
+    ) {
+        presentActivityUpdateScreen(activity: activity)
+    }
+}
+
+// MARK: - ActivityDetailViewControllerDelegate
+
+extension MainViewController: ActivityDetailViewControllerDelegate {
+    
+    func activityDetailViewControllerDidCancel(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        dismiss(animated: true)
+    }
+    
+    func activityDetailViewControllerDidFinish(
+        _ activityDetailViewController: ActivityDetailViewController
+    ) {
+        dismiss(animated: true)
+    }
+}
