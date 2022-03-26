@@ -9,7 +9,7 @@ import UIKit
 
 protocol LandingViewControllerDelegate: AnyObject {
     
-    func landingViewControllerDidTapAddNewActivity(_ landingViewController: LandingViewController)
+    func landingViewControllerAddButtonWasTapped(_ landingViewController: LandingViewController)
 }
 
 public final class LandingViewController: NiblessViewController {
@@ -98,7 +98,7 @@ public final class LandingViewController: NiblessViewController {
     // MARK: Button actions
     @objc
     func addNewActivity(_ sender: UIBarButtonItem) {
-        delegate?.landingViewControllerDidTapAddNewActivity(self)
+        delegate?.landingViewControllerAddButtonWasTapped(self)
     }
     
     @objc
