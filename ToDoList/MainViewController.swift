@@ -59,7 +59,7 @@ public final class MainViewController: NiblessNavigationController {
 
 extension MainViewController: LandingViewControllerDelegate {
     
-    func landingViewControllerShouldCreateActivity(_ _: LandingViewController) {
+    func landingViewControllerDidTapAddNewActivity(_ _: LandingViewController) {
         presentActivityCreationScreen()
     }
 }

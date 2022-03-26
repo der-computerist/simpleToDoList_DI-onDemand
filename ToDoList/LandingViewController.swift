@@ -9,7 +9,7 @@ import UIKit
 
 protocol LandingViewControllerDelegate: AnyObject {
     
-    func landingViewControllerShouldCreateActivity(_ landingViewController: LandingViewController)
+    func landingViewControllerDidTapAddNewActivity(_ landingViewController: LandingViewController)
 }
 
 public final class LandingViewController: NiblessViewController {
@@ -18,13 +18,13 @@ public final class LandingViewController: NiblessViewController {
     let activitiesViewController: ActivitiesViewController
     weak var delegate: LandingViewControllerDelegate?
     
-    private lazy var addButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
+    private lazy var addButtonItem: UIBarButtonItem = {
+        let buttonItem = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(addNewActivity(_:))
         )
-        return button
+        return buttonItem
     }()
     
     private lazy var rootView: UIView = {
@@ -59,9 +59,25 @@ public final class LandingViewController: NiblessViewController {
         super.init()
         navigationItem.title = "To Do List"
         navigationItem.leftBarButtonItem = editButtonItem
-        navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItem = addButtonItem
     }
     
+    public func updateActivitiesCountLabel() {
+        guard var text = activitiesCountLabel.text else {
+            return
+        }
+        guard let indexOfSpace = text.lastIndex(of: " ") else {
+            assertionFailure("The Activities count label must use a space as delimiter")
+            return
+        }
+
+        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
+        
+        text.removeSubrange(text.index(after: indexOfSpace)...)
+        text.append(String(activitiesCount))
+        activitiesCountLabel.text = text
+    }
+
     // MARK: View lifecycle
     public override func loadView() {
         view = rootView
@@ -82,29 +98,13 @@ public final class LandingViewController: NiblessViewController {
     // MARK: Button actions
     @objc
     func addNewActivity(_ sender: UIBarButtonItem) {
-        delegate?.landingViewControllerShouldCreateActivity(self)
+        delegate?.landingViewControllerDidTapAddNewActivity(self)
     }
     
     @objc
     public override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         activitiesViewController.setEditing(editing, animated: animated)
-    }
-    
-    public func updateActivitiesCountLabel() {
-        guard var text = activitiesCountLabel.text else {
-            return
-        }
-        guard let indexOfSpace = text.lastIndex(of: " ") else {
-            assertionFailure("The Activities count label must use a space as delimiter")
-            return
-        }
-
-        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
-        
-        text.removeSubrange(text.index(after: indexOfSpace)...)
-        text.append(String(activitiesCount))
-        activitiesCountLabel.text = text
     }
     
     // MARK: Private

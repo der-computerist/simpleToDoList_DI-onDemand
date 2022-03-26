@@ -45,23 +45,23 @@ final class ActivityDetailViewController: NiblessViewController {
         originalActivityDetails.name != editedActivityDetails.name
     }
     
-    private lazy var cancelButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
+    private lazy var cancelButtonItem: UIBarButtonItem = {
+        let buttonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
             target: self,
             action: #selector(cancel(_:))
         )
-        return button
+        return buttonItem
     }()
     
-    private lazy var saveButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
+    private lazy var saveButtonItem: UIBarButtonItem = {
+        let buttonItem = UIBarButtonItem(
             title: "Add",
             style: .done,
             target: self,
             action: #selector(save(_:))
         )
-        return button
+        return buttonItem
     }()
 
     private lazy var rootView: UIView = {
@@ -194,13 +194,13 @@ final class ActivityDetailViewController: NiblessViewController {
         switch flow {
         case .newActivity:
             navigationItem.title = "New Activity"
-            navigationItem.rightBarButtonItem = saveButton
+            navigationItem.rightBarButtonItem = saveButtonItem
             
         case .existingActivity:
             navigationItem.title = "Details"
             navigationItem.rightBarButtonItem = editButtonItem
         }
-        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.leftBarButtonItem = cancelButtonItem
     }
     
     // MARK: View lifecycle
@@ -229,7 +229,7 @@ final class ActivityDetailViewController: NiblessViewController {
 
         // "New activity" flow: If there are unsaved changes to the activity name,
         // enable the Save button.
-        saveButton.isEnabled = hasChangesInActivityName
+        saveButtonItem.isEnabled = hasChangesInActivityName
         
         /*
           "Existing activity" flow:
