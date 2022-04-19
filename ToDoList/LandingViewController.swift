@@ -62,22 +62,11 @@ public final class LandingViewController: NiblessViewController {
         navigationItem.rightBarButtonItem = addButtonItem
     }
     
-    public func updateActivitiesCountLabel() {
-        guard var text = activitiesCountLabel.text else {
-            return
-        }
-        guard let indexOfSpace = text.lastIndex(of: " ") else {
-            assertionFailure("The Activities count label must use a space as delimiter")
-            return
-        }
-
-        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
-        
-        text.removeSubrange(text.index(after: indexOfSpace)...)
-        text.append(String(activitiesCount))
-        activitiesCountLabel.text = text
+    public func updateViewFromModel() {
+        updateActivitiesCountLabel()
+        activitiesViewController.updateViewFromModel()
     }
-
+    
     // MARK: View lifecycle
     public override func loadView() {
         view = rootView
@@ -185,5 +174,21 @@ public final class LandingViewController: NiblessViewController {
         NSLayoutConstraint.activate(
             [containerToTop, containerToLeading, containerToTrailing, containerToBottom]
         )
+    }
+    
+    private func updateActivitiesCountLabel() {
+        guard var text = activitiesCountLabel.text else {
+            return
+        }
+        guard let indexOfSpace = text.lastIndex(of: " ") else {
+            assertionFailure("The Activities count label must use a space as delimiter")
+            return
+        }
+
+        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
+        
+        text.removeSubrange(text.index(after: indexOfSpace)...)
+        text.append(String(activitiesCount))
+        activitiesCountLabel.text = text
     }
 }

@@ -29,6 +29,10 @@ public final class ActivitiesViewController: NiblessTableViewController {
         super.init(style: .plain)
     }
     
+    public func updateViewFromModel() {
+        tableView.reloadData()
+    }
+    
     // MARK: View lifecycle
     public override func viewDidLoad() {
         super.viewDidLoad()

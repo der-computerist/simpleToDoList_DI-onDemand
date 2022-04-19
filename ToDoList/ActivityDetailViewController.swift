@@ -363,12 +363,6 @@ final class ActivityDetailViewController: NiblessViewController {
         doneSwitchLeadingAlignment.isActive = true
     }
     
-    private func updateViewFromActivity() {
-        nameField.text = activity.name
-        descriptionTextView.text = activity.description
-        doneSwitch.isOn = activity.status == .done ? true : false
-    }
-    
     private func validateInputs() throws {
         guard let activityName = nameField.text else {
             throw ActivityCreationError.nameEmpty
@@ -416,13 +410,22 @@ final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        activity.name = editedActivityDetails.name
-        activity.description = editedActivityDetails.description
-        activity.status = editedActivityDetails.status
-        
+        updateActivityFromView()
         GlobalToDoListActivityRepository.save(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
+    }
+    
+    private func updateViewFromActivity() {
+        nameField.text = activity.name
+        descriptionTextView.text = activity.description
+        doneSwitch.isOn = activity.status == .done ? true : false
+    }
+    
+    private func updateActivityFromView() {
+        activity.name = editedActivityDetails.name
+        activity.description = editedActivityDetails.description
+        activity.status = editedActivityDetails.status
     }
 }
 

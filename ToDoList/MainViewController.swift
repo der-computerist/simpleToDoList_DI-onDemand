@@ -76,7 +76,7 @@ extension MainViewController: ActivitiesViewControllerDelegate {
     }
     
     func activitiesViewController(_ _: ActivitiesViewController, didDeleteActivity _: Activity) {
-        landingViewController.updateActivitiesCountLabel()
+        landingViewController.updateViewFromModel()
     }
 }
 
@@ -91,11 +91,7 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
-        if case .newActivity = activityDetailViewController.flow {
-            landingViewController.updateActivitiesCountLabel()
-        }
-        landingViewController.activitiesViewController.tableView.reloadData()
-
+        landingViewController.updateViewFromModel()
         dismiss(animated: true)
     }
 }
