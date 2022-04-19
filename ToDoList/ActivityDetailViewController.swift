@@ -210,12 +210,13 @@ final class ActivityDetailViewController: NiblessViewController {
         activateConstraints()
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        updateViewFromActivity()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        nameField.text = activity.name
-        descriptionTextView.text = activity.description
-        doneSwitch.isOn = activity.status == .done ? true : false
 
         // For user convenience, when creating a new activity, present the keyboard as
         // soon as the view begins appearing.
@@ -360,6 +361,12 @@ final class ActivityDetailViewController: NiblessViewController {
         
         doneSwitchLeadingAlignment.identifier = "doneSwitchLeadingAlignment"
         doneSwitchLeadingAlignment.isActive = true
+    }
+    
+    private func updateViewFromActivity() {
+        nameField.text = activity.name
+        descriptionTextView.text = activity.description
+        doneSwitch.isOn = activity.status == .done ? true : false
     }
     
     private func validateInputs() throws {

@@ -88,10 +88,6 @@ public final class LandingViewController: NiblessViewController {
     public override func viewDidLoad() {
         add(childViewController: activitiesViewController, over: activitiesContainerView)
         super.viewDidLoad()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         updateActivitiesCountLabel()
     }
     
