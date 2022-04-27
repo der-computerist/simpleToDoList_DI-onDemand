@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ActivitiesViewControllerDelegate: AnyObject {
+public protocol ActivitiesViewControllerDelegate: AnyObject {
     
     func activitiesViewController(
         _ activitiesViewController: ActivitiesViewController,
@@ -22,7 +22,10 @@ protocol ActivitiesViewControllerDelegate: AnyObject {
 public final class ActivitiesViewController: NiblessTableViewController {
     
     // MARK: - Properties
-    weak var delegate: ActivitiesViewControllerDelegate?
+    public weak var delegate: ActivitiesViewControllerDelegate?
+    private var allActivities: [Activity] {
+        GlobalToDoListActivityRepository.allActivities
+    }
     
     // MARK: - Methods
     public init() {
@@ -44,7 +47,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        GlobalToDoListActivityRepository.allActivities.count
+        allActivities.count
     }
 
     public override func tableView(
@@ -53,7 +56,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     ) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell", for: indexPath)
-        let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
+        let activity = allActivities[indexPath.row]
         cell.textLabel?.text = activity.name
 
         switch activity.status {
@@ -72,7 +75,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         forRowAt indexPath: IndexPath
     ) {
         if editingStyle == .delete {
-            let activity = GlobalToDoListActivityRepository.allActivities[indexPath.row]
+            let activity = allActivities[indexPath.row]
             
             // Remove the activity from the store
             GlobalToDoListActivityRepository.delete(activity: activity) { activity in
@@ -88,9 +91,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let activities = GlobalToDoListActivityRepository.allActivities
-        let selectedActivity = activities[indexPath.row]
-        
+        let selectedActivity = allActivities[indexPath.row]
         delegate?.activitiesViewController(self, didSelectActivity: selectedActivity)
     }
 }

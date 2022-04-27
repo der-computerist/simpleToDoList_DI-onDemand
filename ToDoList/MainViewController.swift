@@ -68,14 +68,17 @@ extension MainViewController: LandingViewControllerDelegate {
 
 extension MainViewController: ActivitiesViewControllerDelegate {
     
-    func activitiesViewController(
+    public func activitiesViewController(
         _ _: ActivitiesViewController,
         didSelectActivity activity: Activity
     ) {
         presentActivityUpdateScreen(activity: activity)
     }
     
-    func activitiesViewController(_ _: ActivitiesViewController, didDeleteActivity _: Activity) {
+    public func activitiesViewController(
+        _ _: ActivitiesViewController,
+        didDeleteActivity _: Activity
+    ) {
         landingViewController.refreshUI()
     }
 }
