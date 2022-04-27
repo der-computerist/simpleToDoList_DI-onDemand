@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol LandingViewControllerDelegate: AnyObject {
+public protocol LandingViewControllerDelegate: AnyObject {
     
     func landingViewControllerAddButtonWasTapped(_ landingViewController: LandingViewController)
 }
@@ -15,8 +15,11 @@ protocol LandingViewControllerDelegate: AnyObject {
 public final class LandingViewController: NiblessViewController {
     
     // MARK: - Properties
-    let activitiesViewController: ActivitiesViewController
-    weak var delegate: LandingViewControllerDelegate?
+    public let activitiesViewController: ActivitiesViewController
+    public weak var delegate: LandingViewControllerDelegate?
+    private var activitiesCount: Int {
+        GlobalToDoListActivityRepository.allActivities.count
+    }
     
     private lazy var addButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(
@@ -42,7 +45,7 @@ public final class LandingViewController: NiblessViewController {
     
     private lazy var activitiesCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "Total: 0"
+        label.text = "Total: \(activitiesCount)"
         label.accessibilityIdentifier = "activitiesCountLabel"
         return label
     }()
@@ -62,9 +65,9 @@ public final class LandingViewController: NiblessViewController {
         navigationItem.rightBarButtonItem = addButtonItem
     }
     
-    public func updateViewFromModel() {
+    public func refreshUI() {
         updateActivitiesCountLabel()
-        activitiesViewController.updateViewFromModel()
+        activitiesViewController.refreshUI()
     }
     
     // MARK: View lifecycle
@@ -77,10 +80,9 @@ public final class LandingViewController: NiblessViewController {
     public override func viewDidLoad() {
         add(childViewController: activitiesViewController, over: activitiesContainerView)
         super.viewDidLoad()
-        updateActivitiesCountLabel()
     }
     
-    // MARK: Button actions
+    // MARK: Actions
     @objc
     func addNewActivity(_ sender: UIBarButtonItem) {
         delegate?.landingViewControllerAddButtonWasTapped(self)
@@ -177,18 +179,6 @@ public final class LandingViewController: NiblessViewController {
     }
     
     private func updateActivitiesCountLabel() {
-        guard var text = activitiesCountLabel.text else {
-            return
-        }
-        guard let indexOfSpace = text.lastIndex(of: " ") else {
-            assertionFailure("The Activities count label must use a space as delimiter")
-            return
-        }
-
-        let activitiesCount = GlobalToDoListActivityRepository.allActivities.count
-        
-        text.removeSubrange(text.index(after: indexOfSpace)...)
-        text.append(String(activitiesCount))
-        activitiesCountLabel.text = text
+        activitiesCountLabel.text = "Total: \(activitiesCount)"
     }
 }

@@ -29,7 +29,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         super.init(style: .plain)
     }
     
-    public func updateViewFromModel() {
+    public func refreshUI() {
         tableView.reloadData()
     }
     
@@ -76,11 +76,11 @@ public final class ActivitiesViewController: NiblessTableViewController {
             
             // Remove the activity from the store
             GlobalToDoListActivityRepository.delete(activity: activity) { activity in
+                
+                // Remove that row from the table view with an animation
+                tableView.deleteRows(at: [indexPath], with: .automatic)
                 self.delegate?.activitiesViewController(self, didDeleteActivity: activity)
             }
-            
-            // Remove that row from the table view with an animation
-            tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
     
