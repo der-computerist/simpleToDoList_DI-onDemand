@@ -14,7 +14,7 @@ private struct Constants {
     static let activityDescriptionMaxCharacters = 200
 }
 
-protocol ActivityDetailViewControllerDelegate: AnyObject {
+public protocol ActivityDetailViewControllerDelegate: AnyObject {
     
     func activityDetailViewControllerDidCancel(
         _ activityDetailViewController: ActivityDetailViewController
@@ -24,13 +24,13 @@ protocol ActivityDetailViewControllerDelegate: AnyObject {
     )
 }
 
-final class ActivityDetailViewController: NiblessViewController {
+public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
-    let flow: ActivityDetailView
-    var activity: Activity
-    weak var delegate: ActivityDetailViewControllerDelegate?
-
+    public weak var delegate: ActivityDetailViewControllerDelegate?
+    
+    private let flow: ActivityDetailView
+    private var activity: Activity
     private let originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
         didSet {
@@ -204,18 +204,18 @@ final class ActivityDetailViewController: NiblessViewController {
     }
     
     // MARK: View lifecycle
-    override func loadView() {
+    public override func loadView() {
         view = rootView
         constructViewHierarchy()
         activateConstraints()
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         updateViewFromActivity()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         // For user convenience, when creating a new activity, present the keyboard as
@@ -225,7 +225,7 @@ final class ActivityDetailViewController: NiblessViewController {
         }
     }
     
-    override func viewWillLayoutSubviews() {
+    public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
         // "New activity" flow: If there are unsaved changes to the activity name,
@@ -277,7 +277,7 @@ final class ActivityDetailViewController: NiblessViewController {
     }
     
     // MARK: Editing Mode
-    override func setEditing(_ editing: Bool, animated: Bool) {
+    public override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
         if editing {
@@ -433,7 +433,7 @@ final class ActivityDetailViewController: NiblessViewController {
 
 extension ActivityDetailViewController: UITextFieldDelegate {
     
-    func textField(
+    public func textField(
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String
@@ -447,7 +447,7 @@ extension ActivityDetailViewController: UITextFieldDelegate {
         return true
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
@@ -457,7 +457,7 @@ extension ActivityDetailViewController: UITextFieldDelegate {
 
 extension ActivityDetailViewController: UITextViewDelegate {
     
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         editedActivityDetails.description = textView.text
     }
 }
@@ -466,7 +466,7 @@ extension ActivityDetailViewController: UITextViewDelegate {
 
 extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate {
     
-    func presentationControllerDidAttemptToDismiss(_ _: UIPresentationController) {
+    public func presentationControllerDidAttemptToDismiss(_ _: UIPresentationController) {
         // A user-initiated attempt to dismiss the view was prevented because
         // there were unsaved changes. Ask the user to confirm their intention.
         confirmCancel()

@@ -87,11 +87,11 @@ extension MainViewController: ActivitiesViewControllerDelegate {
 
 extension MainViewController: ActivityDetailViewControllerDelegate {
     
-    func activityDetailViewControllerDidCancel(_ _: ActivityDetailViewController) {
+    public func activityDetailViewControllerDidCancel(_ _: ActivityDetailViewController) {
         dismiss(animated: true)
     }
     
-    func activityDetailViewControllerDidFinish(
+    public func activityDetailViewControllerDidFinish(
         _ activityDetailViewController: ActivityDetailViewController
     ) {
         landingViewController.refreshUI()
