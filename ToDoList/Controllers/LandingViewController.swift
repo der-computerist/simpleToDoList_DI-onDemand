@@ -21,7 +21,7 @@ public final class LandingViewController: NiblessViewController {
         GlobalToDoListActivityRepository.allActivities.count
     }
     
-    public var rootView: LandingRootView! {
+    private var rootView: LandingRootView! {
         guard isViewLoaded else { return nil }
         return (view as! LandingRootView)
     }

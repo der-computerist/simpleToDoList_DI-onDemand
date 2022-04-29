@@ -31,6 +31,8 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private let flow: ActivityDetailView
     private var activity: Activity
+    private var isFirstLayout = true
+    
     private let originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
         didSet {
@@ -43,6 +45,11 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     private var hasChangesInActivityName: Bool {
         originalActivityDetails.name != editedActivityDetails.name
+    }
+    
+    private var rootView: ActivityDetailRootView! {
+        guard isViewLoaded else { return nil }
+        return (view as! ActivityDetailRootView)
     }
     
     private lazy var cancelButtonItem: UIBarButtonItem = {
@@ -64,125 +71,6 @@ public final class ActivityDetailViewController: NiblessViewController {
         return buttonItem
     }()
 
-    private lazy var rootView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Color.background
-        view.accessibilityIdentifier = "rootView"
-        
-        // Layout margins
-        var customMargins = view.layoutMargins
-        customMargins.top = 16
-        view.layoutMargins = customMargins
-        
-        return view
-    }()
-    
-    private lazy var formStackView: UIStackView = {
-        let stackView = UIStackView(
-            arrangedSubviews: [nameStackView, descriptionStackView, statusStackView]
-        )
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.accessibilityIdentifier = "formStackView"
-        return stackView
-    }()
-    
-    private lazy var nameStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameLabel, nameField])
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.accessibilityIdentifier = "nameStackView"
-        return stackView
-    }()
-    
-    private lazy var descriptionStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [descriptionLabel, descriptionTextView])
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.alignment = .top
-        stackView.accessibilityIdentifier = "descriptionStackView"
-        return stackView
-    }()
-    
-    private lazy var statusStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [doneLabel, doneSwitch])
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.accessibilityIdentifier = "statusStackView"
-        return stackView
-    }()
-    
-    private lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Name"
-        label.accessibilityIdentifier = "nameLabel"
-        return label
-    }()
-    
-    private lazy var nameField: UITextField = {
-        let field = UITextField()
-        field.borderStyle = .roundedRect
-        field.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
-        field.setContentCompressionResistancePriority(.defaultHigh - 10, for: .horizontal)
-        if case .existingActivity = flow {
-            field.isEnabled = false
-        }
-        field.accessibilityIdentifier = "nameField"
-        field.delegate = self
-        return field
-    }()
-    
-    private lazy var descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Description"
-        label.accessibilityIdentifier = "descriptionLabel"
-        return label
-    }()
-    
-    private lazy var descriptionTextView: UITextView = {
-        let textView = UITextView()
-        textView.layer.borderWidth = 1
-        textView.layer.cornerRadius = 5
-        textView.backgroundColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor.black
-            default:
-                return UIColor.white
-            }
-        }
-        textView.layer.borderColor = UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor.systemGray4
-            default:
-                return UIColor.systemGray3
-            }
-        }.cgColor
-        if case .existingActivity = flow {
-            textView.isUserInteractionEnabled = false
-        }
-        textView.accessibilityIdentifier = "descriptionTextView"
-        textView.delegate = self
-        return textView
-    }()
-    
-    private lazy var doneLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Done"
-        label.accessibilityIdentifier = "doneLabel"
-        return label
-    }()
-    
-    private lazy var doneSwitch: UISwitch = {
-        let `switch` = UISwitch()
-        `switch`.setContentHuggingPriority(.defaultLow - 10, for: .horizontal)
-        `switch`.addTarget(self, action: #selector(toggleStatus(_:)), for: .valueChanged)
-        `switch`.isEnabled = false
-        `switch`.accessibilityIdentifier = "doneSwitch"
-        return `switch`
-    }()
-    
     // MARK: - Methods
     public init(for flow: ActivityDetailView) {
         self.flow = flow
@@ -205,24 +93,16 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: View lifecycle
     public override func loadView() {
-        view = rootView
-        constructViewHierarchy()
-        activateConstraints()
+        view = ActivityDetailRootView()
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        rootView.nameField.delegate = self
+        rootView.descriptionTextView.delegate = self
+        setUpController(for: flow)
+        wireController()
         updateViewFromActivity()
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        // For user convenience, when creating a new activity, present the keyboard as
-        // soon as the view begins appearing.
-        if case .newActivity = flow {
-            nameField.becomeFirstResponder()
-        }
     }
     
     public override func viewWillLayoutSubviews() {
@@ -246,7 +126,19 @@ public final class ActivityDetailViewController: NiblessViewController {
         isModalInPresentation = hasChanges
     }
     
-    // MARK: Target-action pairs
+    public override func viewDidLayoutSubviews() {
+        if isFirstLayout {
+            defer { isFirstLayout = false }
+            
+            // For user convenience, when creating a new activity, present the keyboard as
+            // soon as the view begins to appear.
+            if case .newActivity = flow {
+                rootView.nameField.becomeFirstResponder()
+            }
+        }
+    }
+    
+    // MARK: Actions
     @objc
     func save(_ sender: UIBarButtonItem) {
         do {
@@ -281,11 +173,11 @@ public final class ActivityDetailViewController: NiblessViewController {
         super.setEditing(editing, animated: animated)
         
         if editing {
-            nameField.isEnabled = true
-            descriptionTextView.isUserInteractionEnabled = true
-            doneSwitch.isEnabled = true
+            rootView.nameField.isEnabled = true
+            rootView.descriptionTextView.isUserInteractionEnabled = true
+            rootView.doneSwitch.isEnabled = true
             editButtonItem.isEnabled = false
-            nameField.becomeFirstResponder()
+            rootView.nameField.becomeFirstResponder()
             
         } else {
             isEditing = true  // do not exit editing mode until the save is successful
@@ -294,81 +186,32 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     // MARK: Private
-    private func constructViewHierarchy() {
-        if case .newActivity = flow {
-            statusStackView.isHidden = true
+    private func setUpController(for flow: ActivityDetailView) {
+        switch flow {
+        case .newActivity:
+            rootView.statusStackView.isHidden = true
+        case .existingActivity:
+            rootView.nameField.isEnabled = false
+            rootView.descriptionTextView.isUserInteractionEnabled = false
         }
-        view.addSubview(formStackView)
     }
     
-    private func activateConstraints() {
-        activateConstraintsFormStackView()
-        activateConstraintsNameField()
-        activateConstraintsDescriptionTextView()
-        activateConstraintsDoneSwitch()
+    private func wireController() {
+        rootView.doneSwitch.addTarget(self, action: #selector(toggleStatus(_:)), for: .valueChanged)
     }
     
-    private func activateConstraintsFormStackView() {
-        formStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let margins = view.layoutMarginsGuide
-        let formToLeading = formStackView.leadingAnchor.constraint(equalTo: margins.leadingAnchor)
-        let formToTrailing = formStackView.trailingAnchor.constraint(
-            equalTo: margins.trailingAnchor
-        )
-        let formToTop = formStackView.topAnchor.constraint(equalTo: margins.topAnchor)
-        let formHeight = formStackView.heightAnchor.constraint(
-            equalTo: view.heightAnchor,
-            multiplier: 1.0/3
-        )
-        
-        formToLeading.identifier = "formToLeading"
-        formToTrailing.identifier = "formToTrailing"
-        formToTop.identifier = "formToTop"
-        formHeight.identifier = "formHeight"
-
-        NSLayoutConstraint.activate([formToLeading, formToTrailing, formToTop, formHeight])
-    }
-    
-    private func activateConstraintsNameField() {
-        nameField.translatesAutoresizingMaskIntoConstraints = false
-        
-        let nameFieldLeadingAlignment = nameField.leadingAnchor.constraint(
-            equalTo: descriptionTextView.leadingAnchor
-        )
-        
-        nameFieldLeadingAlignment.identifier = "nameFieldLeadingAlignment"
-        nameFieldLeadingAlignment.isActive = true
-    }
-    
-    private func activateConstraintsDescriptionTextView() {
-        descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let descriptionTextViewHeight = descriptionTextView.heightAnchor.constraint(
-            equalTo: descriptionStackView.heightAnchor
-        )
-        
-        descriptionTextViewHeight.identifier = "descriptionTextViewHeight"
-        descriptionTextViewHeight.isActive = true
-    }
-    
-    private func activateConstraintsDoneSwitch() {
-        doneSwitch.translatesAutoresizingMaskIntoConstraints = false
-        
-        let doneSwitchLeadingAlignment = doneSwitch.leadingAnchor.constraint(
-            equalTo: descriptionTextView.leadingAnchor
-        )
-        
-        doneSwitchLeadingAlignment.identifier = "doneSwitchLeadingAlignment"
-        doneSwitchLeadingAlignment.isActive = true
+    private func updateViewFromActivity() {
+        rootView.nameField.text = activity.name
+        rootView.descriptionTextView.text = activity.description
+        rootView.doneSwitch.isOn = activity.status == .done ? true : false
     }
     
     private func validateInputs() throws {
-        guard let activityName = nameField.text else {
+        guard let activityName = rootView.nameField.text else {
             throw ActivityCreationError.nameEmpty
         }
         
-        let activityDescription = descriptionTextView.text ?? ""
+        let activityDescription = rootView.descriptionTextView.text ?? ""
         
         if activityName.count > Constants.activityNameMaxCharacters {
             throw ActivityCreationError.nameTooLong(
@@ -414,12 +257,6 @@ public final class ActivityDetailViewController: NiblessViewController {
         GlobalToDoListActivityRepository.save(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
-    }
-    
-    private func updateViewFromActivity() {
-        nameField.text = activity.name
-        descriptionTextView.text = activity.description
-        doneSwitch.isOn = activity.status == .done ? true : false
     }
     
     private func updateActivityFromView() {

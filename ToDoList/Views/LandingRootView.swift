@@ -12,13 +12,13 @@ public final class LandingRootView: NiblessView {
     // MARK: - Properties
     private var hierarchyNotReady = true
     
-    public let activitiesCountLabel: UILabel = {
+    let activitiesCountLabel: UILabel = {
         let label = UILabel()
         label.accessibilityIdentifier = "activitiesCountLabel"
         return label
     }()
     
-    public let activitiesContainerView: UIView = {
+    let activitiesContainerView: UIView = {
         let view = UIView()
         view.accessibilityIdentifier = "activitiesContainerView"
         return view
