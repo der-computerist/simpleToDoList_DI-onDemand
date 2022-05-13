@@ -9,7 +9,7 @@ import UIKit
 
 public protocol LandingViewControllerDelegate: AnyObject {
     
-    func landingViewControllerAddButtonWasTapped(_ landingViewController: LandingViewController)
+    func landingViewControllerAddButtonWasTapped(_ viewController: LandingViewController)
 }
 
 public final class LandingViewController: NiblessViewController {

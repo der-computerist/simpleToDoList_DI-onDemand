@@ -92,7 +92,7 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     }
     
     public func activityDetailViewControllerDidFinish(
-        _ activityDetailViewController: ActivityDetailViewController
+        _ viewController: ActivityDetailViewController
     ) {
         landingViewController.refreshUI()
         dismiss(animated: true)

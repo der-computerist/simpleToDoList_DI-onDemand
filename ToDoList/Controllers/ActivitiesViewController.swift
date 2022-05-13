@@ -10,11 +10,11 @@ import UIKit
 public protocol ActivitiesViewControllerDelegate: AnyObject {
     
     func activitiesViewController(
-        _ activitiesViewController: ActivitiesViewController,
+        _ viewController: ActivitiesViewController,
         didSelectActivity activity: Activity
     )
     func activitiesViewController(
-        _ activitiesViewController: ActivitiesViewController,
+        _ viewController: ActivitiesViewController,
         didDeleteActivity activity: Activity
     )
 }

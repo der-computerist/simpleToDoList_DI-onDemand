@@ -16,12 +16,8 @@ private struct Constants {
 
 public protocol ActivityDetailViewControllerDelegate: AnyObject {
     
-    func activityDetailViewControllerDidCancel(
-        _ activityDetailViewController: ActivityDetailViewController
-    )
-    func activityDetailViewControllerDidFinish(
-        _ activityDetailViewController: ActivityDetailViewController
-    )
+    func activityDetailViewControllerDidCancel(_ viewController: ActivityDetailViewController)
+    func activityDetailViewControllerDidFinish(_ viewController: ActivityDetailViewController)
 }
 
 public final class ActivityDetailViewController: NiblessViewController {
