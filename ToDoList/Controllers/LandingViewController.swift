@@ -30,7 +30,7 @@ public final class LandingViewController: NiblessViewController {
         let buttonItem = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
-            action: #selector(addNewActivity(_:))
+            action: #selector(handleAddButtonPressed(sender:))
         )
         return buttonItem
     }()
@@ -65,7 +65,7 @@ public final class LandingViewController: NiblessViewController {
     
     // MARK: Actions
     @objc
-    func addNewActivity(_ sender: UIBarButtonItem) {
+    func handleAddButtonPressed(sender: UIBarButtonItem) {
         delegate?.landingViewControllerAddButtonWasTapped(self)
     }
     

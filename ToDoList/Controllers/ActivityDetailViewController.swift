@@ -52,7 +52,7 @@ public final class ActivityDetailViewController: NiblessViewController {
         let buttonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
             target: self,
-            action: #selector(cancel(_:))
+            action: #selector(handleCancelPressed(sender:))
         )
         return buttonItem
     }()
@@ -62,7 +62,7 @@ public final class ActivityDetailViewController: NiblessViewController {
             title: "Add",
             style: .done,
             target: self,
-            action: #selector(save(_:))
+            action: #selector(handleSavePressed(sender:))
         )
         return buttonItem
     }()
@@ -136,7 +136,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: Actions
     @objc
-    func save(_ sender: UIBarButtonItem) {
+    func handleSavePressed(sender: UIBarButtonItem) {
         do {
             try validateInputs()
             confirmSave()
@@ -149,7 +149,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     @objc
-    func cancel(_ sender: UIBarButtonItem) {
+    func handleCancelPressed(sender: UIBarButtonItem) {
         if hasChanges {
             // The user tapped Cancel with unsaved changes. Confirm that it's OK to lose the changes.
             confirmCancel()
@@ -177,7 +177,7 @@ public final class ActivityDetailViewController: NiblessViewController {
             
         } else {
             isEditing = true  // do not exit editing mode until the save is successful
-            save(editButtonItem)
+            handleSavePressed(sender: editButtonItem)
         }
     }
     
