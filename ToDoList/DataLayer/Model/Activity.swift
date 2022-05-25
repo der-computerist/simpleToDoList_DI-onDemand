@@ -17,23 +17,18 @@ public enum ActivityStatus: Int, Codable {
 public struct Activity: Codable {
     
     // MARK: - Properties
-    public let id: ActivityID
-    public var name: String
+    public var name = ""
     public var description: String?
-    public let dateCreated: Date
-    public var status: ActivityStatus
-    
+    public var status = ActivityStatus.pending
+    public private(set) var id: ActivityID = UUID().uuidString
+    public private(set) var dateCreated = Date()
+
     // MARK: - Methods
+    public init() {}
+    
     public init(name: String, description: String? = nil) {
-        id = UUID().uuidString
         self.name = name
         self.description = description
-        dateCreated = Date()
-        status = .pending
-    }
-
-    public init() {
-        self.init(name: "")
     }
 }
 
