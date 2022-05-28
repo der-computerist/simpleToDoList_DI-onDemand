@@ -26,6 +26,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     private var allActivities: [Activity] {
         GlobalToDoListActivityRepository.allActivities
     }
+    private let cellIdentifier = "UITableViewCell"
     
     // MARK: - Methods
     public init() {
@@ -39,7 +40,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     // MARK: View lifecycle
     public override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
     // MARK: - UITableViewDataSource
@@ -55,7 +56,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         let activity = allActivities[indexPath.row]
         cell.textLabel?.text = activity.name
 
