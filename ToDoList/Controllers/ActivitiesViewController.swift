@@ -42,8 +42,11 @@ public final class ActivitiesViewController: NiblessTableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
     }
+}
+
+// MARK: - UITableViewDataSource
+extension ActivitiesViewController {
     
-    // MARK: - UITableViewDataSource
     public override func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
@@ -87,8 +90,10 @@ public final class ActivitiesViewController: NiblessTableViewController {
             }
         }
     }
-    
-    // MARK: - UITableViewDelegate
+}
+
+// MARK: - UITableViewDelegate
+extension ActivitiesViewController {
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
