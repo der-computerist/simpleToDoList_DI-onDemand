@@ -7,13 +7,6 @@
 
 import UIKit
 
-private typealias ActivityDetails = (name: String, description: String, status: ActivityStatus)
-
-private struct Constants {
-    static let activityNameMaxCharacters = 50
-    static let activityDescriptionMaxCharacters = 200
-}
-
 public protocol ActivityDetailViewControllerDelegate: AnyObject {
     
     func activityDetailViewControllerDidCancel(_ viewController: ActivityDetailViewController)
@@ -22,6 +15,14 @@ public protocol ActivityDetailViewControllerDelegate: AnyObject {
 
 public final class ActivityDetailViewController: NiblessViewController {
     
+    private struct Constants {
+        static let activityNameMaxCharacters = 50
+        static let activityDescriptionMaxCharacters = 200
+    }
+    
+    private typealias ActivityDetails =
+        (name: String, description: String, status: Activity.ActivityStatus)
+
     // MARK: - Properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
     

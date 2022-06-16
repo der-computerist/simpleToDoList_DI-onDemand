@@ -7,31 +7,24 @@
 
 import Foundation
 
-public typealias ActivityID = String
-
-public enum ActivityStatus: Int, Codable {
-    case pending = 0
-    case done = 1
-}
-
 public struct Activity: Codable {
     
+    public enum ActivityStatus: Int, Codable {
+        case pending = 0
+        case done = 1
+    }
+    
+    public typealias ActivityID = String
+
     // MARK: - Properties
-    public var name = ""
+    public var name = "[Unnamed]"
     public var description: String?
     public var status = ActivityStatus.pending
     public private(set) var id: ActivityID = UUID().uuidString
     public private(set) var dateCreated = Date()
-
-    // MARK: - Methods
-    public init() {}
-    
-    public init(name: String, description: String? = nil) {
-        self.name = name
-        self.description = description
-    }
 }
 
+// MARK: - Equatable
 extension Activity: Equatable {
     
     public static func == (lhs: Activity, rhs: Activity) -> Bool {
