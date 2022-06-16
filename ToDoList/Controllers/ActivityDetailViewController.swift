@@ -75,7 +75,7 @@ public final class ActivityDetailViewController: NiblessViewController {
         editedActivityDetails = originalActivityDetails
         super.init()
         
-        switch flow {
+        switch self.flow {
         case .newActivity:
             navigationItem.title = "New Activity"
             navigationItem.rightBarButtonItem = saveButtonItem

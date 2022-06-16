@@ -11,6 +11,7 @@ public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
     private(set) public var allActivities = [Activity]()
+    private let fileName = "activities.plist"
     private var docsURL: URL? {
         FileManager.default.urls(
             for: .documentDirectory,
@@ -19,10 +20,15 @@ public class FileActivityDataStore: ActivityDataStore {
         .first
     }
     private var activitiesArchiveURL: URL? {
-        docsURL?.appendingPathComponent("activities.plist")
+        docsURL?.appendingPathComponent(fileName)
     }
     
+    // MARK: - Object lifecycle
     public init() {
+        loadActivities()
+    }
+    
+    private func loadActivities() {
         guard let activitiesArchiveURL = activitiesArchiveURL else {
             assertionFailure("Missing path to archive file")
             return
