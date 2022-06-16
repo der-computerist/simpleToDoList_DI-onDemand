@@ -24,7 +24,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     // MARK: - Properties
     public weak var delegate: ActivitiesViewControllerDelegate?
     private var allActivities: [Activity] {
-        GlobalToDoListActivityRepository.allActivities
+        GlobalToDoListActivityRepository.activities
     }
     private let cellIdentifier = "UITableViewCell"
     

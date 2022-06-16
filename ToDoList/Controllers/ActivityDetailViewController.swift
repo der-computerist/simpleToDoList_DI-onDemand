@@ -251,7 +251,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private func saveAndDismiss() {
         updateActivityFromView()
-        GlobalToDoListActivityRepository.save(activity: activity) { _ in
+        GlobalToDoListActivityRepository.update(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
     }

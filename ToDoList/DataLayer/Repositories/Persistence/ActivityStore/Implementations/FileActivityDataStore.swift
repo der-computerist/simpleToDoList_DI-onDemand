@@ -81,7 +81,7 @@ public class FileActivityDataStore: ActivityDataStore {
             return true
             
         } catch let encodingError {
-            assertionFailure("Error encoding allActivities: \(encodingError)")
+            assertionFailure("Error encoding activities: \(encodingError)")
             return false
         }
     }

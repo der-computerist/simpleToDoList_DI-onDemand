@@ -18,7 +18,7 @@ public final class LandingViewController: NiblessViewController {
     public let activitiesViewController: ActivitiesViewController
     public weak var delegate: LandingViewControllerDelegate?
     private var activitiesCount: Int {
-        GlobalToDoListActivityRepository.allActivities.count
+        GlobalToDoListActivityRepository.activities.count
     }
     
     private var rootView: LandingRootView! {

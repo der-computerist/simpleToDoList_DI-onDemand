@@ -15,7 +15,7 @@ public let GlobalToDoListActivityRepository: ActivityRepository = {
 public class ToDoListActivityRepository: ActivityRepository {
 
     // MARK: - Properties
-    public var allActivities: [Activity] {
+    public var activities: [Activity] {
         dataStore.activities
     }
     public var emptyActivity: Activity {
@@ -28,7 +28,7 @@ public class ToDoListActivityRepository: ActivityRepository {
         self.dataStore = dataStore
     }
     
-    public func save(activity: Activity, completion: ((Activity) -> Void)?) {
+    public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.update(activity: activity, completion: completion)
     }
     
@@ -36,7 +36,7 @@ public class ToDoListActivityRepository: ActivityRepository {
         dataStore.delete(activity: activity, completion: completion)
     }
     
-    public func saveChanges() -> Bool {
+    public func save() -> Bool {
         dataStore.save()
     }
 }
