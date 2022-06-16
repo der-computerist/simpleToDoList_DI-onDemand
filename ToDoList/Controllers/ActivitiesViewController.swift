@@ -23,7 +23,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     
     // MARK: - Properties
     public weak var delegate: ActivitiesViewControllerDelegate?
-    private var allActivities: [Activity] {
+    private var activities: [Activity] {
         GlobalToDoListActivityRepository.activities
     }
     private let cellIdentifier = "UITableViewCell"
@@ -51,7 +51,7 @@ extension ActivitiesViewController {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        allActivities.count
+        activities.count
     }
 
     public override func tableView(
@@ -60,7 +60,7 @@ extension ActivitiesViewController {
     ) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-        let activity = allActivities[indexPath.row]
+        let activity = activities[indexPath.row]
         cell.textLabel?.text = activity.name
 
         switch activity.status {
@@ -79,7 +79,7 @@ extension ActivitiesViewController {
         forRowAt indexPath: IndexPath
     ) {
         if editingStyle == .delete {
-            let activity = allActivities[indexPath.row]
+            let activity = activities[indexPath.row]
             
             // Remove the activity from the store
             GlobalToDoListActivityRepository.delete(activity: activity) { activity in
@@ -97,7 +97,7 @@ extension ActivitiesViewController {
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let selectedActivity = allActivities[indexPath.row]
+        let selectedActivity = activities[indexPath.row]
         delegate?.activitiesViewController(self, didSelectActivity: selectedActivity)
     }
 }
