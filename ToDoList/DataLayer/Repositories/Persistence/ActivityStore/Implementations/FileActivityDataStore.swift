@@ -10,7 +10,7 @@ import Foundation
 public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
-    private(set) public var allActivities = [Activity]()
+    public private(set) var activities = [Activity]()
     private let fileName = "activities.plist"
     private var docsURL: URL? {
         FileManager.default.urls(
@@ -38,7 +38,7 @@ public class FileActivityDataStore: ActivityDataStore {
             let data = try Data(contentsOf: activitiesArchiveURL)
             let decoder = PropertyListDecoder()
             let activities = try decoder.decode([Activity].self, from: data)
-            allActivities = activities
+            self.activities = activities
             
         } catch {
             print("Error reading in saved activities: \(error)")
@@ -46,27 +46,27 @@ public class FileActivityDataStore: ActivityDataStore {
     }
 
     // MARK: - Methods
-    public func save(activity: Activity, completion: ((Activity) -> Void)? = nil) {
-        if let index = allActivities.firstIndex(of: activity) {
+    public func update(activity: Activity, completion: ((Activity) -> Void)? = nil) {
+        if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
-            allActivities[index] = activity
+            activities[index] = activity
         } else {
             // Otherwise, add to the end of the array
-            allActivities.append(activity)
+            activities.append(activity)
         }
         print("Activity saved!")
         completion?(activity)
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)? = nil) {
-        if let index = allActivities.firstIndex(of: activity) {
-            allActivities.remove(at: index)
+        if let index = activities.firstIndex(of: activity) {
+            activities.remove(at: index)
         }
         print("Activity deleted")
         completion?(activity)
     }
     
-    public func saveChanges() -> Bool {
+    public func save() -> Bool {
         guard let activitiesArchiveURL = activitiesArchiveURL else {
             assertionFailure("Missing path to archive file")
             return false
@@ -76,7 +76,7 @@ public class FileActivityDataStore: ActivityDataStore {
         
         do {
             let encoder = PropertyListEncoder()
-            let data = try encoder.encode(allActivities)
+            let data = try encoder.encode(activities)
             try data.write(to: activitiesArchiveURL, options: [.atomic])
             return true
             

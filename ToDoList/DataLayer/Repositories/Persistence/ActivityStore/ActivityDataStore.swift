@@ -9,8 +9,8 @@ import Foundation
 
 public protocol ActivityDataStore {
     
-    var allActivities: [Activity] { get }
-    func save(activity: Activity, completion: ((Activity) -> Void)?)
+    var activities: [Activity] { get }
+    func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
-    func saveChanges() -> Bool
+    func save() -> Bool
 }

@@ -16,7 +16,7 @@ public class ToDoListActivityRepository: ActivityRepository {
 
     // MARK: - Properties
     public var allActivities: [Activity] {
-        dataStore.allActivities
+        dataStore.activities
     }
     public var emptyActivity: Activity {
         Activity()
@@ -29,7 +29,7 @@ public class ToDoListActivityRepository: ActivityRepository {
     }
     
     public func save(activity: Activity, completion: ((Activity) -> Void)?) {
-        dataStore.save(activity: activity, completion: completion)
+        dataStore.update(activity: activity, completion: completion)
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
@@ -37,6 +37,6 @@ public class ToDoListActivityRepository: ActivityRepository {
     }
     
     public func saveChanges() -> Bool {
-        dataStore.saveChanges()
+        dataStore.save()
     }
 }
