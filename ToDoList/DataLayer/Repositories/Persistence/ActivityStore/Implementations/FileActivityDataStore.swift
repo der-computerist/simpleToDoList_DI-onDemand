@@ -11,37 +11,16 @@ public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
     public private(set) var activities = [Activity]()
-    private let fileName = "activities.plist"
-    private var docsURL: URL? {
-        FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        )
-        .first
-    }
-    private var activitiesArchiveURL: URL? {
-        docsURL?.appendingPathComponent(fileName)
-    }
-    
+    private let fileName = "activities"
+
     // MARK: - Object lifecycle
     public init() {
         loadActivities()
     }
     
     private func loadActivities() {
-        guard let activitiesArchiveURL = activitiesArchiveURL else {
-            assertionFailure("Missing path to archive file")
-            return
-        }
-        
-        do {
-            let data = try Data(contentsOf: activitiesArchiveURL)
-            let decoder = PropertyListDecoder()
-            let activities = try decoder.decode([Activity].self, from: data)
+        if let activities = try? DiskCaretaker.retrieve([Activity].self, from: fileName) {
             self.activities = activities
-            
-        } catch {
-            print("Error reading in saved activities: \(error)")
         }
     }
 
@@ -54,7 +33,7 @@ public class FileActivityDataStore: ActivityDataStore {
             // Otherwise, add to the end of the array
             activities.append(activity)
         }
-        print("Activity saved!")
+        print("Activity registered!")
         completion?(activity)
     }
     
@@ -67,21 +46,10 @@ public class FileActivityDataStore: ActivityDataStore {
     }
     
     public func save() -> Bool {
-        guard let activitiesArchiveURL = activitiesArchiveURL else {
-            assertionFailure("Missing path to archive file")
-            return false
-        }
-        
-        print("Saving activities to: \(activitiesArchiveURL)")
-        
         do {
-            let encoder = PropertyListEncoder()
-            let data = try encoder.encode(activities)
-            try data.write(to: activitiesArchiveURL, options: [.atomic])
+            try DiskCaretaker.save(activities, to: fileName)
             return true
-            
-        } catch let encodingError {
-            assertionFailure("Error encoding activities: \(encodingError)")
+        } catch {
             return false
         }
     }

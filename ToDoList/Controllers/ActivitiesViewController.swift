@@ -47,10 +47,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
 // MARK: - UITableViewDataSource
 extension ActivitiesViewController {
     
-    public override func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
+    public override func tableView(_ _: UITableView, numberOfRowsInSection _: Int) -> Int {
         activities.count
     }
 
