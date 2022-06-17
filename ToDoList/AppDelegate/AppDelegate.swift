@@ -40,12 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        let success = GlobalToDoListActivityRepository.save()
-        if success {
-            print("Saved all of the activities")
-        } else {
-            print("Could not save any of the activities")
-        }
+        try? GlobalToDoListActivityRepository.save()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {

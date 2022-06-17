@@ -45,12 +45,13 @@ public class FileActivityDataStore: ActivityDataStore {
         completion?(activity)
     }
     
-    public func save() -> Bool {
+    public func save() throws {
         do {
             try DiskCaretaker.save(activities, to: fileName)
-            return true
-        } catch {
-            return false
+            print("ALL ACTIVITIES SAVED!")
+        } catch let error {
+            print("ERROR: Could not save the activities :(")
+            throw error
         }
     }
 }

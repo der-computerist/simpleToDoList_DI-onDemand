@@ -36,7 +36,7 @@ public class ToDoListActivityRepository: ActivityRepository {
         dataStore.delete(activity: activity, completion: completion)
     }
     
-    public func save() -> Bool {
-        dataStore.save()
+    public func save() throws {
+        try dataStore.save()
     }
 }

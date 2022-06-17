@@ -12,5 +12,5 @@ public protocol ActivityDataStore {
     var activities: [Activity] { get }
     func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
-    func save() -> Bool
+    func save() throws
 }
