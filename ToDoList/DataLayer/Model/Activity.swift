@@ -17,7 +17,7 @@ public struct Activity: Codable {
     public typealias ActivityID = String
 
     // MARK: - Properties
-    public var name = "[Unnamed]"
+    public var name = ""
     public var description: String?
     public var status = ActivityStatus.pending
     public private(set) var id: ActivityID = UUID().uuidString
