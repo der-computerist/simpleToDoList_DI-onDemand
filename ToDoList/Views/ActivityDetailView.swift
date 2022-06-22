@@ -17,6 +17,41 @@ public enum ActivityDetailView {
             return activity
         }
     }
+    
+    var isNewActivity: Bool {
+        if case .newActivity = self {
+            return true
+        }
+        return false
+    }
+    
+    var isExistingActivity: Bool {
+        if case .existingActivity = self {
+            return true
+        }
+        return false
+    }
+    
+    var title: String {
+        switch self {
+        case .existingActivity:
+            return "Details"
+        case .newActivity:
+            return "New Activity"
+        }
+    }
+    
+    var hidesActivityStatus: Bool {
+        isNewActivity
+    }
+    
+    var enablesNameField: Bool {
+        isNewActivity
+    }
+    
+    var enablesDescriptionField: Bool {
+        isNewActivity
+    }
 }
 
 extension ActivityDetailView: Equatable {

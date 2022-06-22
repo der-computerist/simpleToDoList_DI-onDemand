@@ -28,8 +28,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private let flow: ActivityDetailView
     private var activity: Activity
-    private var isFirstLayout = true
-    
+
     private let originalActivityDetails: ActivityDetails
     private var editedActivityDetails: ActivityDetails {
         didSet {
@@ -43,7 +42,8 @@ public final class ActivityDetailViewController: NiblessViewController {
     private var hasChangesInActivityName: Bool {
         originalActivityDetails.name != editedActivityDetails.name
     }
-    
+    private var isFirstLayout = true
+
     private var rootView: ActivityDetailRootView! {
         guard isViewLoaded else { return nil }
         return (view as! ActivityDetailRootView)
@@ -71,21 +71,15 @@ public final class ActivityDetailViewController: NiblessViewController {
     // MARK: - Methods
     public init(for flow: ActivityDetailView) {
         self.flow = flow
-        activity = flow.activity
+        activity = self.flow.activity
         originalActivityDetails = (activity.name, activity.description ?? "", activity.status)
         editedActivityDetails = originalActivityDetails
         super.init()
         
-        switch self.flow {
-        case .newActivity:
-            navigationItem.title = "New Activity"
-            navigationItem.rightBarButtonItem = saveButtonItem
-            
-        case .existingActivity:
-            navigationItem.title = "Details"
-            navigationItem.rightBarButtonItem = editButtonItem
-        }
+        navigationItem.title = self.flow.title
         navigationItem.leftBarButtonItem = cancelButtonItem
+        navigationItem.rightBarButtonItem =
+            self.flow.isNewActivity ? saveButtonItem : editButtonItem
     }
     
     // MARK: View lifecycle
@@ -97,7 +91,7 @@ public final class ActivityDetailViewController: NiblessViewController {
         super.viewDidLoad()
         rootView.nameField.delegate = self
         rootView.descriptionTextView.delegate = self
-        setUpController(for: flow)
+        setUpController()
         wireController()
         updateViewFromActivity()
     }
@@ -105,20 +99,23 @@ public final class ActivityDetailViewController: NiblessViewController {
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
-        // "New activity" flow: If there are unsaved changes to the activity name,
-        // enable the Save button.
-        saveButtonItem.isEnabled = hasChangesInActivityName
+        if flow.isNewActivity {
+            // If there are unsaved changes to the activity name, enable the Save button.
+            saveButtonItem.isEnabled = hasChangesInActivityName
+        }
         
-        /*
-          "Existing activity" flow:
-              * While out of editing mode, the "Edit/Done" button item always remains enabled.
-              * After entering editing mode, the "Edit/Done" button will remain disabled as long
-                as there are no edits. As soon as edits are made, it will become enabled. It will
-                disable itself again if the activity name becomes empty.
-         */
-        editButtonItem.isEnabled = !isEditing || (hasChanges != editedActivityDetails.name.isEmpty)
+        if flow.isExistingActivity {
+            /*
+             - While out of editing mode, the "Edit/Done" button item always remains enabled.
+             - After entering editing mode, the "Edit/Done" button will remain disabled as long
+               as there are no edits. As soon as edits are made, it will become enabled. It will
+               disable itself again if the activity name becomes empty.
+             */
+            editButtonItem.isEnabled =
+                !isEditing || (hasChanges != editedActivityDetails.name.isEmpty)
+        }
 
-        // Both flows: If there are unsaved changes overall, disable the ability to dismiss
+        // If there are unsaved changes overall, disable the ability to dismiss
         // using the pull-down gesture.
         isModalInPresentation = hasChanges
     }
@@ -129,7 +126,7 @@ public final class ActivityDetailViewController: NiblessViewController {
             
             // For user convenience, when creating a new activity, present the keyboard as
             // soon as the view begins to appear.
-            if case .newActivity = flow {
+            if flow.isNewActivity {
                 rootView.nameField.becomeFirstResponder()
             }
         }
@@ -183,14 +180,10 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     // MARK: Private
-    private func setUpController(for flow: ActivityDetailView) {
-        switch flow {
-        case .newActivity:
-            rootView.statusStackView.isHidden = true
-        case .existingActivity:
-            rootView.nameField.isEnabled = false
-            rootView.descriptionTextView.isUserInteractionEnabled = false
-        }
+    private func setUpController() {
+        rootView.statusStackView.isHidden = flow.hidesActivityStatus
+        rootView.nameField.isEnabled = flow.enablesNameField
+        rootView.descriptionTextView.isUserInteractionEnabled = flow.enablesDescriptionField
     }
     
     private func wireController() {
