@@ -14,5 +14,4 @@ public protocol ActivityRepository {
     func emptyActivity() -> Activity
     func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
-    func save() throws
 }

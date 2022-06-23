@@ -32,13 +32,11 @@ public class ToDoListActivityRepository: ActivityRepository {
     
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.update(activity: activity, completion: completion)
+        try? dataStore.save()
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.delete(activity: activity, completion: completion)
-    }
-    
-    public func save() throws {
-        try dataStore.save()
+        try? dataStore.save()
     }
 }
