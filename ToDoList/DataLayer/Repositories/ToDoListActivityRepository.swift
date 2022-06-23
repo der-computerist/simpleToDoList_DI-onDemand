@@ -18,14 +18,16 @@ public class ToDoListActivityRepository: ActivityRepository {
     public var activities: [Activity] {
         dataStore.activities
     }
-    public var emptyActivity: Activity {
-        Activity()
-    }
     private let dataStore: ActivityDataStore
     
-    // MARK: - Methods
+    // MARK: - Object lifecycle
     public init(dataStore: ActivityDataStore) {
         self.dataStore = dataStore
+    }
+    
+    // MARK: - ActivityRepository
+    public func emptyActivity() -> Activity {
+        Activity()
     }
     
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
