@@ -33,10 +33,6 @@ public final class ActivitiesViewController: NiblessTableViewController {
         super.init(style: .plain)
     }
     
-    public func refreshUI() {
-        tableView.reloadData()
-    }
-    
     // MARK: View lifecycle
     public override func viewDidLoad() {
         super.viewDidLoad()

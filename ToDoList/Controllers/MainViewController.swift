@@ -79,7 +79,7 @@ extension MainViewController: ActivitiesViewControllerDelegate {
         _ _: ActivitiesViewController,
         didDeleteActivity _: Activity
     ) {
-        landingViewController.refreshUI()
+        // NO-OP
     }
 }
 
@@ -94,7 +94,7 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     public func activityDetailViewControllerDidFinish(
         _ viewController: ActivityDetailViewController
     ) {
-        landingViewController.refreshUI()
+        landingViewController.reloadTableData()
         dismiss(animated: true)
     }
 }

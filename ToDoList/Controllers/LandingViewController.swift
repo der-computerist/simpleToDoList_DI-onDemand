@@ -15,8 +15,8 @@ public protocol LandingViewControllerDelegate: AnyObject {
 public final class LandingViewController: NiblessViewController {
     
     // MARK: - Properties
-    public let activitiesViewController: ActivitiesViewController
     public weak var delegate: LandingViewControllerDelegate?
+    private let activitiesViewController: ActivitiesViewController
 
     private var rootView: LandingRootView! {
         guard isViewLoaded else { return nil }
@@ -41,8 +41,8 @@ public final class LandingViewController: NiblessViewController {
         navigationItem.rightBarButtonItem = addButtonItem
     }
     
-    public func refreshUI() {
-        activitiesViewController.refreshUI()
+    public func reloadTableData() {
+        activitiesViewController.tableView.reloadData()
     }
     
     // MARK: View lifecycle
