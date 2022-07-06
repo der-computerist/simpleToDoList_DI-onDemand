@@ -18,6 +18,9 @@ public class ToDoListActivityRepository: ActivityRepository {
     public var activities: [Activity] {
         dataStore.activities
     }
+    public var activitiesCount: Observable<Int> {
+        dataStore.activitiesCount
+    }
     private let dataStore: ActivityDataStore
     
     // MARK: - Object lifecycle

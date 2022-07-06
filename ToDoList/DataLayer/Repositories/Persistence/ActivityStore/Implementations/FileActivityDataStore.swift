@@ -10,7 +10,14 @@ import Foundation
 public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
-    public private(set) var activities = [Activity]()
+    public private(set) var activities = [Activity]() {
+        didSet {
+            if activities.count != oldValue.count {
+                updateActivitiesCount()
+            }
+        }
+    }
+    public lazy var activitiesCount = Observable(calculateActivitiesCount())
     private let fileName = "activities"
 
     // MARK: - Object lifecycle
@@ -53,5 +60,14 @@ public class FileActivityDataStore: ActivityDataStore {
             print("ERROR: Could not save the activities :(")
             throw error
         }
+    }
+
+    // MARK: Private
+    private func calculateActivitiesCount() -> Int {
+        activities.count
+    }
+    
+    private func updateActivitiesCount() {
+        activitiesCount.value = activities.count
     }
 }

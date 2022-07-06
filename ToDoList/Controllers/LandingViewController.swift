@@ -17,10 +17,7 @@ public final class LandingViewController: NiblessViewController {
     // MARK: - Properties
     public let activitiesViewController: ActivitiesViewController
     public weak var delegate: LandingViewControllerDelegate?
-    private var activitiesCount: Int {
-        GlobalToDoListActivityRepository.activities.count
-    }
-    
+
     private var rootView: LandingRootView! {
         guard isViewLoaded else { return nil }
         return (view as! LandingRootView)
@@ -45,7 +42,6 @@ public final class LandingViewController: NiblessViewController {
     }
     
     public func refreshUI() {
-        updateActivitiesCountLabel()
         activitiesViewController.refreshUI()
     }
     
@@ -56,7 +52,13 @@ public final class LandingViewController: NiblessViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        updateActivitiesCountLabel()
+        
+        GlobalToDoListActivityRepository.activitiesCount.addObserver(
+            rootView.activitiesCountLabel,
+            options: [.initial, .new]
+        ) { [weak self] newActivitiesCount, _ in
+            self?.updateActivitiesCountLabel(with: newActivitiesCount)
+        }
     }
     
     public override func viewWillLayoutSubviews() {
@@ -76,7 +78,7 @@ public final class LandingViewController: NiblessViewController {
     }
     
     // MARK: Private
-    private func updateActivitiesCountLabel() {
-        rootView.activitiesCountLabel.text = "Total: \(activitiesCount)"
+    private func updateActivitiesCountLabel(with newActivitiesCount: Int) {
+        rootView.activitiesCountLabel.text = "Total: \(newActivitiesCount)"
     }
 }

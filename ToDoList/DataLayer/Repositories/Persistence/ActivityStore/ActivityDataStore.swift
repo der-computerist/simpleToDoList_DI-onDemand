@@ -10,6 +10,8 @@ import Foundation
 public protocol ActivityDataStore {
     
     var activities: [Activity] { get }
+    var activitiesCount: Observable<Int> { get }
+    
     func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
     func save() throws

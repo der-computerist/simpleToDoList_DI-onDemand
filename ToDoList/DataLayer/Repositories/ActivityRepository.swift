@@ -10,6 +10,7 @@ import Foundation
 public protocol ActivityRepository {
     
     var activities: [Activity] { get }
+    var activitiesCount: Observable<Int> { get }
 
     func emptyActivity() -> Activity
     func update(activity: Activity, completion: ((Activity) -> Void)?)
