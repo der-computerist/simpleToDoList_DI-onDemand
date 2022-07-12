@@ -57,7 +57,9 @@ public final class LandingViewController: NiblessViewController {
             rootView.activitiesCountLabel,
             options: [.initial, .new]
         ) { [weak self] newActivitiesCount, _ in
-            self?.updateActivitiesCountLabel(with: newActivitiesCount)
+            DispatchQueue.main.async {
+                self?.updateActivitiesCountLabel(with: newActivitiesCount)
+            }
         }
     }
     
