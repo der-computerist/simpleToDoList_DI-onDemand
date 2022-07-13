@@ -7,29 +7,16 @@
 
 public enum ActivityDetailView {
     
-    case newActivity(Activity)
+    case newActivity
     case existingActivity(Activity)
     
-    var activity: Activity {
+    var activity: Activity? {
         switch self {
-        case let .newActivity(activity),
-             let .existingActivity(activity):
+        case let .existingActivity(activity):
             return activity
+        case .newActivity:
+            return nil
         }
-    }
-    
-    var isNewActivity: Bool {
-        if case .newActivity = self {
-            return true
-        }
-        return false
-    }
-    
-    var isExistingActivity: Bool {
-        if case .existingActivity = self {
-            return true
-        }
-        return false
     }
     
     var title: String {
@@ -42,15 +29,30 @@ public enum ActivityDetailView {
     }
     
     var hidesActivityStatus: Bool {
-        isNewActivity
+        switch self {
+        case .existingActivity:
+            return false
+        case .newActivity:
+            return true
+        }
     }
     
     var enablesNameField: Bool {
-        isNewActivity
+        switch self {
+        case .existingActivity:
+            return false
+        case .newActivity:
+            return true
+        }
     }
     
     var enablesDescriptionField: Bool {
-        isNewActivity
+        switch self {
+        case .existingActivity:
+            return false
+        case .newActivity:
+            return true
+        }
     }
 }
 
@@ -58,8 +60,8 @@ extension ActivityDetailView: Equatable {
     
     public static func == (lhs: ActivityDetailView, rhs: ActivityDetailView) -> Bool {
         switch (lhs, rhs) {
-        case let (.newActivity(l), .newActivity(r)):
-            return l == r
+        case (.newActivity, .newActivity):
+            return true
         case let (.existingActivity(l), .existingActivity(r)):
             return l == r
         case (.newActivity, _),

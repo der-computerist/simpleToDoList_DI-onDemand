@@ -7,21 +7,21 @@
 
 import Foundation
 
+public typealias ActivityID = String
+
 public struct Activity: Codable {
     
-    public enum ActivityStatus: Int, Codable {
+    public enum Status: Int, Codable {
         case pending = 0
         case done = 1
     }
-    
-    public typealias ActivityID = String
 
     // MARK: - Properties
-    public var name = ""
+    public var name: String
     public var description: String?
-    public var status = ActivityStatus.pending
-    public private(set) var id: ActivityID = UUID().uuidString
-    public private(set) var dateCreated = Date()
+    public var status: Status
+    public let id: ActivityID
+    public let dateCreated: Date
 }
 
 // MARK: - Equatable

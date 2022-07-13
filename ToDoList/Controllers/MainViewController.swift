@@ -31,9 +31,7 @@ public final class MainViewController: NiblessNavigationController {
     }
     
     private func presentActivityCreationScreen() {
-        let detailViewController = ActivityDetailViewController(
-            for: .newActivity(GlobalToDoListActivityRepository.emptyActivity())
-        )
+        let detailViewController = ActivityDetailViewController(for: .newActivity)
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)

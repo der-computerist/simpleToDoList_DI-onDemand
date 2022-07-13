@@ -15,32 +15,15 @@ public protocol ActivityDetailViewControllerDelegate: AnyObject {
 
 public final class ActivityDetailViewController: NiblessViewController {
     
-    private struct Constants {
-        static let activityNameMaxCharacters = 50
-        static let activityDescriptionMaxCharacters = 200
-    }
-    
-    private typealias ActivityDetails =
-        (name: String, description: String, status: Activity.ActivityStatus)
-
     // MARK: - Properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
     private let flow: ActivityDetailView
-    private var activity: Activity
-
-    private let originalActivityDetails: ActivityDetails
-    private var editedActivityDetails: ActivityDetails {
+    private var activity: Activity!
+    private var activityBuilder: ActivityBuilder {
         didSet {
             viewIfLoaded?.setNeedsLayout()
         }
-    }
-    
-    private var hasChanges: Bool {
-        originalActivityDetails != editedActivityDetails
-    }
-    private var hasChangesInActivityName: Bool {
-        originalActivityDetails.name != editedActivityDetails.name
     }
     private var isFirstLayout = true
 
@@ -72,14 +55,13 @@ public final class ActivityDetailViewController: NiblessViewController {
     public init(for flow: ActivityDetailView) {
         self.flow = flow
         activity = self.flow.activity
-        originalActivityDetails = (activity.name, activity.description ?? "", activity.status)
-        editedActivityDetails = originalActivityDetails
+        activityBuilder = ActivityBuilder(activity: activity)
         super.init()
         
         navigationItem.title = self.flow.title
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem =
-            self.flow.isNewActivity ? saveButtonItem : editButtonItem
+            self.flow == .newActivity ? saveButtonItem : editButtonItem
     }
     
     // MARK: View lifecycle
@@ -98,13 +80,13 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
-        if flow.isNewActivity {
-            // If there are unsaved changes to the activity name, enable the Save button.
-            saveButtonItem.isEnabled = hasChangesInActivityName
-        }
         
-        if flow.isExistingActivity {
+        if case .newActivity = flow {
+            // If there are unsaved changes to the activity name, enable the Save button.
+            saveButtonItem.isEnabled = activityBuilder.hasNameChanges()
+        }
+
+        if case .existingActivity = flow {
             /*
              - While out of editing mode, the "Edit/Done" button item always remains enabled.
              - After entering editing mode, the "Edit/Done" button will remain disabled as long
@@ -112,12 +94,12 @@ public final class ActivityDetailViewController: NiblessViewController {
                disable itself again if the activity name becomes empty.
              */
             editButtonItem.isEnabled =
-                !isEditing || (hasChanges != editedActivityDetails.name.isEmpty)
+                !isEditing || (activityBuilder.hasChanges() != activityBuilder.name.isEmpty)
         }
 
         // If there are unsaved changes overall, disable the ability to dismiss
         // using the pull-down gesture.
-        isModalInPresentation = hasChanges
+        isModalInPresentation = activityBuilder.hasChanges()
     }
     
     public override func viewDidLayoutSubviews() {
@@ -126,7 +108,7 @@ public final class ActivityDetailViewController: NiblessViewController {
             
             // For user convenience, when creating a new activity, present the keyboard as
             // soon as the view begins to appear.
-            if flow.isNewActivity {
+            if case .newActivity = flow {
                 rootView.nameField.becomeFirstResponder()
             }
         }
@@ -136,11 +118,11 @@ public final class ActivityDetailViewController: NiblessViewController {
     @objc
     func handleSavePressed(sender: UIBarButtonItem) {
         do {
-            try validateInputs()
+            activity = try activityBuilder.build()
             confirmSave()
         } catch {
             presentErrorAlert(
-                title: ActivityCreationError.title,
+                title: ActivityBuilder.Error.title,
                 message: error.localizedDescription
             )
         }
@@ -148,8 +130,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     @objc
     func handleCancelPressed(sender: UIBarButtonItem) {
-        if hasChanges {
-            // The user tapped Cancel with unsaved changes. Confirm that it's OK to lose the changes.
+        if activityBuilder.hasChanges() {
+            // The user tapped Cancel while having unsaved changes.
+            // Confirm that it's OK to lose the changes.
             confirmCancel()
         } else {
             // There are no unsaved changes; ask the delegate to dismiss immediately.
@@ -159,7 +142,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     @objc
     func toggleStatus(_ sender: UISwitch) {
-        editedActivityDetails.status = sender.isOn ? .done : .pending
+        activityBuilder.status = sender.isOn ? .done : .pending
     }
     
     // MARK: Editing Mode
@@ -191,28 +174,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func updateViewFromActivity() {
-        rootView.nameField.text = activity.name
-        rootView.descriptionTextView.text = activity.description
-        rootView.doneSwitch.isOn = activity.status == .done ? true : false
-    }
-    
-    private func validateInputs() throws {
-        guard let activityName = rootView.nameField.text else {
-            throw ActivityCreationError.nameEmpty
-        }
-        
-        let activityDescription = rootView.descriptionTextView.text ?? ""
-        
-        if activityName.count > Constants.activityNameMaxCharacters {
-            throw ActivityCreationError.nameTooLong(
-                maxCharacters: Constants.activityNameMaxCharacters
-            )
-
-        } else if activityDescription.count > Constants.activityDescriptionMaxCharacters {
-            throw ActivityCreationError.descriptionTooLong(
-                maxCharacters: Constants.activityDescriptionMaxCharacters
-            )
-        }
+        rootView.nameField.text = activityBuilder.name
+        rootView.descriptionTextView.text = activityBuilder.description
+        rootView.doneSwitch.isOn = activityBuilder.status == .done ? true : false
     }
     
     private func confirmSave() {
@@ -243,21 +207,13 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        updateActivityFromView()
         GlobalToDoListActivityRepository.update(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
     }
-    
-    private func updateActivityFromView() {
-        activity.name = editedActivityDetails.name
-        activity.description = editedActivityDetails.description
-        activity.status = editedActivityDetails.status
-    }
 }
 
 // MARK: - UITextFieldDelegate
-
 extension ActivityDetailViewController: UITextFieldDelegate {
     
     public func textField(
@@ -270,7 +226,7 @@ extension ActivityDetailViewController: UITextFieldDelegate {
         }
         
         let newText = oldText.replacingCharacters(in: Range(range, in: oldText)!, with: string)
-        editedActivityDetails.name = newText
+        activityBuilder.name = newText
         return true
     }
     
@@ -281,16 +237,14 @@ extension ActivityDetailViewController: UITextFieldDelegate {
 }
 
 // MARK: - UITextViewDelegate
-
 extension ActivityDetailViewController: UITextViewDelegate {
     
     public func textViewDidChange(_ textView: UITextView) {
-        editedActivityDetails.description = textView.text
+        activityBuilder.description = textView.text
     }
 }
 
 // MARK: - UIAdaptivePresentationControllerDelegate
-
 extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate {
     
     public func presentationControllerDidAttemptToDismiss(_ _: UIPresentationController) {

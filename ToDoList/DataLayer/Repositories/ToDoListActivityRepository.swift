@@ -29,10 +29,6 @@ public class ToDoListActivityRepository: ActivityRepository {
     }
     
     // MARK: - ActivityRepository
-    public func emptyActivity() -> Activity {
-        Activity()
-    }
-    
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.update(activity: activity, completion: completion)
         try? dataStore.save()
