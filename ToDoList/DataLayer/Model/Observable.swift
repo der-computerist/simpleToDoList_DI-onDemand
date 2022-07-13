@@ -5,6 +5,8 @@
 //  Created by Enrique Aliaga on 7/5/22.
 //
 
+import Foundation
+
 public class Observable<Type> {
     
     // MARK: - Callback

@@ -17,9 +17,9 @@ public struct Activity: Codable {
     }
 
     // MARK: - Properties
-    public var name: String
-    public var description: String?
-    public var status: Status
+    public let name: String
+    public let description: String?
+    public let status: Status
     public let id: ActivityID
     public let dateCreated: Date
 }

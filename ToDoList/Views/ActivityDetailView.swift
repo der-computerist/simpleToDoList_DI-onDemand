@@ -5,6 +5,8 @@
 //  Created by Enrique Aliaga on 1/25/22.
 //
 
+import Foundation
+
 public enum ActivityDetailView {
     
     case newActivity
