@@ -21,7 +21,7 @@ public final class DiskCaretaker {
             try data.write(to: url, options: .atomic)
             print("Save success: URL: `\(url)`")
             
-        } catch let error {
+        } catch {
             print("Save failed: Object: `\(object)`, Error: `\(error)`")
             throw error
         }
@@ -35,7 +35,7 @@ public final class DiskCaretaker {
             print("Retrieve success: URL: `\(url)`")
             return object
             
-        } catch let error {
+        } catch {
             print("Retrieve failed: URL: `\(url)`, Error: `\(error)`")
             throw error
         }

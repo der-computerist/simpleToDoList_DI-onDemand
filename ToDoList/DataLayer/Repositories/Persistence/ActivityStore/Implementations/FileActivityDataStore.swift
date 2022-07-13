@@ -56,7 +56,7 @@ public class FileActivityDataStore: ActivityDataStore {
         do {
             try DiskCaretaker.save(activities, to: fileName)
             print("ALL ACTIVITIES SAVED!")
-        } catch let error {
+        } catch {
             print("ERROR: Could not save the activities :(")
             throw error
         }
