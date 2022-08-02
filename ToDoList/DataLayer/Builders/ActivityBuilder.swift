@@ -89,6 +89,7 @@ public struct ActivityBuilder {
 
 // MARK: Public
 extension ActivityBuilder.Error {
+    
     public static let title = NSLocalizedString(
         "Activity Creation Error",
         comment: "ActivityCreationError.title"
@@ -97,6 +98,7 @@ extension ActivityBuilder.Error {
 
 // MARK: LocalizedError
 extension ActivityBuilder.Error: LocalizedError {
+    
     public var errorDescription: String? {
         switch self {
         case .nameEmpty:

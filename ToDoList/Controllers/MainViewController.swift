@@ -72,13 +72,6 @@ extension MainViewController: ActivitiesViewControllerDelegate {
     ) {
         presentActivityUpdateScreen(activity: activity)
     }
-    
-    public func activitiesViewController(
-        _ _: ActivitiesViewController,
-        didDeleteActivity _: Activity
-    ) {
-        // NO-OP
-    }
 }
 
 // MARK: - ActivityDetailViewControllerDelegate
@@ -89,9 +82,7 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
         dismiss(animated: true)
     }
     
-    public func activityDetailViewControllerDidFinish(
-        _ viewController: ActivityDetailViewController
-    ) {
+    public func activityDetailViewControllerDidFinish(_ _: ActivityDetailViewController) {
         landingViewController.reloadTableData()
         dismiss(animated: true)
     }

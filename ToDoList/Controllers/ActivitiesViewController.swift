@@ -13,10 +13,6 @@ public protocol ActivitiesViewControllerDelegate: AnyObject {
         _ viewController: ActivitiesViewController,
         didSelectActivity activity: Activity
     )
-    func activitiesViewController(
-        _ viewController: ActivitiesViewController,
-        didDeleteActivity activity: Activity
-    )
 }
 
 public final class ActivitiesViewController: NiblessTableViewController {
@@ -75,11 +71,9 @@ extension ActivitiesViewController {
             let activity = activities[indexPath.row]
             
             // Remove the activity from the store
-            GlobalToDoListActivityRepository.delete(activity: activity) { activity in
-                
+            GlobalToDoListActivityRepository.delete(activity: activity) { _ in
                 // Remove that row from the table view with an animation
                 tableView.deleteRows(at: [indexPath], with: .automatic)
-                self.delegate?.activitiesViewController(self, didDeleteActivity: activity)
             }
         }
     }
