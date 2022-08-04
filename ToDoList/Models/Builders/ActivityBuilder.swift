@@ -33,6 +33,7 @@ public struct ActivityBuilder {
            let id = activity?.id,
            let dateCreated = activity?.dateCreated {
             
+            // Existing activity
             self.name = name
             self.description = description
             self.status = status
@@ -40,7 +41,7 @@ public struct ActivityBuilder {
             self.dateCreated = dateCreated
             
         } else {
-            
+            // New activity
             self.name = ""
             self.description = ""
             self.status = .pending
