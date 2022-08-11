@@ -12,23 +12,30 @@ public let GlobalToDoListActivityRepository: ActivityRepository = {
     return ToDoListActivityRepository(dataStore: activityDataStore)
 }()
 
-public class ToDoListActivityRepository: ActivityRepository {
+public class ToDoListActivityRepository: NSObject, ActivityRepository {
 
     // MARK: - Properties
     public var activities: [Activity] {
         dataStore.activities
     }
-    public var activitiesCount: Observable<Int> {
-        dataStore.activitiesCount
-    }
-    private let dataStore: ActivityDataStore
+    @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
+    @objc private let dataStore: ActivityDataStore
+    private var observation: NSKeyValueObservation?
     
     // MARK: - Object lifecycle
     public init(dataStore: ActivityDataStore) {
         self.dataStore = dataStore
+        super.init()
+        
+        observation = observe(
+            \.dataStore.activitiesCount,
+            options: [.new]
+        ) { [weak self] _, change in
+            self?.activitiesCount = change.newValue!
+        }
     }
     
-    // MARK: - ActivityRepository
+    // MARK: - Methods
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.update(activity: activity, completion: completion)
         try? dataStore.save()
@@ -37,5 +44,10 @@ public class ToDoListActivityRepository: ActivityRepository {
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.delete(activity: activity, completion: completion)
         try? dataStore.save()
+    }
+    
+    // MARK: Private
+    private func calculateActivitiesCount() -> Int {
+        dataStore.activitiesCount
     }
 }

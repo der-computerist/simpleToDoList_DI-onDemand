@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class FileActivityDataStore: ActivityDataStore {
+public class FileActivityDataStore: NSObject, ActivityDataStore {
 
     // MARK: - Properties
     public private(set) var activities = [Activity]() {
@@ -17,11 +17,12 @@ public class FileActivityDataStore: ActivityDataStore {
             }
         }
     }
-    public lazy var activitiesCount = Observable(calculateActivitiesCount())
+    @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
     private let fileName = "activities"
 
     // MARK: - Object lifecycle
-    public init() {
+    public override init() {
+        super.init()
         loadActivities()
     }
     
@@ -68,6 +69,6 @@ public class FileActivityDataStore: ActivityDataStore {
     }
     
     private func updateActivitiesCount() {
-        activitiesCount.value = activities.count
+        activitiesCount = activities.count
     }
 }

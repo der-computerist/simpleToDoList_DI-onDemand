@@ -17,6 +17,10 @@ public final class LandingViewController: NiblessViewController {
     // MARK: - Properties
     public weak var delegate: LandingViewControllerDelegate?
     private let activitiesViewController: ActivitiesViewController
+    @objc private var activityRepository: ActivityRepository {
+        GlobalToDoListActivityRepository
+    }
+    private var observation: NSKeyValueObservation?
 
     private var rootView: LandingRootView! {
         guard isViewLoaded else { return nil }
@@ -53,12 +57,12 @@ public final class LandingViewController: NiblessViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        GlobalToDoListActivityRepository.activitiesCount.addObserver(
-            rootView.activitiesCountLabel,
+        observation = observe(
+            \.activityRepository.activitiesCount,
             options: [.initial, .new]
-        ) { [weak self] newActivitiesCount, _ in
+        ) { [weak self] _, change in
             DispatchQueue.main.async {
-                self?.updateActivitiesCountLabel(with: newActivitiesCount)
+                self?.updateActivitiesCountLabel(with: change.newValue!)
             }
         }
     }
