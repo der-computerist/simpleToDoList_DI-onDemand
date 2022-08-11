@@ -28,7 +28,7 @@ public struct ActivityBuilder {
     public init(activity: Activity?) {
         
         if let name = activity?.name,
-           let description = activity?.description,
+           let description = activity?.activityDescription,
            let status = activity?.status,
            let id = activity?.id,
            let dateCreated = activity?.dateCreated {
