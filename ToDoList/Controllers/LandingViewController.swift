@@ -56,15 +56,7 @@ public final class LandingViewController: NiblessViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
-        observation = observe(
-            \.activityRepository.activitiesCount,
-            options: [.initial, .new]
-        ) { [weak self] _, change in
-            DispatchQueue.main.async {
-                self?.updateActivitiesCountLabel(with: change.newValue!)
-            }
-        }
+        observation = observeActivitiesCount(on: GlobalToDoListActivityRepository)
     }
     
     public override func viewWillLayoutSubviews() {
@@ -84,6 +76,17 @@ public final class LandingViewController: NiblessViewController {
     }
     
     // MARK: Private
+    private func observeActivitiesCount<T: NSObject & ActivityRepository>(
+        on subject: T
+    ) -> NSKeyValueObservation {
+        
+        subject.observe(\.activitiesCount, options: [.initial, .new]) { [weak self] subject, _ in
+            DispatchQueue.main.async {
+                self?.updateActivitiesCountLabel(with: subject.activitiesCount)
+            }
+        }
+    }
+    
     private func updateActivitiesCountLabel(with newActivitiesCount: Int) {
         rootView.activitiesCountLabel.text = "Total: \(newActivitiesCount)"
     }

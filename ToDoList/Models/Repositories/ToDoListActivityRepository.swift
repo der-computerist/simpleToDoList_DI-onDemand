@@ -7,7 +7,7 @@
 
 import Foundation
 
-public let GlobalToDoListActivityRepository: ActivityRepository = {
+public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
     let activityDataStore = FileActivityDataStore()
     return ToDoListActivityRepository(dataStore: activityDataStore)
 }()
@@ -19,20 +19,15 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
         dataStore.activities
     }
     @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
-    @objc private let dataStore: ActivityDataStore
-    private var observation: NSKeyValueObservation?
+
+    private let dataStore: NSObject & ActivityDataStore
+    private var activitiesCountObservation: NSKeyValueObservation?
     
     // MARK: - Object lifecycle
-    public init(dataStore: ActivityDataStore) {
+    public init(dataStore: NSObject & ActivityDataStore) {
         self.dataStore = dataStore
         super.init()
-        
-        observation = observe(
-            \.dataStore.activitiesCount,
-            options: [.new]
-        ) { [weak self] _, change in
-            self?.activitiesCount = change.newValue!
-        }
+        activitiesCountObservation = observeActivitiesCount(on: dataStore)
     }
     
     // MARK: - Methods
@@ -49,5 +44,14 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     // MARK: Private
     private func calculateActivitiesCount() -> Int {
         dataStore.activitiesCount
+    }
+
+    private func observeActivitiesCount<T: NSObject & ActivityDataStore>(
+        on subject: T
+    ) -> NSKeyValueObservation {
+        
+        subject.observe(\.activitiesCount, options: .new) { [weak self] subject, _ in
+            self?.activitiesCount = subject.activitiesCount
+        }
     }
 }
