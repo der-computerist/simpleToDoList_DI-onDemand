@@ -18,6 +18,8 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
         }
     }
     @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
+    
+    private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
     private let fileName = "activities"
 
     // MARK: - Object lifecycle
@@ -36,10 +38,10 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
     public func update(activity: Activity, completion: ((Activity) -> Void)? = nil) {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
-            activities[index] = activity
+            kvoActivities[index] = activity
         } else {
             // Otherwise, add to the end of the array
-            activities.append(activity)
+            kvoActivities.add(activity)
         }
         print("Activity registered!")
         completion?(activity)
@@ -47,7 +49,7 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)? = nil) {
         if let index = activities.firstIndex(of: activity) {
-            activities.remove(at: index)
+            kvoActivities.removeObject(at: index)
         }
         print("Activity deleted")
         completion?(activity)

@@ -15,18 +15,19 @@ public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
 public class ToDoListActivityRepository: NSObject, ActivityRepository {
 
     // MARK: - Properties
-    public var activities: [Activity] {
-        dataStore.activities
-    }
+    public lazy var activities: [Activity] = dataStore.activities
     @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
 
     private let dataStore: NSObject & ActivityDataStore
+    private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
+    private var activitiesObservation: NSKeyValueObservation?
     private var activitiesCountObservation: NSKeyValueObservation?
     
     // MARK: - Object lifecycle
     public init(dataStore: NSObject & ActivityDataStore) {
         self.dataStore = dataStore
         super.init()
+        activitiesObservation = observeActivities(on: dataStore)
         activitiesCountObservation = observeActivitiesCount(on: dataStore)
     }
     
@@ -44,6 +45,29 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     // MARK: Private
     private func calculateActivitiesCount() -> Int {
         dataStore.activitiesCount
+    }
+    
+    private func observeActivities<T: NSObject & ActivityDataStore>(
+        on subject: T
+    ) -> NSKeyValueObservation {
+        
+        subject.observe(\.activities, options: .new) { [weak self] subject, change in
+            switch change.kind {
+            case .insertion:
+                guard let newActivities = change.newValue,
+                      let newActivity = newActivities.first else { return }
+                self?.kvoActivities.add(newActivity)
+            case .removal:
+                guard let index = change.indexes?.first else { return }
+                self?.kvoActivities.removeObject(at: index)
+            case .replacement:
+                guard let index = change.indexes?.first,
+                      let newActivity = change.newValue?.first else { return }
+                self?.kvoActivities[index] = newActivity
+            default:
+                self?.activities = subject.activities
+            }
+        }
     }
 
     private func observeActivitiesCount<T: NSObject & ActivityDataStore>(

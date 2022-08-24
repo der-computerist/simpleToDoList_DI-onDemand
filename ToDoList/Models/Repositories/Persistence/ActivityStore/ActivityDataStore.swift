@@ -10,7 +10,7 @@ import Foundation
 @objc
 public protocol ActivityDataStore {
     
-    var activities: [Activity] { get }
+    @objc dynamic var activities: [Activity] { get }
     @objc dynamic var activitiesCount: Int { get }
     
     func update(activity: Activity, completion: ((Activity) -> Void)?)

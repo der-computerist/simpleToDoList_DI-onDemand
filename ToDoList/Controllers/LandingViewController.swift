@@ -17,9 +17,6 @@ public final class LandingViewController: NiblessViewController {
     // MARK: - Properties
     public weak var delegate: LandingViewControllerDelegate?
     private let activitiesViewController: ActivitiesViewController
-    @objc private var activityRepository: ActivityRepository {
-        GlobalToDoListActivityRepository
-    }
     private var observation: NSKeyValueObservation?
 
     private var rootView: LandingRootView! {
@@ -43,10 +40,6 @@ public final class LandingViewController: NiblessViewController {
         navigationItem.title = "To Do List"
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButtonItem
-    }
-    
-    public func reloadTableData() {
-        activitiesViewController.tableView.reloadData()
     }
     
     // MARK: View lifecycle

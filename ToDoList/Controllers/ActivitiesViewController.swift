@@ -23,6 +23,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         GlobalToDoListActivityRepository.activities
     }
     private let cellIdentifier = "UITableViewCell"
+    private var observation: NSKeyValueObservation?
     
     // MARK: - Methods
     public init() {
@@ -32,7 +33,30 @@ public final class ActivitiesViewController: NiblessTableViewController {
     // MARK: View lifecycle
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        observation = observeActivities(on: GlobalToDoListActivityRepository)
+    }
+    
+    // MARK: Private
+    private func observeActivities<T: NSObject & ActivityRepository>(
+        on subject: T
+    ) -> NSKeyValueObservation {
+        
+        subject.observe(\.activities, options: .new) { [weak self] _, change in
+            switch change.kind {
+            case .removal:
+                guard let oldIndex = change.indexes?.first else { return }
+                let indexPaths = [IndexPath(row: oldIndex, section: 0)]
+                DispatchQueue.main.async {
+                    self?.tableView.deleteRows(at: indexPaths, with: .automatic)
+                }
+            default:
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
+            }
+        }
     }
 }
 
@@ -69,12 +93,7 @@ extension ActivitiesViewController {
     ) {
         if editingStyle == .delete {
             let activity = activities[indexPath.row]
-            
-            // Remove the activity from the store
-            GlobalToDoListActivityRepository.delete(activity: activity) { _ in
-                // Remove that row from the table view with an animation
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-            }
+            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
         }
     }
 }

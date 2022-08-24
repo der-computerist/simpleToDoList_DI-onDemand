@@ -83,7 +83,6 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     }
     
     public func activityDetailViewControllerDidFinish(_ _: ActivityDetailViewController) {
-        landingViewController.reloadTableData()
         dismiss(animated: true)
     }
 }
