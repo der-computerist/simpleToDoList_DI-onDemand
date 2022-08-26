@@ -17,7 +17,7 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
             }
         }
     }
-    @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
+    @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
     
     private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
     private let fileName = "activities"

@@ -15,8 +15,8 @@ public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
 public class ToDoListActivityRepository: NSObject, ActivityRepository {
 
     // MARK: - Properties
-    public lazy var activities: [Activity] = dataStore.activities
-    @objc public dynamic lazy var activitiesCount = calculateActivitiesCount()
+    public private(set) lazy var activities: [Activity] = dataStore.activities
+    @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
 
     private let dataStore: NSObject & ActivityDataStore
     private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
