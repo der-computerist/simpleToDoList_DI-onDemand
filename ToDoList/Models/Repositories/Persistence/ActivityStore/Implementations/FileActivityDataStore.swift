@@ -35,7 +35,7 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
     }
 
     // MARK: - Methods
-    public func update(activity: Activity, completion: ((Activity) -> Void)? = nil) {
+    public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
             kvoActivities[index] = activity
@@ -47,7 +47,7 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
         completion?(activity)
     }
     
-    public func delete(activity: Activity, completion: ((Activity) -> Void)? = nil) {
+    public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
         if let index = activities.firstIndex(of: activity) {
             kvoActivities.removeObject(at: index)
         }
