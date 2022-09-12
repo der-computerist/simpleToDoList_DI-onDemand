@@ -19,9 +19,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
     private let flow: ActivityDetailView
-    private var activity: Activity!
-    private var activityBuilder: ActivityBuilder {
-        didSet {
+    private var activity: Activity
+    private lazy var activityBuilder = ActivityBuilder(activity: activity) {
+        didSet{
             viewIfLoaded?.setNeedsLayout()
         }
     }
@@ -54,8 +54,17 @@ public final class ActivityDetailViewController: NiblessViewController {
     // MARK: - Methods
     public init(for flow: ActivityDetailView) {
         self.flow = flow
-        activity = self.flow.activity
-        activityBuilder = ActivityBuilder(activity: activity)
+        
+        if let existingActivity = self.flow.activity {
+            activity = existingActivity
+        } else {
+            activity = Activity(name: "",
+                                description: "",
+                                status: .pending,
+                                id: UUID().uuidString,
+                                dateCreated: Date())
+        }
+        
         super.init()
         
         navigationItem.title = self.flow.title
@@ -174,9 +183,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func updateViewFromActivity() {
-        rootView.nameField.text = activityBuilder.name
-        rootView.descriptionTextView.text = activityBuilder.description
-        rootView.doneSwitch.isOn = activityBuilder.status == .done ? true : false
+        rootView.nameField.text = activity.name
+        rootView.descriptionTextView.text = activity.description
+        rootView.doneSwitch.isOn = activity.status == .done ? true : false
     }
     
     private func confirmSave() {

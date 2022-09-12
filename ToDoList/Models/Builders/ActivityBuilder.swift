@@ -25,31 +25,13 @@ public struct ActivityBuilder {
     private let originalActivityDetails: ActivityDetails
     
     // MARK: - Object lifecycle
-    public init(activity: Activity?) {
-        
-        if let name = activity?.name,
-           let description = activity?.activityDescription,
-           let status = activity?.status,
-           let id = activity?.id,
-           let dateCreated = activity?.dateCreated {
-            
-            // Existing activity
-            self.name = name
-            self.description = description
-            self.status = status
-            self.id = id
-            self.dateCreated = dateCreated
-            
-        } else {
-            // New activity
-            self.name = ""
-            self.description = ""
-            self.status = .pending
-            self.id = UUID().uuidString
-            self.dateCreated = Date()
-        }
-        
-        originalActivityDetails = (self.name, self.description, self.status)
+    public init(activity: Activity) {
+        name = activity.name
+        description = activity.description
+        status = activity.status
+        id = activity.id
+        dateCreated = activity.dateCreated
+        originalActivityDetails = (name, description, status)
     }
     
     // MARK: - Public
