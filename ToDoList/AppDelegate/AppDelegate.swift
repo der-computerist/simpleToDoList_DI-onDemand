@@ -14,8 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+        _ _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         let activitiesViewController = ActivitiesViewController()
         
@@ -49,6 +49,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
-
+    // MARK: - State Restoration
+    func application(_ _: UIApplication, shouldSaveSecureApplicationState _: NSCoder) -> Bool {
+        true
+    }
+    
+    func application(_ _: UIApplication, shouldRestoreSecureApplicationState _: NSCoder) -> Bool {
+        true
+    }
 }
-
