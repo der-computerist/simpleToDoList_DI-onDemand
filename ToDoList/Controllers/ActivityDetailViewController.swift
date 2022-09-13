@@ -184,7 +184,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private func updateViewFromActivity() {
         rootView.nameField.text = activity.name
-        rootView.descriptionTextView.text = activity.description
+        rootView.descriptionTextView.text = activity.activityDescription
         rootView.doneSwitch.isOn = activity.status == .done ? true : false
     }
     

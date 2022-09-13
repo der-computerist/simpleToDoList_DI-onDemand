@@ -27,7 +27,7 @@ public struct ActivityBuilder {
     // MARK: - Object lifecycle
     public init(activity: Activity) {
         name = activity.name
-        description = activity.description
+        description = activity.activityDescription ?? ""
         status = activity.status
         id = activity.id
         dateCreated = activity.dateCreated
