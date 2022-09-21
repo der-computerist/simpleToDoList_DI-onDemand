@@ -35,6 +35,12 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
     }
 
     // MARK: - Methods
+    public func activity(fromIdentifier activityID: ActivityID) -> Activity? {
+        let filteredActivities = activities.filter({ $0.id == activityID })
+        if filteredActivities.isEmpty { return nil }
+        return filteredActivities.first
+    }
+    
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it

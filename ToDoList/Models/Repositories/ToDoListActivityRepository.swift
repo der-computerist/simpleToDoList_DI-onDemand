@@ -32,6 +32,10 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     }
     
     // MARK: - Methods
+    public func activity(fromIdentifier activityID: ActivityID) -> Activity? {
+        dataStore.activity(fromIdentifier: activityID)
+    }
+    
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
         dataStore.update(activity: activity, completion: completion)
         try? dataStore.save()
