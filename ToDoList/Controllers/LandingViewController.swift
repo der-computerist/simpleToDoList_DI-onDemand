@@ -49,11 +49,8 @@ public final class LandingViewController: NiblessViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        observation = observeActivitiesCount(on: GlobalToDoListActivityRepository)
-    }
-    
-    public override func viewWillLayoutSubviews() {
         add(childViewController: activitiesViewController, over: rootView.activitiesContainerView)
+        observation = observeActivitiesCount(on: GlobalToDoListActivityRepository)
     }
     
     // MARK: Actions

@@ -15,12 +15,7 @@ extension UIViewController {
         over containingView: UIView
     ) {
         guard child.parent == nil else { return }
-        guard containingView.isDescendant(of: view) else {
-            preconditionFailure("""
-            `containingView` must be part of the parent view controller's view hierarchy
-            """)
-        }
-        
+
         addChild(child)
         containingView.addSubview(child.view)
         
