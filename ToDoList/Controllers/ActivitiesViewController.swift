@@ -17,7 +17,11 @@ public protocol ActivitiesViewControllerDelegate: AnyObject {
 
 public final class ActivitiesViewController: NiblessTableViewController {
     
-    // MARK: - Properties
+    // MARK: - Type properties
+    static let viewControllerIdentifier = String(describing: ActivitiesViewController.self)
+    static let tableViewIdentifier = viewControllerIdentifier + "TableView"
+    
+    // MARK: - Instance properties
     public weak var delegate: ActivitiesViewControllerDelegate?
     private var activities: [Activity] {
         GlobalToDoListActivityRepository.activities
@@ -28,6 +32,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     // MARK: - Methods
     public init() {
         super.init(style: .plain)
+        restorationIdentifier = Self.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -35,6 +40,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         super.viewDidLoad()
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.restorationIdentifier = Self.tableViewIdentifier
         observation = observeActivities(on: GlobalToDoListActivityRepository)
     }
     
@@ -106,5 +112,21 @@ extension ActivitiesViewController {
         
         let selectedActivity = activities[indexPath.row]
         delegate?.activitiesViewController(self, didSelectActivity: selectedActivity)
+    }
+}
+
+// MARK: - State restoration
+extension ActivitiesViewController {
+    
+    static let tableViewIsEditingKey = "tableViewIsEditing"
+    
+    public override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode(isEditing, forKey: Self.tableViewIsEditingKey)
+    }
+    
+    public override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        isEditing = coder.decodeBool(forKey: Self.tableViewIsEditingKey)
     }
 }

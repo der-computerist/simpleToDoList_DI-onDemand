@@ -14,7 +14,10 @@ public protocol LandingViewControllerDelegate: AnyObject {
 
 public final class LandingViewController: NiblessViewController {
     
-    // MARK: - Properties
+    // MARK: - Type properties
+    static let viewControllerIdentifier = String(describing: LandingViewController.self)
+
+    // MARK: - Instance properties
     public weak var delegate: LandingViewControllerDelegate?
     private let activitiesViewController: ActivitiesViewController
     private var observation: NSKeyValueObservation?
@@ -37,6 +40,7 @@ public final class LandingViewController: NiblessViewController {
     public init(activitiesViewController: ActivitiesViewController) {
         self.activitiesViewController = activitiesViewController
         super.init()
+        restorationIdentifier = Self.viewControllerIdentifier
         navigationItem.title = "To Do List"
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButtonItem
@@ -79,5 +83,16 @@ public final class LandingViewController: NiblessViewController {
     
     private func updateActivitiesCountLabel(with newActivitiesCount: Int) {
         rootView.activitiesCountLabel.text = "Total: \(newActivitiesCount)"
+    }
+}
+
+// MARK: - State restoration
+extension LandingViewController {
+    
+    static let activitiesViewControllerKey = "activities"
+    
+    public override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode(activitiesViewController, forKey: Self.activitiesViewControllerKey)
     }
 }

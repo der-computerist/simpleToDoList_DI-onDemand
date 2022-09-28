@@ -12,25 +12,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    
+    func application(
+        _ application: UIApplication,
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
+        
+        window = UIWindow()
+        window?.makeKeyAndVisible()
+        return true
+    }
 
     func application(
         _ _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let activitiesViewController = ActivitiesViewController()
         
-        let landingViewController = LandingViewController(
-            activitiesViewController: activitiesViewController
-        )
-
-        let mainViewController = MainViewController(landingViewController: landingViewController)
-        landingViewController.delegate = mainViewController
-        activitiesViewController.delegate = mainViewController
+        if window?.rootViewController == nil {
+            let mainVC = makeMainViewController()
+            window?.rootViewController = mainVC
+        }
         
-        window = UIWindow()
-        window?.rootViewController = mainViewController
-        
-        window?.makeKeyAndVisible()
         return true
     }
 
@@ -56,5 +58,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ _: UIApplication, shouldRestoreSecureApplicationState _: NSCoder) -> Bool {
         true
+    }
+    
+    func application(
+        _ application: UIApplication,
+        viewControllerWithRestorationIdentifierPath identifierComponents: [String], coder: NSCoder
+    ) -> UIViewController? {
+        
+        var viewController: UIViewController?
+        let restorationIdentifier = identifierComponents.last
+        
+        switch restorationIdentifier {
+        case MainViewController.viewControllerIdentifier:
+            viewController = makeMainViewController()
+            window?.rootViewController = viewController
+        case ActivitiesViewController.viewControllerIdentifier:
+            viewController = window?.rootViewController?.children[0].children[0]
+        default:
+            break
+        }
+        
+        return viewController
+    }
+}
+
+// MARK: - Private
+extension AppDelegate {
+    
+    private func makeMainViewController() -> MainViewController {
+        let activitiesVC = ActivitiesViewController()
+        let landingVC = LandingViewController(activitiesViewController: activitiesVC)
+        let mainVC = MainViewController(landingViewController: landingVC)
+        
+        landingVC.delegate = mainVC
+        activitiesVC.delegate = mainVC
+        
+        return mainVC
     }
 }

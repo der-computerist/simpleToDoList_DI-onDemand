@@ -9,7 +9,10 @@ import Foundation
 
 public final class MainViewController: NiblessNavigationController {
     
-    // MARK: - Properties
+    // MARK: - Type properties
+    static let viewControllerIdentifier = String(describing: MainViewController.self)
+
+    // MARK: - Instance properties
     private let landingViewController: LandingViewController
     private var activityDetailViewController: ActivityDetailViewController?
     
@@ -17,6 +20,7 @@ public final class MainViewController: NiblessNavigationController {
     public init(landingViewController: LandingViewController) {
         self.landingViewController = landingViewController
         super.init()
+        restorationIdentifier = Self.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -54,7 +58,6 @@ public final class MainViewController: NiblessNavigationController {
 }
 
 // MARK: - LandingViewControllerDelegate
-
 extension MainViewController: LandingViewControllerDelegate {
     
     public func landingViewControllerAddButtonWasTapped(_ _: LandingViewController) {
@@ -63,7 +66,6 @@ extension MainViewController: LandingViewControllerDelegate {
 }
 
 // MARK: - ActivitiesViewControllerDelegate
-
 extension MainViewController: ActivitiesViewControllerDelegate {
     
     public func activitiesViewController(
@@ -75,7 +77,6 @@ extension MainViewController: ActivitiesViewControllerDelegate {
 }
 
 // MARK: - ActivityDetailViewControllerDelegate
-
 extension MainViewController: ActivityDetailViewControllerDelegate {
     
     public func activityDetailViewControllerDidCancel(_ _: ActivityDetailViewController) {
