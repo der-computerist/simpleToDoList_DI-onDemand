@@ -18,21 +18,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
         
+        let activitiesVC = ActivitiesViewController()
+        let landingVC = LandingViewController(activitiesViewController: activitiesVC)
+        let mainVC = MainViewController(landingViewController: landingVC)
+        
+        landingVC.delegate = mainVC
+        activitiesVC.delegate = mainVC
+        
         window = UIWindow()
+        window?.rootViewController = mainVC
+        
         window?.makeKeyAndVisible()
-        return true
-    }
-
-    func application(
-        _ _: UIApplication,
-        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        
-        if window?.rootViewController == nil {
-            let mainVC = makeMainViewController()
-            window?.rootViewController = mainVC
-        }
-        
         return true
     }
 
@@ -69,9 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let restorationIdentifier = identifierComponents.last
         
         switch restorationIdentifier {
-        case MainViewController.viewControllerIdentifier:
-            viewController = makeMainViewController()
-            window?.rootViewController = viewController
         case ActivitiesViewController.viewControllerIdentifier:
             viewController = window?.rootViewController?.children[0].children[0]
         default:
@@ -79,20 +72,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return viewController
-    }
-}
-
-// MARK: - Private
-extension AppDelegate {
-    
-    private func makeMainViewController() -> MainViewController {
-        let activitiesVC = ActivitiesViewController()
-        let landingVC = LandingViewController(activitiesViewController: activitiesVC)
-        let mainVC = MainViewController(landingViewController: landingVC)
-        
-        landingVC.delegate = mainVC
-        activitiesVC.delegate = mainVC
-        
-        return mainVC
     }
 }
