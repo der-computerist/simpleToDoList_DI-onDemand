@@ -5,12 +5,13 @@
 //  Created by Enrique Aliaga on 3/17/22.
 //
 
-import Foundation
+import UIKit
 
 public final class MainViewController: NiblessNavigationController {
     
     // MARK: - Type properties
     static let viewControllerIdentifier = String(describing: MainViewController.self)
+    static let navControllerIdentifier = String(describing: NiblessNavigationController.self)
 
     // MARK: - Instance properties
     private let landingViewController: LandingViewController
@@ -39,6 +40,8 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
+        navController.restorationIdentifier = Self.navControllerIdentifier
+        navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
         present(navController, animated: true)
@@ -50,6 +53,8 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
+        navController.restorationIdentifier = Self.navControllerIdentifier
+        navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
         present(navController, animated: true)
@@ -85,5 +90,30 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
     
     public func activityDetailViewControllerDidFinish(_ _: ActivityDetailViewController) {
         dismiss(animated: true)
+    }
+}
+
+// MARK: - State Restoration
+extension MainViewController: UIViewControllerRestoration {
+    
+    public static func viewController(
+        withRestorationIdentifierPath identifierComponents: [String],
+        coder: NSCoder
+    ) -> UIViewController? {
+        
+        var viewController: UIViewController?
+        let restorationIdentifier = identifierComponents.last
+        
+        switch restorationIdentifier {
+        case Self.navControllerIdentifier:
+            let navController = NiblessNavigationController()
+            navController.restorationIdentifier = restorationIdentifier
+            navController.restorationClass = self
+            viewController = navController
+        default:
+            break
+        }
+        
+        return viewController
     }
 }

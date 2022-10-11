@@ -15,7 +15,10 @@ public protocol ActivityDetailViewControllerDelegate: AnyObject {
 
 public final class ActivityDetailViewController: NiblessViewController {
     
-    // MARK: - Properties
+    // MARK: - Type properties
+    static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
+
+    // MARK: - Instance properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
     private let flow: ActivityDetailView
@@ -67,6 +70,8 @@ public final class ActivityDetailViewController: NiblessViewController {
         
         super.init()
         
+        restorationIdentifier = Self.viewControllerIdentifier
+        restorationClass = type(of: self)
         navigationItem.title = self.flow.title
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem =
@@ -260,5 +265,40 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
         // A user-initiated attempt to dismiss the view was prevented because
         // there were unsaved changes. Ask the user to confirm their intention.
         confirmCancel()
+    }
+}
+
+// MARK: - State Restoration
+extension ActivityDetailViewController: UIViewControllerRestoration {
+
+    public static func viewController(
+        withRestorationIdentifierPath identifierComponents: [String],
+        coder: NSCoder
+    ) -> UIViewController? {
+
+        var viewController: ActivityDetailViewController?
+        
+        if let activityID = coder.decodeObject(forKey: Self.activityKey) as? String,
+           let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
+            viewController = ActivityDetailViewController(for: .existingActivity(activity))
+        } else {
+            viewController = ActivityDetailViewController(for: .newActivity)
+        }
+
+        return viewController
+    }
+}
+
+extension ActivityDetailViewController {
+
+    static let activityKey = "activity"
+
+    public override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+        // Preserve the activity ID only if we are editing an existing activity.
+        if case .existingActivity = flow {
+            coder.encode(activity.id, forKey: ActivityDetailViewController.activityKey)
+        }
     }
 }
