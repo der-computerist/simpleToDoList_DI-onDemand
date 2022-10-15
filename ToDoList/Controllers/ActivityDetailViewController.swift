@@ -53,6 +53,19 @@ public final class ActivityDetailViewController: NiblessViewController {
         )
         return buttonItem
     }()
+    
+    // MARK: State Restoration
+    /**
+     If state restoration occurred, this flag indicates whether the view controller was
+     in editing mode or not when the app was suspended.
+     */
+    private var wasEditing = false
+    
+    /**
+     If state restoration occurred, this variable holds a reference to which field was
+     active (first responder) when the app was suspended.
+     */
+    private var lastActiveField: UIView?
 
     // MARK: - Methods
     public init(for flow: ActivityDetailView) {
@@ -120,10 +133,30 @@ public final class ActivityDetailViewController: NiblessViewController {
         if isFirstLayout {
             defer { isFirstLayout = false }
             
-            // For user convenience, when creating a new activity, present the keyboard as
-            // soon as the view begins to appear.
-            if case .newActivity = flow {
-                rootView.nameField.becomeFirstResponder()
+            switch flow {
+            case .newActivity:
+                // When creating a new activity, present the keyboard as soon as the view
+                // begins to appear.
+                
+                // If state restoration occurred, bring focus back to the last active field;
+                // otherwise, focus on the name field.
+                if let lastActiveField = lastActiveField {
+                    lastActiveField.becomeFirstResponder()
+                } else {
+                    rootView.nameField.becomeFirstResponder()
+                }
+
+            case .existingActivity:
+                // If state restoration occurred, restore the editing state of the
+                // view controller...
+                if wasEditing {
+                    isEditing = wasEditing
+  
+                    // ...and bring the focus back to the last active field (if any).
+                    if let lastActiveField = lastActiveField {
+                        lastActiveField.becomeFirstResponder()
+                    }
+                }
             }
         }
     }
@@ -188,9 +221,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func updateViewFromActivity() {
-        rootView.nameField.text = activity.name
-        rootView.descriptionTextView.text = activity.activityDescription
-        rootView.doneSwitch.isOn = activity.status == .done ? true : false
+        rootView.nameField.text = activityBuilder.name
+        rootView.descriptionTextView.text = activityBuilder.description
+        rootView.doneSwitch.isOn = activityBuilder.status == .done ? true : false
     }
     
     private func confirmSave() {
@@ -269,6 +302,85 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
 }
 
 // MARK: - State Restoration
+extension ActivityDetailViewController {
+
+    static let activityIDKey = "activityID"
+    static let activityDetailViewControllerIsEditingKey = "activityDetailViewControllerIsEditing"
+    static let activityHasUnsavedChangesKey = "activityHasUnsavedChanges"
+    static let editedNameKey = "editedName"
+    static let editedDescriptionKey = "editedDescription"
+    static let editedStatusKey = "editedStatus"
+    static let activeFieldKey = "activeField"
+
+    public override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+        // Preserve the activity ID and editing state only if we are editing an existing activity.
+        if case .existingActivity = flow {
+            coder.encode(activity.id, forKey: Self.activityIDKey)
+            coder.encode(isEditing, forKey: Self.activityDetailViewControllerIsEditingKey)
+        }
+        
+        // Write out any temporary data if editing is in progress.
+        if activityBuilder.hasChanges() {
+            coder.encode(activityBuilder.hasChanges(), forKey: Self.activityHasUnsavedChangesKey)
+            coder.encode(activityBuilder.name, forKey: Self.editedNameKey)
+            coder.encode(activityBuilder.description, forKey: Self.editedDescriptionKey)
+            coder.encode(activityBuilder.status.rawValue, forKey: Self.editedStatusKey)
+        }
+        
+        // Keep track of the active field.
+        if rootView.nameField.isFirstResponder {
+            coder.encode(Int32(1), forKey: Self.activeFieldKey)
+            
+        } else if rootView.descriptionTextView.isFirstResponder {
+            coder.encode(Int32(2), forKey: Self.activeFieldKey)
+            
+        } else {
+            coder.encode(Int32(0), forKey: Self.activeFieldKey)  // No field was active
+        }
+    }
+
+    public override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        
+        // Decode the editing state only if we were editing an existing activity.
+        if case .existingActivity = flow {
+            wasEditing = coder.decodeBool(forKey: Self.activityDetailViewControllerIsEditingKey)
+        }
+        
+        // Restore any unsaved data if editing was in progress.
+        let activityHasUnsavedChanges = coder.decodeBool(forKey: Self.activityHasUnsavedChangesKey)
+        if activityHasUnsavedChanges {
+            if let name = coder.decodeObject(forKey: Self.editedNameKey) as? String {
+                activityBuilder.name = name
+            }
+            if let description = coder.decodeObject(forKey: Self.editedDescriptionKey) as? String {
+                activityBuilder.description = description
+            }
+            let rawStatus = coder.decodeInteger(forKey: Self.editedStatusKey)
+            if let status = Activity.Status(rawValue: rawStatus) {
+                activityBuilder.status = status
+            }
+        }
+
+        // Decode the identity of the last active field (if any).
+        let activeField = coder.decodeInteger(forKey: Self.activeFieldKey)
+        switch activeField {
+        case 1:
+            lastActiveField = rootView.nameField
+        case 2:
+            lastActiveField = rootView.descriptionTextView
+        default:
+            lastActiveField = nil
+        }
+    }
+
+    public override func applicationFinishedRestoringState() {
+        updateViewFromActivity()
+    }
+}
+
 extension ActivityDetailViewController: UIViewControllerRestoration {
 
     public static func viewController(
@@ -276,29 +388,12 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
         coder: NSCoder
     ) -> UIViewController? {
 
-        var viewController: ActivityDetailViewController?
-        
-        if let activityID = coder.decodeObject(forKey: Self.activityKey) as? String,
+
+        if let activityID = coder.decodeObject(forKey: Self.activityIDKey) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
-            viewController = ActivityDetailViewController(for: .existingActivity(activity))
+            return self.init(for: .existingActivity(activity))
         } else {
-            viewController = ActivityDetailViewController(for: .newActivity)
-        }
-
-        return viewController
-    }
-}
-
-extension ActivityDetailViewController {
-
-    static let activityKey = "activity"
-
-    public override func encodeRestorableState(with coder: NSCoder) {
-        super.encodeRestorableState(with: coder)
-
-        // Preserve the activity ID only if we are editing an existing activity.
-        if case .existingActivity = flow {
-            coder.encode(activity.id, forKey: ActivityDetailViewController.activityKey)
+            return self.init(for: .newActivity)
         }
     }
 }
