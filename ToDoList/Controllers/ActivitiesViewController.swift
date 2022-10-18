@@ -39,6 +39,8 @@ public final class ActivitiesViewController: NiblessTableViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.dataSource = self  // For some reason, this is needed for
+                                     // `UIDataSourceModelAssociation` methods to be called.
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.restorationIdentifier = Self.tableViewIdentifier
         observation = observeActivities(on: GlobalToDoListActivityRepository)
@@ -115,7 +117,7 @@ extension ActivitiesViewController {
     }
 }
 
-// MARK: - State restoration
+// MARK: - State Restoration
 extension ActivitiesViewController {
     
     public override func encodeRestorableState(with coder: NSCoder) {
@@ -124,5 +126,24 @@ extension ActivitiesViewController {
     
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
+    }
+}
+
+extension ActivitiesViewController: UIDataSourceModelAssociation {
+    
+    public func modelIdentifierForElement(at idx: IndexPath, in view: UIView) -> String? {
+        activities[idx.row].id
+    }
+    
+    public func indexPathForElement(
+        withModelIdentifier identifier: String,
+        in view: UIView
+    ) -> IndexPath? {
+        
+        guard let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: identifier),
+              let index = activities.firstIndex(of: activity) else {
+            return nil
+        }
+        return IndexPath(row: index, section: 0)
     }
 }
