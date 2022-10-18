@@ -299,6 +299,10 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
         // there were unsaved changes. Ask the user to confirm their intention.
         confirmCancel()
     }
+    
+    public func presentationControllerDidDismiss(_ _: UIPresentationController) {
+        delegate?.activityDetailViewControllerDidCancel(self)
+    }
 }
 
 // MARK: - State Restoration

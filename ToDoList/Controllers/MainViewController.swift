@@ -85,10 +85,12 @@ extension MainViewController: ActivitiesViewControllerDelegate {
 extension MainViewController: ActivityDetailViewControllerDelegate {
     
     public func activityDetailViewControllerDidCancel(_ _: ActivityDetailViewController) {
+        activityDetailViewController = nil
         dismiss(animated: true)
     }
     
     public func activityDetailViewControllerDidFinish(_ _: ActivityDetailViewController) {
+        activityDetailViewController = nil
         dismiss(animated: true)
     }
 }
