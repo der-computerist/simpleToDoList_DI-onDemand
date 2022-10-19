@@ -89,7 +89,7 @@ public final class LandingViewController: NiblessViewController {
 // MARK: - State restoration
 extension LandingViewController {
     
-    static let activitiesViewControllerKey = "activities"
+    static let activitiesViewControllerKey = "activitiesViewController"
     static let activitiesViewControllerIsEditingKey = "activitiesViewControllerIsEditing"
     
     public override func encodeRestorableState(with coder: NSCoder) {

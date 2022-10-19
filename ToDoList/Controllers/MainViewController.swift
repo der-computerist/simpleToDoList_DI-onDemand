@@ -96,6 +96,25 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
 }
 
 // MARK: - State Restoration
+extension MainViewController {
+    
+    static let activityDetailViewControllerKey = "activityDetailViewController"
+
+    public override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode(activityDetailViewController, forKey: Self.activityDetailViewControllerKey)
+    }
+
+    public override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        
+        if let activityDetailVC = coder.decodeObject(of: ActivityDetailViewController.self,
+           forKey: Self.activityDetailViewControllerKey) {
+            activityDetailViewController = activityDetailVC
+        }
+    }
+}
+
 extension MainViewController: UIViewControllerRestoration {
     
     public static func viewController(
