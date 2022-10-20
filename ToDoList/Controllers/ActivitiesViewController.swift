@@ -118,17 +118,6 @@ extension ActivitiesViewController {
 }
 
 // MARK: - State Restoration
-extension ActivitiesViewController {
-    
-    public override func encodeRestorableState(with coder: NSCoder) {
-        super.encodeRestorableState(with: coder)
-    }
-    
-    public override func decodeRestorableState(with coder: NSCoder) {
-        super.decodeRestorableState(with: coder)
-    }
-}
-
 extension ActivitiesViewController: UIDataSourceModelAssociation {
     
     public func modelIdentifierForElement(at idx: IndexPath, in view: UIView) -> String? {

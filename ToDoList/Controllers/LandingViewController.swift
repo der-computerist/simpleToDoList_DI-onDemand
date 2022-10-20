@@ -86,7 +86,7 @@ public final class LandingViewController: NiblessViewController {
     }
 }
 
-// MARK: - State restoration
+// MARK: - State Restoration
 extension LandingViewController {
     
     static let activitiesViewControllerKey = "activitiesViewController"

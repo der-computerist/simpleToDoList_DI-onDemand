@@ -392,7 +392,6 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
         coder: NSCoder
     ) -> UIViewController? {
 
-
         if let activityID = coder.decodeObject(forKey: Self.activityIDKey) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
             return self.init(for: .existingActivity(activity))
