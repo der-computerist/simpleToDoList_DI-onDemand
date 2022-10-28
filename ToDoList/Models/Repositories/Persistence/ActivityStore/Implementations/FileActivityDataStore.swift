@@ -19,7 +19,15 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
     }
     @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
     
+    /**
+     Proxy to the `activities` array that allows the Key-Value Observing mechanism to
+     communicate the kind of change to any observers.
+     
+     Any changes to the `activities` array must be made through this proxy; otherwise,
+     KVO won't be able to detect the kind of change.
+     */
     private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
+    
     private let fileName = "activities"
 
     // MARK: - Object lifecycle
@@ -45,18 +53,18 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
             kvoActivities[index] = activity
+            print("Activity updated!")
         } else {
             // Otherwise, add to the end of the array
             kvoActivities.add(activity)
+            print("New activity registered!")
         }
-        print("Activity registered!")
         completion?(activity)
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
-        if let index = activities.firstIndex(of: activity) {
-            kvoActivities.removeObject(at: index)
-        }
+        guard let index = activities.firstIndex(of: activity) else { return }
+        kvoActivities.removeObject(at: index)
         print("Activity deleted")
         completion?(activity)
     }

@@ -19,7 +19,16 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
 
     private let dataStore: NSObject & ActivityDataStore
+    
+    /**
+     Proxy to the `activities` array that allows the Key-Value Observing mechanism to
+     communicate the kind of change to any observers.
+     
+     Any changes to the `activities` array must be made through this proxy; otherwise,
+     KVO won't be able to detect the kind of change.
+     */
     private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
+    
     private var activitiesObservation: NSKeyValueObservation?
     private var activitiesCountObservation: NSKeyValueObservation?
     
