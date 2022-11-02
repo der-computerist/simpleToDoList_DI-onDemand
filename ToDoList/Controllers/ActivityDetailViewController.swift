@@ -137,26 +137,11 @@ public final class ActivityDetailViewController: NiblessViewController {
             case .newActivity:
                 // When creating a new activity, present the keyboard as soon as the view
                 // begins to appear.
-                
-                // If state restoration occurred, bring focus back to the last active field;
-                // otherwise, focus on the name field.
-                if let lastActiveField = lastActiveField {
-                    lastActiveField.becomeFirstResponder()
-                } else {
-                    rootView.nameField.becomeFirstResponder()
-                }
-
+                showKeyboard()
             case .existingActivity:
                 // If state restoration occurred, restore the editing state of the
-                // view controller...
-                if wasEditing {
-                    isEditing = wasEditing
-  
-                    // ...and bring the focus back to the last active field (if any).
-                    if let lastActiveField = lastActiveField {
-                        lastActiveField.becomeFirstResponder()
-                    }
-                }
+                // view controller.
+                if wasEditing { isEditing = wasEditing }
             }
         }
     }
@@ -194,19 +179,17 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: Editing Mode
     public override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        
-        if editing {
-            rootView.nameField.isEnabled = true
-            rootView.descriptionTextView.isUserInteractionEnabled = true
-            rootView.doneSwitch.isEnabled = true
-            editButtonItem.isEnabled = false
-            rootView.nameField.becomeFirstResponder()
-            
-        } else {
-            isEditing = true  // do not exit editing mode until the save is successful
+        // Handle tap on "Done"
+        if !editing {
             handleSavePressed(sender: editButtonItem)
+            return
         }
+        
+        // Handle tap on "Edit"
+        super.setEditing(editing, animated: animated)
+        updateViewForEditing(editing)
+        rootView.setNeedsLayout()
+        showKeyboard()
     }
     
     // MARK: Private
@@ -257,6 +240,16 @@ public final class ActivityDetailViewController: NiblessViewController {
         GlobalToDoListActivityRepository.update(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
+    }
+    
+    private func updateViewForEditing(_ editing: Bool) {
+        rootView.nameField.isEnabled = editing
+        rootView.descriptionTextView.isUserInteractionEnabled = editing
+        rootView.doneSwitch.isEnabled = editing
+    }
+    
+    private func showKeyboard() {
+        (lastActiveField ?? rootView.nameField).becomeFirstResponder()
     }
 }
 

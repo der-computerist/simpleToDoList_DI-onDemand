@@ -90,16 +90,16 @@ public final class LandingViewController: NiblessViewController {
 extension LandingViewController {
     
     static let activitiesViewControllerKey = "activitiesViewController"
-    static let activitiesViewControllerIsEditingKey = "activitiesViewControllerIsEditing"
+    static let landingViewControllerIsEditingKey = "landingViewControllerIsEditing"
     
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
         coder.encode(activitiesViewController, forKey: Self.activitiesViewControllerKey)
-        coder.encode(isEditing, forKey: Self.activitiesViewControllerIsEditingKey)
+        coder.encode(isEditing, forKey: Self.landingViewControllerIsEditingKey)
     }
     
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
-        isEditing = coder.decodeBool(forKey: Self.activitiesViewControllerIsEditingKey)
+        isEditing = coder.decodeBool(forKey: Self.landingViewControllerIsEditingKey)
     }
 }
