@@ -24,7 +24,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     private let flow: ActivityDetailView
     private var activity: Activity
     private lazy var activityBuilder = ActivityBuilder(activity: activity) {
-        didSet{
+        didSet {
             viewIfLoaded?.setNeedsLayout()
         }
     }

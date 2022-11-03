@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ActivityDetailView {
+public enum ActivityDetailView: Equatable {
     
     case newActivity
     case existingActivity(Activity)
@@ -54,21 +54,6 @@ public enum ActivityDetailView {
             return false
         case .newActivity:
             return true
-        }
-    }
-}
-
-extension ActivityDetailView: Equatable {
-    
-    public static func == (lhs: ActivityDetailView, rhs: ActivityDetailView) -> Bool {
-        switch (lhs, rhs) {
-        case (.newActivity, .newActivity):
-            return true
-        case let (.existingActivity(l), .existingActivity(r)):
-            return l == r
-        case (.newActivity, _),
-             (.existingActivity, _):
-            return false
         }
     }
 }

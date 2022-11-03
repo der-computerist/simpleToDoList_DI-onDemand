@@ -33,7 +33,7 @@ public class Activity: NSObject, Codable {
     }
 }
 
-// MARK: - Equality
+// MARK: - Equatable
 extension Activity {
     
     public override func isEqual(_ object: Any?) -> Bool {
