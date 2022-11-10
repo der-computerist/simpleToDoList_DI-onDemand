@@ -1,14 +1,14 @@
 //
-//  ToDoListTests.swift
-//  ToDoListTests
+//  LandingViewControllerTests.swift
+//  ToDoListUITests
 //
-//  Created by Enrique Aliaga on 11/5/21.
+//  Created by Enrique Aliaga on 11/8/22.
 //
 
 import XCTest
 @testable import ToDoList
 
-final class ToDoListTests: XCTestCase {
+final class LandingViewControllerTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
