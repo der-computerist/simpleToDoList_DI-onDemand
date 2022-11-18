@@ -17,3 +17,14 @@ public protocol ActivityRepository {
     func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
 }
+
+extension ActivityRepository {
+    
+    func update(activity: Activity) {
+        update(activity: activity, completion: nil)
+    }
+    
+    func delete(activity: Activity) {
+        delete(activity: activity, completion: nil)
+    }
+}

@@ -101,7 +101,7 @@ extension ActivitiesViewController {
     ) {
         if editingStyle == .delete {
             let activity = activities[indexPath.row]
-            GlobalToDoListActivityRepository.delete(activity: activity, completion: nil)
+            GlobalToDoListActivityRepository.delete(activity: activity)
         }
     }
 }
