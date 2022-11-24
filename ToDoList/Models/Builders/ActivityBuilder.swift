@@ -61,22 +61,21 @@ public struct ActivityBuilder {
                         id: id,
                         dateCreated: dateCreated)
     }
+}
+
+// MARK: - Activity Creation Error
+extension ActivityBuilder {
     
-    // MARK: - Activity Creation Error
     public enum Error: Swift.Error {
         case nameEmpty
         case nameTooLong(maxCharacters: Int)
         case descriptionTooLong(maxCharacters: Int)
+        
+        public static let title = NSLocalizedString(
+            "Activity Creation Error",
+            comment: "ActivityCreationError.title"
+        )
     }
-}
-
-// MARK: Public
-extension ActivityBuilder.Error {
-    
-    public static let title = NSLocalizedString(
-        "Activity Creation Error",
-        comment: "ActivityCreationError.title"
-    )
 }
 
 // MARK: LocalizedError
