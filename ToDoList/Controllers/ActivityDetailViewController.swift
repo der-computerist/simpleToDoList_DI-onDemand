@@ -21,7 +21,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     // MARK: - Instance properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
-    private let flow: ActivityDetailView
+    private let flow: Flow
     private var activity: Activity
     private lazy var activityBuilder = ActivityBuilder(activity: activity) {
         didSet {
@@ -68,7 +68,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     private var lastActiveField: UIView?
 
     // MARK: - Methods
-    public init(for flow: ActivityDetailView) {
+    public init(for flow: Flow) {
         self.flow = flow
         
         if let existingActivity = self.flow.activity {
@@ -295,6 +295,60 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
     
     public func presentationControllerDidDismiss(_ _: UIPresentationController) {
         delegate?.activityDetailViewControllerDidCancel(self)
+    }
+}
+
+// MARK: - Flow
+extension ActivityDetailViewController {
+    
+    public enum Flow: Equatable {
+        case newActivity
+        case existingActivity(Activity)
+        
+        var activity: Activity? {
+            switch self {
+            case let .existingActivity(activity):
+                return activity
+            case .newActivity:
+                return nil
+            }
+        }
+        
+        var title: String {
+            switch self {
+            case .existingActivity:
+                return "Details"
+            case .newActivity:
+                return "New Activity"
+            }
+        }
+        
+        var hidesActivityStatus: Bool {
+            switch self {
+            case .existingActivity:
+                return false
+            case .newActivity:
+                return true
+            }
+        }
+        
+        var enablesNameField: Bool {
+            switch self {
+            case .existingActivity:
+                return false
+            case .newActivity:
+                return true
+            }
+        }
+        
+        var enablesDescriptionField: Bool {
+            switch self {
+            case .existingActivity:
+                return false
+            case .newActivity:
+                return true
+            }
+        }
     }
 }
 
