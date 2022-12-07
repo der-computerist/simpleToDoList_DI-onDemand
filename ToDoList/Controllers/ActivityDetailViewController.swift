@@ -22,6 +22,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
     private let flow: Flow
+    private let activityRepository: ActivityRepository
     private var activity: Activity
     private lazy var activityBuilder = ActivityBuilder(activity: activity) {
         didSet {
@@ -68,8 +69,9 @@ public final class ActivityDetailViewController: NiblessViewController {
     private var lastActiveField: UIView?
 
     // MARK: - Methods
-    public init(for flow: Flow) {
+    public init(for flow: Flow, activityRepository: ActivityRepository) {
         self.flow = flow
+        self.activityRepository = activityRepository
         
         if let existingActivity = self.flow.activity {
             activity = existingActivity
@@ -237,7 +239,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        GlobalToDoListActivityRepository.update(activity: activity) { _ in
+        activityRepository.update(activity: activity) { _ in
             self.delegate?.activityDetailViewControllerDidFinish(self)
         }
     }
@@ -441,9 +443,11 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
 
         if let activityID = coder.decodeObject(forKey: Self.activityIDKey) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
-            return self.init(for: .existingActivity(activity))
+            return self.init(for: .existingActivity(activity),
+                             activityRepository: GlobalToDoListActivityRepository)
         } else {
-            return self.init(for: .newActivity)
+            return self.init(for: .newActivity,
+                             activityRepository: GlobalToDoListActivityRepository)
         }
     }
 }

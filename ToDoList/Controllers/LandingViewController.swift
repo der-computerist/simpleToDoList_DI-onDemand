@@ -19,7 +19,9 @@ public final class LandingViewController: NiblessViewController {
 
     // MARK: - Instance properties
     public weak var delegate: LandingViewControllerDelegate?
+    
     private let activitiesViewController: ActivitiesViewController
+    private let activityRepository: NSObject & ActivityRepository
     private var observation: NSKeyValueObservation?
 
     private var rootView: LandingRootView! {
@@ -37,9 +39,15 @@ public final class LandingViewController: NiblessViewController {
     }()
     
     // MARK: - Methods
-    public init(activitiesViewController: ActivitiesViewController) {
+    public init(
+        activitiesViewController: ActivitiesViewController,
+        activityRepository: NSObject & ActivityRepository
+    ) {
         self.activitiesViewController = activitiesViewController
+        self.activityRepository = activityRepository
+        
         super.init()
+        
         restorationIdentifier = Self.viewControllerIdentifier
         navigationItem.title = "To Do List"
         navigationItem.leftBarButtonItem = editButtonItem
@@ -54,7 +62,7 @@ public final class LandingViewController: NiblessViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         add(childViewController: activitiesViewController, over: rootView.activitiesContainerView)
-        observation = observeActivitiesCount(on: GlobalToDoListActivityRepository)
+        observation = observeActivitiesCount(on: activityRepository)
     }
     
     // MARK: Actions

@@ -13,9 +13,9 @@ public protocol ActivityRepository {
     @objc dynamic var activities: [Activity] { get }
     @objc dynamic var activitiesCount: Int { get }
 
-    func activity(fromIdentifier activityID: ActivityID) -> Activity?
     func update(activity: Activity, completion: ((Activity) -> Void)?)
     func delete(activity: Activity, completion: ((Activity) -> Void)?)
+    func activity(fromIdentifier activityID: ActivityID) -> Activity?
 }
 
 extension ActivityRepository {

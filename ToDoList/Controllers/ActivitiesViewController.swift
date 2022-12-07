@@ -23,14 +23,15 @@ public final class ActivitiesViewController: NiblessTableViewController {
     
     // MARK: - Instance properties
     public weak var delegate: ActivitiesViewControllerDelegate?
-    private var activities: [Activity] {
-        GlobalToDoListActivityRepository.activities
-    }
+    
+    private let activityRepository: NSObject & ActivityRepository
+    private var activities: [Activity] { activityRepository.activities }
     private let cellIdentifier = "UITableViewCell"
     private var observation: NSKeyValueObservation?
     
     // MARK: - Methods
-    public init() {
+    public init(activityRepository: NSObject & ActivityRepository) {
+        self.activityRepository = activityRepository
         super.init(style: .plain)
         restorationIdentifier = Self.viewControllerIdentifier
     }
@@ -43,7 +44,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
                                      // `UIDataSourceModelAssociation` methods to be called.
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.restorationIdentifier = Self.tableViewIdentifier
-        observation = observeActivities(on: GlobalToDoListActivityRepository)
+        observation = observeActivities(on: activityRepository)
     }
     
     // MARK: Private
@@ -101,7 +102,7 @@ extension ActivitiesViewController {
     ) {
         if editingStyle == .delete {
             let activity = activities[indexPath.row]
-            GlobalToDoListActivityRepository.delete(activity: activity)
+            activityRepository.delete(activity: activity)
         }
     }
 }
@@ -129,7 +130,7 @@ extension ActivitiesViewController: UIDataSourceModelAssociation {
         in view: UIView
     ) -> IndexPath? {
         
-        guard let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: identifier),
+        guard let activity = activityRepository.activity(fromIdentifier: identifier),
               let index = activities.firstIndex(of: activity) else {
             return nil
         }

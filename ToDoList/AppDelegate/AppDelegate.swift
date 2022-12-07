@@ -18,8 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
         
-        let activitiesVC = ActivitiesViewController()
-        let landingVC = LandingViewController(activitiesViewController: activitiesVC)
+        let activitiesVC = ActivitiesViewController(
+            activityRepository: GlobalToDoListActivityRepository
+        )
+        let landingVC = LandingViewController(
+            activitiesViewController: activitiesVC,
+            activityRepository: GlobalToDoListActivityRepository
+        )
         let mainVC = MainViewController(landingViewController: landingVC)
         
         landingVC.delegate = mainVC
