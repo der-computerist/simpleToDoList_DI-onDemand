@@ -15,10 +15,16 @@ public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
 public class ToDoListActivityRepository: NSObject, ActivityRepository {
 
     // MARK: - Properties
-    public private(set) lazy var activities: [Activity] = dataStore.activities
+    public private(set) lazy var activities: [Activity] = dataStore.readActivities() {
+        didSet {
+            if activities.count != oldValue.count {
+                updateActivitiesCount()
+            }
+        }
+    }
     @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
 
-    private let dataStore: NSObject & ActivityDataStore
+    private let dataStore: ActivityDataStore
     
     /**
      Proxy to the `activities` array that allows the Key-Value Observing mechanism to
@@ -29,66 +35,46 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
      */
     private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
     
-    private var activitiesObservation: NSKeyValueObservation?
-    private var activitiesCountObservation: NSKeyValueObservation?
-    
     // MARK: - Object lifecycle
-    public init(dataStore: NSObject & ActivityDataStore) {
+    public init(dataStore: ActivityDataStore) {
         self.dataStore = dataStore
-        super.init()
-        activitiesObservation = observeActivities(on: dataStore)
-        activitiesCountObservation = observeActivitiesCount(on: dataStore)
     }
     
     // MARK: - Methods
-    public func activity(fromIdentifier activityID: ActivityID) -> Activity? {
-        dataStore.activity(fromIdentifier: activityID)
-    }
-    
     public func update(activity: Activity, completion: ((Activity) -> Void)?) {
-        dataStore.update(activity: activity, completion: completion)
-        try? dataStore.save()
+        if let index = activities.firstIndex(of: activity) {
+            // If the activity already exists, update it
+            kvoActivities[index] = activity
+            print("Activity updated!")
+        } else {
+            // Otherwise, add to the end of the array
+            kvoActivities.add(activity)
+            print("New activity registered!")
+        }
+        completion?(activity)
+        try? dataStore.save(activities: activities)
     }
     
     public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
-        dataStore.delete(activity: activity, completion: completion)
-        try? dataStore.save()
+        guard let index = activities.firstIndex(of: activity) else { return }
+        kvoActivities.removeObject(at: index)
+        print("Activity deleted!")
+        completion?(activity)
+        try? dataStore.save(activities: activities)
+    }
+    
+    public func activity(fromIdentifier activityID: ActivityID) -> Activity? {
+        let filteredActivities = activities.filter({ $0.id == activityID })
+        if filteredActivities.isEmpty { return nil }
+        return filteredActivities.first
     }
     
     // MARK: Private
     private func calculateActivitiesCount() -> Int {
-        dataStore.activitiesCount
+        activities.count
     }
     
-    private func observeActivities<T: NSObject & ActivityDataStore>(
-        on subject: T
-    ) -> NSKeyValueObservation {
-        
-        subject.observe(\.activities, options: .new) { [weak self] subject, change in
-            switch change.kind {
-            case .insertion:
-                guard let newActivities = change.newValue,
-                      let newActivity = newActivities.first else { return }
-                self?.kvoActivities.add(newActivity)
-            case .removal:
-                guard let index = change.indexes?.first else { return }
-                self?.kvoActivities.removeObject(at: index)
-            case .replacement:
-                guard let index = change.indexes?.first,
-                      let newActivity = change.newValue?.first else { return }
-                self?.kvoActivities[index] = newActivity
-            default:
-                self?.activities = subject.activities
-            }
-        }
-    }
-
-    private func observeActivitiesCount<T: NSObject & ActivityDataStore>(
-        on subject: T
-    ) -> NSKeyValueObservation {
-        
-        subject.observe(\.activitiesCount, options: .new) { [weak self] subject, _ in
-            self?.activitiesCount = subject.activitiesCount
-        }
+    private func updateActivitiesCount() {
+        activitiesCount = activities.count
     }
 }

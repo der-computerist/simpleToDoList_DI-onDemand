@@ -7,63 +7,20 @@
 
 import Foundation
 
-public class FileActivityDataStore: NSObject, ActivityDataStore {
+public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
-    public private(set) var activities = [Activity]() {
-        didSet {
-            if activities.count != oldValue.count {
-                updateActivitiesCount()
-            }
-        }
-    }
-    @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
-    
-    /**
-     Proxy to the `activities` array that allows the Key-Value Observing mechanism to
-     communicate the kind of change to any observers.
-     
-     Any changes to the `activities` array must be made through this proxy; otherwise,
-     KVO won't be able to detect the kind of change.
-     */
-    private lazy var kvoActivities = mutableArrayValue(forKey: #keyPath(activities))
-    
     private let fileName = "activities"
 
-    // MARK: - Object lifecycle
-    public override init() {
-        super.init()
-        loadActivities()
-    }
-    
-    private func loadActivities() {
-        if let activities = try? DiskCaretaker.retrieve([Activity].self, from: fileName) {
-            self.activities = activities
-        }
-    }
-
     // MARK: - Methods
-    public func update(activity: Activity, completion: ((Activity) -> Void)?) {
-        if let index = activities.firstIndex(of: activity) {
-            // If the activity already exists, update it
-            kvoActivities[index] = activity
-            print("Activity updated!")
-        } else {
-            // Otherwise, add to the end of the array
-            kvoActivities.add(activity)
-            print("New activity registered!")
+    public func readActivities() -> [Activity] {
+        if let activities = try? DiskCaretaker.retrieve([Activity].self, from: fileName) {
+            return activities
         }
-        completion?(activity)
+        return []
     }
     
-    public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
-        guard let index = activities.firstIndex(of: activity) else { return }
-        kvoActivities.removeObject(at: index)
-        print("Activity deleted")
-        completion?(activity)
-    }
-    
-    public func save() throws {
+    public func save(activities: [Activity]) throws {
         do {
             try DiskCaretaker.save(activities, to: fileName)
             print("ALL ACTIVITIES SAVED!")
@@ -71,14 +28,5 @@ public class FileActivityDataStore: NSObject, ActivityDataStore {
             print("ERROR: Could not save the activities :(")
             throw error
         }
-    }
-
-    // MARK: Private
-    private func calculateActivitiesCount() -> Int {
-        activities.count
-    }
-    
-    private func updateActivitiesCount() {
-        activitiesCount = activities.count
     }
 }
