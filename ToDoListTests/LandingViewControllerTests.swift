@@ -8,31 +8,6 @@
 import XCTest
 @testable import ToDoList
 
-func constructTestingViews() -> (AppDelegate, MainViewController, LandingViewController) {
-    let activitiesVC = ActivitiesViewController(
-        activityRepository: GlobalToDoListActivityRepository
-    )
-    let landingVC = LandingViewController(
-        activitiesViewController: activitiesVC,
-        activityRepository: GlobalToDoListActivityRepository
-    )
-    let mainVC = MainViewController(landingViewController: landingVC)
-    
-    landingVC.delegate = mainVC
-    activitiesVC.delegate = mainVC
-    
-    landingVC.loadViewIfNeeded()
-    
-    let appDelegate = AppDelegate()
-    
-    let window = UIWindow()
-    window.rootViewController = mainVC
-    appDelegate.window = window
-    
-    window.makeKeyAndVisible()
-    return (appDelegate, mainVC, landingVC)
-}
-
 final class LandingViewControllerTests: XCTestCase {
     
     // MARK: - Properties
@@ -42,8 +17,6 @@ final class LandingViewControllerTests: XCTestCase {
 
     // MARK: - Methods
     override func setUp() {
-        super.setUp()
-        
         let tuple = constructTestingViews()
         appDelegate = tuple.0
         mainViewController = tuple.1
@@ -94,16 +67,44 @@ final class LandingViewControllerTests: XCTestCase {
         XCTAssertFalse(activitiesVC.isEditing)
     }
     
-    func test_createNewActivity() {
+    func test_createNewActivity() throws {
         guard let navigationItemRightButton =
            landingViewController.navigationItem.rightBarButtonItem else {
             XCTFail("Add button item is missing.")
             return
         }
         landingViewController.handleAddButtonPressed(sender: navigationItemRightButton)
-        let navController = landingViewController.presentedViewController as? UINavigationController
-        let activityDetailVC = navController?.topViewController
-        XCTAssert(activityDetailVC?.navigationItem.title == "New Activity")
+        let navController =
+            try XCTUnwrap(landingViewController.presentedViewController as? UINavigationController)
+        let activityDetailVC =
+            try XCTUnwrap(navController.topViewController as? ActivityDetailViewController)
+        XCTAssert(activityDetailVC.navigationItem.title == "New Activity")
         landingViewController.dismiss(animated: false, completion: nil)
+    }
+    
+    // MARK: Private
+    func constructTestingViews() -> (AppDelegate, MainViewController, LandingViewController) {
+        let activitiesVC = ActivitiesViewController(
+            activityRepository: GlobalToDoListActivityRepository
+        )
+        let landingVC = LandingViewController(
+            activitiesViewController: activitiesVC,
+            activityRepository: GlobalToDoListActivityRepository
+        )
+        let mainVC = MainViewController(landingViewController: landingVC)
+        
+        landingVC.delegate = mainVC
+        activitiesVC.delegate = mainVC
+        
+        landingVC.loadViewIfNeeded()
+        
+        let appDelegate = AppDelegate()
+        
+        let window = UIWindow()
+        window.rootViewController = mainVC
+        appDelegate.window = window
+        
+        window.makeKeyAndVisible()
+        return (appDelegate, mainVC, landingVC)
     }
 }

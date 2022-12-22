@@ -29,12 +29,12 @@ public class FakeActivityDataStore: ActivityDataStore {
                          dateCreated: Date()),
                 Activity(name: "Play Grand Theft Auto V",
                          description: "On the Xbox Series X",
-                         status: .pending,
+                         status: .done,
                          id: UUID().uuidString,
                          dateCreated: Date()),
                 Activity(name: "Play Metroid Dread",
                          description: "On the Nintendo Switch",
-                         status: .pending,
+                         status: .done,
                          id: UUID().uuidString,
                          dateCreated: Date())]
     }
