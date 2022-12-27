@@ -16,10 +16,15 @@ public final class MainViewController: NiblessNavigationController {
     // MARK: - Instance properties
     private let landingViewController: LandingViewController
     private var activityDetailViewController: ActivityDetailViewController?
+    private let activityRepository: ActivityRepository
     
     // MARK: - Methods
-    public init(landingViewController: LandingViewController) {
+    public init(
+        landingViewController: LandingViewController,
+        activityRepository: ActivityRepository
+    ) {
         self.landingViewController = landingViewController
+        self.activityRepository = activityRepository
         super.init()
         restorationIdentifier = Self.viewControllerIdentifier
     }
@@ -38,7 +43,7 @@ public final class MainViewController: NiblessNavigationController {
     private func presentActivityCreationScreen() {
         let detailViewController = ActivityDetailViewController(
             for: .newActivity,
-            activityRepository: GlobalToDoListActivityRepository
+            activityRepository: activityRepository
         )
         detailViewController.delegate = self
         
@@ -54,7 +59,7 @@ public final class MainViewController: NiblessNavigationController {
     private func presentActivityUpdateScreen(activity: Activity) {
         let detailViewController = ActivityDetailViewController(
             for: .existingActivity(activity),
-            activityRepository: GlobalToDoListActivityRepository
+            activityRepository: activityRepository
         )
         detailViewController.delegate = self
         

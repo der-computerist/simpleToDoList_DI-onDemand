@@ -25,7 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             activitiesViewController: activitiesVC,
             activityRepository: GlobalToDoListActivityRepository
         )
-        let mainVC = MainViewController(landingViewController: landingVC)
+        let mainVC = MainViewController(
+            landingViewController: landingVC,
+            activityRepository: GlobalToDoListActivityRepository
+        )
         
         landingVC.delegate = mainVC
         activitiesVC.delegate = mainVC
