@@ -239,9 +239,8 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        activityRepository.update(activity: activity) { _ in
-            self.delegate?.activityDetailViewControllerDidFinish(self)
-        }
+        activityRepository.update(activity: activity)
+        delegate?.activityDetailViewControllerDidFinish(self)
     }
     
     private func updateViewForEditing(_ editing: Bool) {

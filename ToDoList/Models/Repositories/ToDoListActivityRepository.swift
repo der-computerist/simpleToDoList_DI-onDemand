@@ -46,7 +46,7 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     }
     
     // MARK: - Methods
-    public func update(activity: Activity, completion: ((Activity) -> Void)?) {
+    public func update(activity: Activity) {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
             kvoActivities[index] = activity
@@ -56,15 +56,13 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
             kvoActivities.add(activity)
             print("New activity registered!")
         }
-        completion?(activity)
         try? dataStore.save(activities: activities)
     }
     
-    public func delete(activity: Activity, completion: ((Activity) -> Void)?) {
+    public func delete(activity: Activity) {
         guard let index = activities.firstIndex(of: activity) else { return }
         kvoActivities.removeObject(at: index)
         print("Activity deleted!")
-        completion?(activity)
         try? dataStore.save(activities: activities)
     }
     
