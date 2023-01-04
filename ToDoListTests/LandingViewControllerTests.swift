@@ -62,6 +62,7 @@ final class LandingViewControllerTests: XCTestCase {
         }
         landingViewController.setEditing(true, animated: false)
         XCTAssertTrue(activitiesVC.isEditing)
+        XCTAssertTrue(activitiesVC.tableView.isEditing)
     }
     
     func test_exitEditingMode() {
@@ -72,6 +73,7 @@ final class LandingViewControllerTests: XCTestCase {
         }
         landingViewController.setEditing(false, animated: false)
         XCTAssertFalse(activitiesVC.isEditing)
+        XCTAssertFalse(activitiesVC.tableView.isEditing)
     }
     
     func test_createNewActivity() throws {
