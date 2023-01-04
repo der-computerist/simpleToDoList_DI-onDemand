@@ -8,12 +8,7 @@
 import Foundation
 
 public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
-    #if TEST
-    let activityDataStore = FakeActivityDataStore()
-    #else
     let activityDataStore = FileActivityDataStore()
-    #endif
-    
     return ToDoListActivityRepository(dataStore: activityDataStore)
 }()
 

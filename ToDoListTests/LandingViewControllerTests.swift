@@ -11,16 +11,23 @@ import XCTest
 final class LandingViewControllerTests: XCTestCase {
     
     // MARK: - Properties
+    var activityRepository: (NSObject & ActivityRepository)!
     var appDelegate: AppDelegate!
     var mainViewController: MainViewController!
     var landingViewController: LandingViewController!
 
     // MARK: - Methods
     override func setUp() {
-        let tuple = constructTestingViews()
+        activityRepository = constructTestingRepository()
+        
+        let tuple = constructTestingViews(activityRepository: activityRepository)
         appDelegate = tuple.0
         mainViewController = tuple.1
         landingViewController = tuple.2
+    }
+    
+    override func tearDown() {
+        activityRepository = nil
     }
     
     // MARK: Test Methods
@@ -87,11 +94,25 @@ final class LandingViewControllerTests: XCTestCase {
         let activitiesVC = ActivitiesViewController(
             activityRepository: GlobalToDoListActivityRepository
         )
+    
+    // MARK: Private
+    private func constructTestingRepository() -> NSObject & ActivityRepository {
+        let activityDataStore = FakeActivityDataStore()
+        return ToDoListActivityRepository(dataStore: activityDataStore)
+    }
+    
+    private func constructTestingViews(activityRepository: NSObject & ActivityRepository) ->
+       (AppDelegate, MainViewController, LandingViewController) {
+        
+        let activitiesVC = ActivitiesViewController(activityRepository: activityRepository)
         let landingVC = LandingViewController(
             activitiesViewController: activitiesVC,
-            activityRepository: GlobalToDoListActivityRepository
+            activityRepository: activityRepository
         )
-        let mainVC = MainViewController(landingViewController: landingVC)
+        let mainVC = MainViewController(
+            landingViewController: landingVC,
+            activityRepository: activityRepository
+        )
         
         landingVC.delegate = mainVC
         activitiesVC.delegate = mainVC
