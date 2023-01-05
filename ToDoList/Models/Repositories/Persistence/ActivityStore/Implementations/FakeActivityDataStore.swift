@@ -7,6 +7,12 @@
 
 import Foundation
 
+let uuid1 = UUID().uuidString
+let uuid2 = UUID().uuidString
+let uuid3 = UUID().uuidString
+let uuid4 = UUID().uuidString
+let uuid5 = UUID().uuidString
+
 public class FakeActivityDataStore: ActivityDataStore {
     
     public func readActivities() -> [Activity] {
@@ -15,27 +21,27 @@ public class FakeActivityDataStore: ActivityDataStore {
         return [Activity(name: "Play Forza Horizon 5",
                          description: "On the Xbox Series X",
                          status: .pending,
-                         id: UUID().uuidString,
+                         id: uuid1,
                          dateCreated: Date()),
                 Activity(name: "Play Super Mario Odyssey",
                          description: "On the Nintendo Switch",
                          status: .pending,
-                         id: UUID().uuidString,
+                         id: uuid2,
                          dateCreated: Date()),
                 Activity(name: "Play The Last of Us Part I",
                          description: "On the PlayStation 5",
                          status: .pending,
-                         id: UUID().uuidString,
+                         id: uuid3,
                          dateCreated: Date()),
                 Activity(name: "Play Grand Theft Auto V",
                          description: "On the Xbox Series X",
                          status: .done,
-                         id: UUID().uuidString,
+                         id: uuid4,
                          dateCreated: Date()),
                 Activity(name: "Play Metroid Dread",
                          description: "On the Nintendo Switch",
                          status: .done,
-                         id: UUID().uuidString,
+                         id: uuid5,
                          dateCreated: Date())]
     }
     
