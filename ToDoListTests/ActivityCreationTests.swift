@@ -63,6 +63,7 @@ final class ActivityCreationTests: XCTestCase {
         XCTAssert(navigationItemLeftButton.target === activityDetailViewController)
         XCTAssert(navigationItemLeftButton.action ==
                 #selector(ActivityDetailViewController.handleCancelPressed(sender:)))
+        XCTAssertTrue(navigationItemLeftButton.isEnabled)
         
         // "Add" button item
         let navigationItemRightButton = try XCTUnwrap(
@@ -74,15 +75,11 @@ final class ActivityCreationTests: XCTestCase {
                 #selector(ActivityDetailViewController.handleSavePressed(sender:)))
         XCTAssertFalse(navigationItemRightButton.isEnabled)
         
-        // Validate input fields
+        // Verify initial state of input fields
         let rootView = activityDetailViewController.view as! ActivityDetailRootView
-        let nameField = rootView.nameField
-        let descriptionTextView = rootView.descriptionTextView
-        let statusSection = rootView.statusStackView
-        
-        XCTAssertTrue(nameField.isEnabled)
-        XCTAssertTrue(descriptionTextView.isUserInteractionEnabled)
-        XCTAssertTrue(statusSection.isHidden)
+        XCTAssertTrue(rootView.nameField.isEnabled)
+        XCTAssertTrue(rootView.descriptionTextView.isUserInteractionEnabled)
+        XCTAssertTrue(rootView.statusStackView.isHidden)
     }
     
     func test_addButtonActivation() throws {
@@ -131,9 +128,14 @@ final class ActivityCreationTests: XCTestCase {
         )
         descriptionTextView.text = "On the PlayStation 5"
         activityDetailViewController.textViewDidChange(descriptionTextView)
+        
+        // Tap on "Add" button
+        let addButton = try XCTUnwrap(
+            activityDetailViewController.navigationItem.rightBarButtonItem
+        )
+        activityDetailViewController.handleSavePressed(sender: addButton)
 
-        // Expect "Confirmation" alert controller to be presented once user taps
-        // on the "Add" button.
+        // Expect "Confirmation" alert controller to be presented
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
@@ -148,21 +150,8 @@ final class ActivityCreationTests: XCTestCase {
             XCTAssert(alert.message == "Are you sure?")
             return true
         }
-
-        // Tap on "Add" button
-        let addButton = try XCTUnwrap(
-            activityDetailViewController.navigationItem.rightBarButtonItem
-        )
-        activityDetailViewController.handleSavePressed(sender: addButton)
         waitForExpectations(timeout: timeout)
         
-        // Expect `ActivityDetailViewController` to be dismissed once the new
-        // activity is registered.
-        expectation = expectation(
-            for: NSPredicate(format: "presentedViewController == nil"),
-            evaluatedWith: mainViewController
-        )
-
         // Tap "Yes" button on the "Confirmation" alert controller
         guard
             let alert = activityDetailViewController.presentedViewController as? UIAlertController
@@ -171,9 +160,15 @@ final class ActivityCreationTests: XCTestCase {
             return
         }
         alert.tapButton(atIndex: 0)
+
+        // Expect `ActivityDetailViewController` to be dismissed
+        expectation = expectation(
+            for: NSPredicate(format: "presentedViewController == nil"),
+            evaluatedWith: mainViewController
+        )
         waitForExpectations(timeout: timeout)
         
-        // Verify the new activity has been registered successfully.
+        // Verify the new activity has been registered successfully
         XCTAssert(activityRepository.activitiesCount == 6)
         guard let newActivity = activityRepository.activities.last else {
             XCTFail("Expected newly created activity to be found in the repository, but it was not.")
@@ -184,6 +179,12 @@ final class ActivityCreationTests: XCTestCase {
     }
     
     func test_saveNewActivity_withEmptyName_shouldDisplayErrorMessage() throws {
+        // Tap on "Add" button
+        let addButton = try XCTUnwrap(
+            activityDetailViewController.navigationItem.rightBarButtonItem
+        )
+        activityDetailViewController.handleSavePressed(sender: addButton)
+        
         // Expect error alert controller to be presented
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
@@ -199,13 +200,7 @@ final class ActivityCreationTests: XCTestCase {
             XCTAssert(alert.message == "Activity name can't be empty.")
             return true
         }
-        defer { waitForExpectations(timeout: timeout) }
-        
-        // Tap on "Add" button
-        let addButton = try XCTUnwrap(
-            activityDetailViewController.navigationItem.rightBarButtonItem
-        )
-        activityDetailViewController.handleSavePressed(sender: addButton)
+        waitForExpectations(timeout: timeout)
         
         // Verify the activity was not registered
         XCTAssert(activityRepository.activitiesCount == 5)
@@ -220,6 +215,12 @@ final class ActivityCreationTests: XCTestCase {
             replacementString: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         )
 
+        // Tap on "Add" button
+        let addButton = try XCTUnwrap(
+            activityDetailViewController.navigationItem.rightBarButtonItem
+        )
+        activityDetailViewController.handleSavePressed(sender: addButton)
+        
         // Expect error alert controller to be presented
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
@@ -235,13 +236,10 @@ final class ActivityCreationTests: XCTestCase {
             XCTAssert(alert.message == "Activity name exceeds max characters (50).")
             return true
         }
-        defer { waitForExpectations(timeout: timeout) }
+        waitForExpectations(timeout: timeout)
         
-        // Tap on "Add" button
-        let addButton = try XCTUnwrap(
-            activityDetailViewController.navigationItem.rightBarButtonItem
-        )
-        activityDetailViewController.handleSavePressed(sender: addButton)
+        // Verify the activity was not registered
+        XCTAssert(activityRepository.activitiesCount == 5)
     }
     
     func test_saveNewActivity_withDescriptionTooLong_shouldDisplayErrorMessage() throws {
@@ -257,7 +255,13 @@ final class ActivityCreationTests: XCTestCase {
         )
         descriptionTextView.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed molestie accumsan turpis sit amet suscipit. Phasellus ut facilisis elit, ut tristique quam. Maecenas maximus lobortis cursus. Nulla at nunc."
         activityDetailViewController.textViewDidChange(descriptionTextView)
-
+        
+        // Tap on "Add" button
+        let addButton = try XCTUnwrap(
+            activityDetailViewController.navigationItem.rightBarButtonItem
+        )
+        activityDetailViewController.handleSavePressed(sender: addButton)
+        
         // Expect error alert controller to be presented
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
@@ -273,28 +277,25 @@ final class ActivityCreationTests: XCTestCase {
             XCTAssert(alert.message == "Activity description exceeds max characters (200).")
             return true
         }
-        defer { waitForExpectations(timeout: timeout) }
+        waitForExpectations(timeout: timeout)
         
-        // Tap on "Add" button
-        let addButton = try XCTUnwrap(
-            activityDetailViewController.navigationItem.rightBarButtonItem
-        )
-        activityDetailViewController.handleSavePressed(sender: addButton)
+        // Verify the activity was not registered
+        XCTAssert(activityRepository.activitiesCount == 5)
     }
     
     func test_cancel_withoutUnsavedChanges_shouldDismissView() throws {
-        // Expect `ActivityDetailViewController` to be dismissed
-        expectation = expectation(
-            for: NSPredicate(format: "presentedViewController == nil"),
-            evaluatedWith: mainViewController
-        )
-        defer { waitForExpectations(timeout: timeout) }
-
         // Tap on "Cancel" button
         let cancelButton = try XCTUnwrap(
             activityDetailViewController.navigationItem.leftBarButtonItem
         )
         activityDetailViewController.handleCancelPressed(sender: cancelButton)
+        
+        // Expect `ActivityDetailViewController` to be dismissed
+        expectation = expectation(
+            for: NSPredicate(format: "presentedViewController == nil"),
+            evaluatedWith: mainViewController
+        )
+        waitForExpectations(timeout: timeout)
     }
     
     func test_cancel_withUnsavedChanges_shouldDisplayConfirmationMessage() throws {
@@ -305,6 +306,12 @@ final class ActivityCreationTests: XCTestCase {
             shouldChangeCharactersIn: NSMakeRange(0, 0),
             replacementString: "A"
         )
+        
+        // Tap on "Cancel" button
+        let cancelButton = try XCTUnwrap(
+            activityDetailViewController.navigationItem.leftBarButtonItem
+        )
+        activityDetailViewController.handleCancelPressed(sender: cancelButton)
         
         // Expect "Confirmation" alert controller to be presented
         expectation = expectation(
@@ -321,13 +328,7 @@ final class ActivityCreationTests: XCTestCase {
             XCTAssert(alert.actions[1].title == "Cancel")
             return true
         }
-        defer { waitForExpectations(timeout: timeout) }
-        
-        // Tap on "Cancel" button
-        let cancelButton = try XCTUnwrap(
-            activityDetailViewController.navigationItem.leftBarButtonItem
-        )
-        activityDetailViewController.handleCancelPressed(sender: cancelButton)
+        waitForExpectations(timeout: timeout)
     }
     
     // MARK: Private
@@ -379,6 +380,7 @@ final class ActivityCreationTests: XCTestCase {
             activityDetailVC.loadViewIfNeeded()
             activityDetailVC.view.setNeedsLayout()
             activityDetailVC.view.layoutIfNeeded()
+            
             return activityDetailVC
         }
         

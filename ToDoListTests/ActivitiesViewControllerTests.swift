@@ -1,6 +1,6 @@
 //
 //  ActivitiesViewControllerTests.swift
-//  ToDoListUITests
+//  ToDoListTests
 //
 //  Created by Enrique Aliaga on 11/8/22.
 //
@@ -16,6 +16,9 @@ final class ActivitiesViewControllerTests: XCTestCase {
     var mainViewController: MainViewController!
     var landingViewController: LandingViewController!
     var activitiesViewController: ActivitiesViewController!
+    var expectation: XCTestExpectation?
+    let timeout = 2.0
+    let tableViewReloadTimeout = 5.0
 
     // MARK: - Methods
     override func setUp() {
@@ -37,22 +40,24 @@ final class ActivitiesViewControllerTests: XCTestCase {
         let viewControllers = landingViewController.children
         XCTAssert(viewControllers.first as? ActivitiesViewController === activitiesViewController)
         
+        let delegate = activitiesViewController.delegate as? MainViewController
+        XCTAssert(delegate === mainViewController)
+        
+        // State Restoration
         let restorationID = activitiesViewController.restorationIdentifier
         XCTAssert(restorationID == "ActivitiesViewController")
         
         let tableViewRestorationID = activitiesViewController.tableView.restorationIdentifier
         XCTAssert(tableViewRestorationID == "ActivitiesViewControllerTableView")
         
-        let delegate = activitiesViewController.delegate as? MainViewController
-        XCTAssert(delegate == mainViewController)
-        
+        // Table view delegates
         let tableViewDelegate =
             activitiesViewController.tableView.delegate as? ActivitiesViewController
-        XCTAssert(tableViewDelegate == activitiesViewController)
+        XCTAssert(tableViewDelegate === activitiesViewController)
         
         let tableViewDataSource =
             activitiesViewController.tableView.dataSource as? ActivitiesViewController
-        XCTAssert(tableViewDataSource == activitiesViewController)
+        XCTAssert(tableViewDataSource === activitiesViewController)
     }
     
     func test_tableView_layout() throws {
@@ -93,7 +98,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
         XCTAssert(fifthCell.imageView?.image == UIImage(named: "Checked") )
     }
     
-    func test_selectActivity() throws {
+    func test_selectActivity_shouldPresentActivityUpdateScreen_withPrePopulatedFields() throws {
         let indexPath = IndexPath(row: 0, section: 0)
         // Simulate the user selecting a row...
         activitiesViewController
@@ -101,21 +106,30 @@ final class ActivitiesViewControllerTests: XCTestCase {
         activitiesViewController
             .tableView(activitiesViewController.tableView, didSelectRowAt: indexPath)
 
+        // Verify presentation of "Activity Update" screen
         XCTAssertNil(activitiesViewController.tableView.indexPathsForSelectedRows)
         let navController = try XCTUnwrap(
             activitiesViewController.presentedViewController as? UINavigationController
         )
-        let activityDetailVC =
-            try XCTUnwrap(navController.topViewController as? ActivityDetailViewController)
+        let activityDetailVC = try XCTUnwrap(
+            navController.topViewController as? ActivityDetailViewController
+        )
         XCTAssert(activityDetailVC.navigationItem.title == "Details")
+
+        // Verify initial state of input fields
+        let activityDetailRootView = activityDetailVC.view as! ActivityDetailRootView
+        XCTAssert(activityDetailRootView.nameField.text == "Play Forza Horizon 5")
+        XCTAssert(activityDetailRootView.descriptionTextView.text == "On the Xbox Series X")
+        XCTAssertFalse(activityDetailRootView.doneSwitch.isOn)
+        
         activitiesViewController.dismiss(animated: false, completion: nil)
     }
     
-    func test_commitEditing() {
+    func test_deleteRow_shouldDeleteActivity() {
         // Confirm activity exists before
         XCTAssertNotNil(activityRepository.activity(fromIdentifier: uuid3))
         
-        // Perform the action
+        // Delete the row corresponding to the activity
         activitiesViewController.tableView(
             activitiesViewController.tableView,
             commit: .delete,
@@ -127,8 +141,6 @@ final class ActivitiesViewControllerTests: XCTestCase {
     }
     
     func test_modelObservation() {
-        var expectation: XCTestExpectation
-        
         // Test insertion
         var activity6 = Activity(name: "Play Uncharted: Drake's Fortune",
                                  description: "On the PlayStation 5",
@@ -136,13 +148,13 @@ final class ActivitiesViewControllerTests: XCTestCase {
                                  id: UUID().uuidString,
                                  dateCreated: Date())
         activityRepository.update(activity: activity6)
-        
-        expectation = self.expectation(description: "Table view reloads data")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            defer { expectation.fulfill() }
+
+        expectation = expectation(description: "Table view reloads data")
+        DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
+            defer { self.expectation?.fulfill() }
             
             guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a valid table view, but found nil")
+                XCTFail("Expected a table view, but found nil.")
                 return
             }
             let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
@@ -151,7 +163,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
             XCTAssert(sixthCell?.textLabel?.text == "Play Uncharted: Drake's Fortune")
             XCTAssert(sixthCell?.imageView?.image == UIImage(named: "Unchecked"))
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: tableViewReloadTimeout * 2)
 
         // Test replacement
         activity6 = Activity(name: "Play Uncharted 2: Among Thieves",
@@ -161,12 +173,12 @@ final class ActivitiesViewControllerTests: XCTestCase {
                              dateCreated: activity6.dateCreated)
         activityRepository.update(activity: activity6)
 
-        expectation = self.expectation(description: "Table view reloads data")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            defer { expectation.fulfill() }
+        expectation = expectation(description: "Table view reloads data")
+        DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
+            defer { self.expectation?.fulfill() }
             
             guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a valid table view, but found nil")
+                XCTFail("Expected a table view, but found nil.")
                 return
             }
             let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
@@ -175,23 +187,23 @@ final class ActivitiesViewControllerTests: XCTestCase {
             XCTAssert(sixthCell?.textLabel?.text == "Play Uncharted 2: Among Thieves")
             XCTAssert(sixthCell?.imageView?.image == UIImage(named: "Unchecked"))
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: tableViewReloadTimeout * 2)
         
         // Test removal
         activityRepository.delete(activity: activity6)
 
-        expectation = self.expectation(description: "Table view deletes row")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            defer { expectation.fulfill() }
+        expectation = expectation(description: "Table view deletes row")
+        DispatchQueue.main.async {
+            defer { self.expectation?.fulfill() }
             
             guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a valid table view, but found nil")
+                XCTFail("Expected a table view, but found nil.")
                 return
             }
             let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
             XCTAssert(sectionZeroRowCount == 5)
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     // MARK: Private

@@ -72,34 +72,29 @@ final class ActivityUpdateTests: XCTestCase {
         XCTAssert(navigationItemRightButton.title == "Edit")
         XCTAssertTrue(navigationItemRightButton.isEnabled)
         
-        // Validate initial state of input fields
+        // Verify initial state of input fields
         let rootView = activityDetailViewController.view as! ActivityDetailRootView
-        let nameField = rootView.nameField
-        let descriptionTextView = rootView.descriptionTextView
-        let statusSection = rootView.statusStackView
-        let doneSwitch = rootView.doneSwitch
-        
-        XCTAssertFalse(nameField.isEnabled)
-        XCTAssertFalse(descriptionTextView.isUserInteractionEnabled)
-        XCTAssertFalse(statusSection.isHidden)
-        XCTAssertFalse(doneSwitch.isEnabled)
+        XCTAssertFalse(rootView.nameField.isEnabled)
+        XCTAssertFalse(rootView.descriptionTextView.isUserInteractionEnabled)
+        XCTAssertFalse(rootView.statusStackView.isHidden)
+        XCTAssertFalse(rootView.doneSwitch.isEnabled)
     }
     
     func test_enterEditingMode() throws {
         let editButton = try XCTUnwrap(
             activityDetailViewController.navigationItem.rightBarButtonItem
         )
+        
+        // Tap on "Edit" button
+        activityDetailViewController.setEditing(true, animated: false)
+        XCTAssert(editButton.title == "Done")
 
         // Expect "Edit" button item to be disabled
         expectation = expectation(
             for: NSPredicate(format: "isEnabled == false"),
             evaluatedWith: editButton
         )
-        defer { waitForExpectations(timeout: timeout) }
-        
-        // Tap on "Edit" button
-        activityDetailViewController.setEditing(true, animated: false)
-        XCTAssert(editButton.title == "Done")
+        waitForExpectations(timeout: timeout)
     }
     
     func test_doneButtonActivation() throws {
