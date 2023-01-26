@@ -110,12 +110,11 @@ public final class ActivityDetailViewController: NiblessViewController {
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        if case .newActivity = flow {
+        switch flow {
+        case .newActivity:
             // If there are unsaved changes to the activity name, enable the Save button.
             saveButtonItem.isEnabled = activityBuilder.hasNameChanges()
-        }
-
-        if case .existingActivity = flow {
+        case .existingActivity:
             /*
              - While out of editing mode, the "Edit/Done" button item always remains enabled.
              - After entering editing mode, the "Edit/Done" button will remain disabled as long
@@ -125,7 +124,7 @@ public final class ActivityDetailViewController: NiblessViewController {
             editButtonItem.isEnabled =
                 !isEditing || (activityBuilder.hasChanges() != activityBuilder.name.isEmpty)
         }
-
+        
         // If there are unsaved changes overall, disable the ability to dismiss
         // using the pull-down gesture.
         isModalInPresentation = activityBuilder.hasChanges()
