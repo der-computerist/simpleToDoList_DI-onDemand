@@ -118,7 +118,7 @@ final class ActivityUpdateTests: XCTestCase {
             shouldChangeCharactersIn: NSMakeRange(0, 20),
             replacementString: "Play Forza Motorsport"
         )
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertTrue(doneButton.isEnabled)
         
         // Restoring the name back to its original value should disable the button
@@ -127,19 +127,19 @@ final class ActivityUpdateTests: XCTestCase {
             shouldChangeCharactersIn: NSMakeRange(0, 20),
             replacementString: "Play Forza Horizon 5"
         )
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertFalse(doneButton.isEnabled)
         
         // Typing in a description change should enable the button
         descriptionTextView.text = "On the Xbox Series S"
         activityDetailViewController.textViewDidChange(descriptionTextView)
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertTrue(doneButton.isEnabled)
         
         // Restoring the description back to its original value should disable the button
         descriptionTextView.text = "On the Xbox Series X"
         activityDetailViewController.textViewDidChange(descriptionTextView)
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertFalse(doneButton.isEnabled)
     }
     

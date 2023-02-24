@@ -96,7 +96,7 @@ final class ActivityCreationTests: XCTestCase {
             shouldChangeCharactersIn: NSMakeRange(0, 0),
             replacementString: "A"
         )
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertTrue(addButton.isEnabled)
         
         // Clearing the name field should disable the "Add" button
@@ -105,13 +105,13 @@ final class ActivityCreationTests: XCTestCase {
             shouldChangeCharactersIn: NSMakeRange(0, 0),
             replacementString: ""
         )
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertFalse(addButton.isEnabled)
         
         // Typing in a description should have no effect on the "Add" button
         descriptionTextView.text = "Something in the way she moves..."
         activityDetailViewController.textViewDidChange(descriptionTextView)
-        activityDetailViewController.view.layoutIfNeeded()
+        rootView.layoutIfNeeded()
         XCTAssertFalse(addButton.isEnabled)
     }
     

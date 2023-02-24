@@ -35,7 +35,7 @@ final class LandingViewControllerTests: XCTestCase {
     // MARK: Test Methods
     func test_startupConfiguration() throws {
         let viewControllers = mainViewController.viewControllers
-        XCTAssert(viewControllers.first as? LandingViewController === landingViewController)
+        XCTAssert(viewControllers.last as? LandingViewController === landingViewController)
         
         let delegate = landingViewController.delegate as? MainViewController
         XCTAssert(delegate === mainViewController)
