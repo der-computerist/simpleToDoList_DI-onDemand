@@ -209,19 +209,19 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private func confirmSave() {
         let alert = UIAlertController(
-            title: Constants.saveConfirmationAlertTitle,
-            message: Constants.saveConfirmationAlertMessage,
+            title: SaveConfirmationAlert.title,
+            message: SaveConfirmationAlert.message,
             preferredStyle: .alert
         )
         
         let yesAction = UIAlertAction(
-            title: Constants.saveConfirmationAlertYesActionTitle,
+            title: SaveConfirmationAlert.yesActionTitle,
             style: .default
         ) { _ in
             self.saveAndDismiss()
         }
         let noAction = UIAlertAction(
-            title: Constants.saveConfirmationAlertNoActionTitle,
+            title: SaveConfirmationAlert.noActionTitle,
             style: .cancel
         )
         
@@ -235,13 +235,13 @@ public final class ActivityDetailViewController: NiblessViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         let yesAction = UIAlertAction(
-            title: Constants.cancelConfirmationAlertYesActionTitle,
+            title: CancelConfirmationAlert.yesActionTitle,
             style: .destructive
         ) { _ in
             self.delegate?.activityDetailViewControllerDidCancel(self)
         }
         let noAction = UIAlertAction(
-            title: Constants.cancelConfirmationAlertNoActionTitle,
+            title: CancelConfirmationAlert.noActionTitle,
             style: .cancel
         )
         
@@ -469,12 +469,6 @@ extension ActivityDetailViewController {
         static let titleForNewActivity                     = "New Activity"
         static let titleForExistingActivity                = "Details"
         static let saveButtonItemTitle                     = "Add"
-        static let saveConfirmationAlertTitle              = "Confirmation"
-        static let saveConfirmationAlertMessage            = "Are you sure?"
-        static let saveConfirmationAlertYesActionTitle     = "Yes"
-        static let saveConfirmationAlertNoActionTitle      = "No"
-        static let cancelConfirmationAlertYesActionTitle   = "Discard Changes"
-        static let cancelConfirmationAlertNoActionTitle    = "Cancel"
     }
     
     struct Restoration {
@@ -489,5 +483,17 @@ extension ActivityDetailViewController {
             static let editedStatus                            = "editedStatus"
             static let activeField                             = "activeField"
         }
+    }
+    
+    struct SaveConfirmationAlert {
+        static let title            = "Confirmation"
+        static let message          = "Are you sure?"
+        static let yesActionTitle   = "Yes"
+        static let noActionTitle    = "No"
+    }
+    
+    struct CancelConfirmationAlert {
+        static let yesActionTitle   = "Discard Changes"
+        static let noActionTitle    = "Cancel"
     }
 }
