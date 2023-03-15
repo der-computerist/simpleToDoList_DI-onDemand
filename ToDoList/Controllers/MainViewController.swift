@@ -9,11 +9,7 @@ import UIKit
 
 public final class MainViewController: NiblessNavigationController {
     
-    // MARK: - Type properties
-    static let viewControllerIdentifier = String(describing: MainViewController.self)
-    static let navControllerIdentifier = String(describing: NiblessNavigationController.self)
-
-    // MARK: - Instance properties
+    // MARK: - Properties
     private let landingViewController: LandingViewController
     private var activityDetailViewController: ActivityDetailViewController?
     private let activityRepository: ActivityRepository
@@ -26,7 +22,7 @@ public final class MainViewController: NiblessNavigationController {
         self.landingViewController = landingViewController
         self.activityRepository = activityRepository
         super.init()
-        restorationIdentifier = Self.viewControllerIdentifier
+        restorationIdentifier = StateRestoration.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -48,7 +44,7 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
-        navController.restorationIdentifier = Self.navControllerIdentifier
+        navController.restorationIdentifier = StateRestoration.navControllerIdentifier
         navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
@@ -64,7 +60,7 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
-        navController.restorationIdentifier = Self.navControllerIdentifier
+        navController.restorationIdentifier = StateRestoration.navControllerIdentifier
         navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
@@ -108,19 +104,18 @@ extension MainViewController: ActivityDetailViewControllerDelegate {
 
 // MARK: - State Restoration
 extension MainViewController {
-    
-    static let activityDetailViewControllerKey = "activityDetailViewController"
 
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-        coder.encode(activityDetailViewController, forKey: Self.activityDetailViewControllerKey)
+        coder.encode(activityDetailViewController,
+            forKey: StateRestoration.Keys.activityDetailViewController)
     }
 
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
         
         if let activityDetailVC = coder.decodeObject(of: ActivityDetailViewController.self,
-           forKey: Self.activityDetailViewControllerKey) {
+           forKey: StateRestoration.Keys.activityDetailViewController) {
             activityDetailViewController = activityDetailVC
         }
     }
@@ -137,7 +132,7 @@ extension MainViewController: UIViewControllerRestoration {
         let restorationIdentifier = identifierComponents.last
         
         switch restorationIdentifier {
-        case Self.navControllerIdentifier:
+        case StateRestoration.navControllerIdentifier:
             let navController = NiblessNavigationController()
             navController.restorationIdentifier = restorationIdentifier
             navController.restorationClass = self
@@ -147,5 +142,18 @@ extension MainViewController: UIViewControllerRestoration {
         }
         
         return viewController
+    }
+}
+
+// MARK: - Constants
+extension MainViewController {
+    
+    struct StateRestoration {
+        static let viewControllerIdentifier  = String(describing: MainViewController.self)
+        static let navControllerIdentifier   = String(describing: NiblessNavigationController.self)
+        
+        struct Keys {
+            static let activityDetailViewController = "activityDetailViewController"
+        }
     }
 }

@@ -11,11 +11,6 @@ private typealias ActivityDetails = (name: String, description: String, status: 
 
 public struct ActivityBuilder {
     
-    private struct Constants {
-        static let nameMaxCharacters = 50
-        static let descriptionMaxCharacters = 200
-    }
-
     // MARK: - Properties
     public var name: String
     public var description: String
@@ -71,10 +66,7 @@ extension ActivityBuilder {
         case nameTooLong(maxCharacters: Int)
         case descriptionTooLong(maxCharacters: Int)
         
-        public static let title = NSLocalizedString(
-            "Activity Creation Error",
-            comment: "ActivityCreationError.title"
-        )
+        public static let title = Constants.errorTitle
     }
 }
 
@@ -84,24 +76,46 @@ extension ActivityBuilder.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .nameEmpty:
-            return NSLocalizedString(
-                "Activity name can't be empty.",
-                comment: "ActivityCreationError.nameEmpty"
-            )
+            return Constants.nameEmptyErrorDescription
             
         case let .nameTooLong(maxCharacters):
-            let description = NSLocalizedString(
-                "Activity name exceeds max characters (%d).",
-                comment: "ActivityCreationError.nameTooLong"
-            )
+            let description = Constants.nameTooLongErrorDescription
             return String.localizedStringWithFormat(description, maxCharacters)
             
         case let .descriptionTooLong(maxCharacters):
-            let description = NSLocalizedString(
-                "Activity description exceeds max characters (%d).",
-                comment: "ActivityCreationError.descriptionTooLong"
-            )
+            let description = Constants.descriptionTooLongErrorDescription
             return String.localizedStringWithFormat(description, maxCharacters)
         }
+    }
+}
+
+// MARK: - Constants
+extension ActivityBuilder {
+    
+    struct Constants {
+        static let nameMaxCharacters = 50
+        static let descriptionMaxCharacters = 200
+    }
+}
+
+extension ActivityBuilder.Error {
+    
+    struct Constants {
+        static let errorTitle = NSLocalizedString(
+            "Activity Creation Error",
+            comment: "ActivityCreationError.title"
+        )
+        static let nameEmptyErrorDescription = NSLocalizedString(
+            "Activity name can't be empty.",
+            comment: "ActivityCreationError.nameEmpty"
+        )
+        static let nameTooLongErrorDescription = NSLocalizedString(
+            "Activity name exceeds max characters (%d).",
+            comment: "ActivityCreationError.nameTooLong"
+        )
+        static let descriptionTooLongErrorDescription = NSLocalizedString(
+            "Activity description exceeds max characters (%d).",
+            comment: "ActivityCreationError.descriptionTooLong"
+        )
     }
 }

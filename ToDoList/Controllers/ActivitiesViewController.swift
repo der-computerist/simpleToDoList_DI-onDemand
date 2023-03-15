@@ -17,23 +17,19 @@ public protocol ActivitiesViewControllerDelegate: AnyObject {
 
 public final class ActivitiesViewController: NiblessTableViewController {
     
-    // MARK: - Type properties
-    static let viewControllerIdentifier = String(describing: ActivitiesViewController.self)
-    static let tableViewIdentifier = viewControllerIdentifier + "TableView"
-    
-    // MARK: - Instance properties
+    // MARK: - Properties
     public weak var delegate: ActivitiesViewControllerDelegate?
     
     private let activityRepository: NSObject & ActivityRepository
     private var activities: [Activity] { activityRepository.activities }
-    private let cellIdentifier = "UITableViewCell"
+    private let cellIdentifier = Constants.cellReuseIdentifier
     private var observation: NSKeyValueObservation?
     
     // MARK: - Methods
     public init(activityRepository: NSObject & ActivityRepository) {
         self.activityRepository = activityRepository
         super.init(style: .plain)
-        restorationIdentifier = Self.viewControllerIdentifier
+        restorationIdentifier = StateRestoration.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -43,7 +39,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         tableView.dataSource = self  // For some reason, this is needed for
                                      // `UIDataSourceModelAssociation` methods to be called.
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        tableView.restorationIdentifier = Self.tableViewIdentifier
+        tableView.restorationIdentifier = StateRestoration.tableViewIdentifier
         observation = observeActivities(on: activityRepository)
     }
     
@@ -87,9 +83,9 @@ extension ActivitiesViewController {
 
         switch activity.status {
         case .pending:
-            cell.imageView?.image = UIImage(named: "Unchecked")
+            cell.imageView?.image = Assets.pendingActivityImage
         case .done:
-            cell.imageView?.image = UIImage(named: "Checked")
+            cell.imageView?.image = Assets.doneActivityImage
         }
         
         return cell
@@ -135,5 +131,23 @@ extension ActivitiesViewController: UIDataSourceModelAssociation {
             return nil
         }
         return IndexPath(row: index, section: 0)
+    }
+}
+
+// MARK: - Constants
+extension ActivitiesViewController {
+    
+    struct Assets {
+        static let doneActivityImage      = UIImage(named: "Checked")
+        static let pendingActivityImage   = UIImage(named: "Unchecked")
+    }
+    
+    struct Constants {
+        static let cellReuseIdentifier = "UITableViewCell"
+    }
+    
+    struct StateRestoration {
+        static let viewControllerIdentifier   = String(describing: ActivitiesViewController.self)
+        static let tableViewIdentifier        = viewControllerIdentifier + "TableView"
     }
 }

@@ -14,10 +14,7 @@ public protocol LandingViewControllerDelegate: AnyObject {
 
 public final class LandingViewController: NiblessViewController {
     
-    // MARK: - Type properties
-    static let viewControllerIdentifier = String(describing: LandingViewController.self)
-
-    // MARK: - Instance properties
+    // MARK: - Properties
     public weak var delegate: LandingViewControllerDelegate?
     
     private let activitiesViewController: ActivitiesViewController
@@ -48,8 +45,8 @@ public final class LandingViewController: NiblessViewController {
         
         super.init()
         
-        restorationIdentifier = Self.viewControllerIdentifier
-        navigationItem.title = "To Do List"
+        restorationIdentifier = StateRestoration.viewControllerIdentifier
+        navigationItem.title = Constants.title
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButtonItem
     }
@@ -97,17 +94,33 @@ public final class LandingViewController: NiblessViewController {
 // MARK: - State Restoration
 extension LandingViewController {
     
-    static let activitiesViewControllerKey = "activitiesViewController"
-    static let landingViewControllerIsEditingKey = "landingViewControllerIsEditing"
-    
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-        coder.encode(activitiesViewController, forKey: Self.activitiesViewControllerKey)
-        coder.encode(isEditing, forKey: Self.landingViewControllerIsEditingKey)
+        
+        coder.encode(activitiesViewController,
+            forKey: StateRestoration.Keys.activitiesViewController)
+        coder.encode(isEditing, forKey: StateRestoration.Keys.landingViewControllerIsEditing)
     }
     
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
-        isEditing = coder.decodeBool(forKey: Self.landingViewControllerIsEditingKey)
+        isEditing = coder.decodeBool(forKey: StateRestoration.Keys.landingViewControllerIsEditing)
+    }
+}
+
+// MARK: - Constants
+extension LandingViewController {
+    
+    struct Constants {
+        static let title = "To Do List"
+    }
+    
+    struct StateRestoration {
+        static let viewControllerIdentifier = String(describing: LandingViewController.self)
+        
+        struct Keys {
+            static let activitiesViewController         = "activitiesViewController"
+            static let landingViewControllerIsEditing   = "landingViewControllerIsEditing"
+        }
     }
 }

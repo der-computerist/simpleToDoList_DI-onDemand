@@ -15,8 +15,16 @@ extension UIViewController {
             message: message,
             preferredStyle: .alert
         )
-        let okAction = UIAlertAction(title: "OK", style: .default)
+        let okAction = UIAlertAction(title: Constants.errorAlertOkActionTitle, style: .default)
         errorAlertController.addAction(okAction)
         present(errorAlertController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - Constants
+extension UIViewController {
+    
+    struct Constants {
+        static let errorAlertOkActionTitle = "OK"
     }
 }

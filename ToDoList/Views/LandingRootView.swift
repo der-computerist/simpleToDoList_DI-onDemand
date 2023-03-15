@@ -14,13 +14,13 @@ public final class LandingRootView: NiblessView {
     
     let activitiesCountLabel: UILabel = {
         let label = UILabel()
-        label.accessibilityIdentifier = "activitiesCountLabel"
+        label.accessibilityIdentifier = AccessibilityIdentifiers.activitiesCountLabel
         return label
     }()
     
     let activitiesContainerView: UIView = {
         let view = UIView()
-        view.accessibilityIdentifier = "activitiesContainerView"
+        view.accessibilityIdentifier = AccessibilityIdentifiers.activitiesContainerView
         return view
     }()
     
@@ -38,11 +38,11 @@ public final class LandingRootView: NiblessView {
     // MARK: Private
     private func styleView() {
         backgroundColor = Color.background
-        accessibilityIdentifier = "rootView"
+        accessibilityIdentifier = AccessibilityIdentifiers.rootView
         
         // Layout margins
         var customMargins = layoutMargins
-        customMargins.top = 16
+        customMargins.top = Metrics.largeSpacing
         layoutMargins = customMargins
     }
     
@@ -66,8 +66,8 @@ public final class LandingRootView: NiblessView {
             equalTo: layoutMarginsGuide.trailingAnchor
         )
         
-        labelToTop.identifier = "labelToTop"
-        labelToTrailing.identifier = "labelToTrailing"
+        labelToTop.identifier = ConstraintIdentifiers.activitiesCountLabelToTop
+        labelToTrailing.identifier = ConstraintIdentifiers.activitiesCountLabelToTrailing
         
         NSLayoutConstraint.activate([labelToTop, labelToTrailing])
     }
@@ -77,7 +77,7 @@ public final class LandingRootView: NiblessView {
         
         let containerToTop = activitiesContainerView.topAnchor.constraint(
             equalTo: activitiesCountLabel.bottomAnchor,
-            constant: 8
+            constant: Metrics.standardSpacing
         )
         let containerToLeading = activitiesContainerView.leadingAnchor.constraint(
             equalTo: leadingAnchor
@@ -89,13 +89,37 @@ public final class LandingRootView: NiblessView {
             equalTo: bottomAnchor
         )
         
-        containerToTop.identifier = "containerToTop"
-        containerToLeading.identifier = "containerToLeading"
-        containerToTrailing.identifier = "containerToTrailing"
-        containerToBottom.identifier = "containerToBottom"
+        containerToTop.identifier = ConstraintIdentifiers.activitiesContainerViewToTop
+        containerToLeading.identifier = ConstraintIdentifiers.activitiesContainerViewToLeading
+        containerToTrailing.identifier = ConstraintIdentifiers.activitiesContainerViewToTrailing
+        containerToBottom.identifier = ConstraintIdentifiers.activitiesContainerViewToBottom
         
         NSLayoutConstraint.activate(
             [containerToTop, containerToLeading, containerToTrailing, containerToBottom]
         )
+    }
+}
+
+// MARK: - Constants
+extension LandingRootView {
+    
+    struct AccessibilityIdentifiers {
+        static let rootView                  = "rootView"
+        static let activitiesCountLabel      = "activitiesCountLabel"
+        static let activitiesContainerView   = "activitiesContainerView"
+    }
+    
+    struct ConstraintIdentifiers {
+        static let activitiesCountLabelToTop           = "labelToTop"
+        static let activitiesCountLabelToTrailing      = "labelToTrailing"
+        static let activitiesContainerViewToTop        = "containerToTop"
+        static let activitiesContainerViewToLeading    = "containerToLeading"
+        static let activitiesContainerViewToTrailing   = "containerToTrailing"
+        static let activitiesContainerViewToBottom     = "containerToBottom"
+    }
+    
+    struct Metrics {
+        static let standardSpacing   = CGFloat(8.0)
+        static let largeSpacing      = CGFloat(16.0)
     }
 }

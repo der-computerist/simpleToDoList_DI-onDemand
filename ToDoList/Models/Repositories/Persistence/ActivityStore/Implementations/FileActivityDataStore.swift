@@ -10,7 +10,7 @@ import Foundation
 public class FileActivityDataStore: ActivityDataStore {
 
     // MARK: - Properties
-    private let fileName = "activities"
+    private let fileName = Constants.fileName
 
     // MARK: - Methods
     public func readActivities() -> [Activity] {
@@ -28,5 +28,13 @@ public class FileActivityDataStore: ActivityDataStore {
             print("ERROR: Could not save the activities :(")
             throw error
         }
+    }
+}
+
+// MARK: - Constants
+extension FileActivityDataStore {
+    
+    struct Constants {
+        static let fileName = "activities"
     }
 }

@@ -15,10 +15,7 @@ public protocol ActivityDetailViewControllerDelegate: AnyObject {
 
 public final class ActivityDetailViewController: NiblessViewController {
     
-    // MARK: - Type properties
-    static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
-
-    // MARK: - Instance properties
+    // MARK: - Properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
     
     private let flow: Flow
@@ -47,7 +44,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private lazy var saveButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(
-            title: "Add",
+            title: Constants.saveButtonItemTitle,
             style: .done,
             target: self,
             action: #selector(handleSavePressed(sender:))
@@ -85,7 +82,7 @@ public final class ActivityDetailViewController: NiblessViewController {
         
         super.init()
         
-        restorationIdentifier = Self.viewControllerIdentifier
+        restorationIdentifier = StateRestoration.viewControllerIdentifier
         restorationClass = type(of: self)
         navigationItem.title = self.flow.title
         navigationItem.leftBarButtonItem = cancelButtonItem
@@ -212,15 +209,24 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     private func confirmSave() {
         let alert = UIAlertController(
-            title: "Confirmation",
-            message: "Are you sure?",
+            title: Constants.saveConfirmationAlertTitle,
+            message: Constants.saveConfirmationAlertMessage,
             preferredStyle: .alert
         )
         
-        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+        let yesAction = UIAlertAction(
+            title: Constants.saveConfirmationAlertYesActionTitle,
+            style: .default
+        ) { _ in
             self.saveAndDismiss()
-        })
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        }
+        let noAction = UIAlertAction(
+            title: Constants.saveConfirmationAlertNoActionTitle,
+            style: .cancel
+        )
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
         
         present(alert, animated: true, completion: nil)
     }
@@ -228,10 +234,19 @@ public final class ActivityDetailViewController: NiblessViewController {
     private func confirmCancel() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        alert.addAction(UIAlertAction(title: "Discard Changes", style: .destructive) { _ in
+        let yesAction = UIAlertAction(
+            title: Constants.cancelConfirmationAlertYesActionTitle,
+            style: .destructive
+        ) { _ in
             self.delegate?.activityDetailViewControllerDidCancel(self)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        }
+        let noAction = UIAlertAction(
+            title: Constants.cancelConfirmationAlertNoActionTitle,
+            style: .cancel
+        )
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
         
         alert.pruneNegativeWidthConstraints()  // workaround to circumvent a UIKit bug
         present(alert, animated: true, completion: nil)
@@ -317,9 +332,9 @@ extension ActivityDetailViewController {
         var title: String {
             switch self {
             case .existingActivity:
-                return "Details"
+                return Constants.titleForExistingActivity
             case .newActivity:
-                return "New Activity"
+                return Constants.titleForNewActivity
             }
         }
         
@@ -355,40 +370,37 @@ extension ActivityDetailViewController {
 // MARK: - State Restoration
 extension ActivityDetailViewController {
 
-    static let activityIDKey = "activityID"
-    static let activityDetailViewControllerIsEditingKey = "activityDetailViewControllerIsEditing"
-    static let activityHasUnsavedChangesKey = "activityHasUnsavedChanges"
-    static let editedNameKey = "editedName"
-    static let editedDescriptionKey = "editedDescription"
-    static let editedStatusKey = "editedStatus"
-    static let activeFieldKey = "activeField"
-
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
 
         // Preserve the activity ID and editing state only if we are editing an existing activity.
         if case .existingActivity = flow {
-            coder.encode(activity.id, forKey: Self.activityIDKey)
-            coder.encode(isEditing, forKey: Self.activityDetailViewControllerIsEditingKey)
+            coder.encode(activity.id, forKey: StateRestoration.Keys.activityID)
+            coder.encode(isEditing,
+                forKey: StateRestoration.Keys.activityDetailViewControllerIsEditing)
         }
         
         // Write out any temporary data if editing is in progress.
         if activityBuilder.hasChanges() {
-            coder.encode(activityBuilder.hasChanges(), forKey: Self.activityHasUnsavedChangesKey)
-            coder.encode(activityBuilder.name, forKey: Self.editedNameKey)
-            coder.encode(activityBuilder.description, forKey: Self.editedDescriptionKey)
-            coder.encode(activityBuilder.status.rawValue, forKey: Self.editedStatusKey)
+            coder.encode(activityBuilder.hasChanges(),
+                forKey: StateRestoration.Keys.activityHasUnsavedChanges)
+            coder.encode(activityBuilder.name, forKey: StateRestoration.Keys.editedName)
+            coder.encode(activityBuilder.description,
+                forKey: StateRestoration.Keys.editedDescription)
+            coder.encode(activityBuilder.status.rawValue,
+                forKey: StateRestoration.Keys.editedStatus)
         }
         
         // Keep track of the active field.
         if rootView.nameField.isFirstResponder {
-            coder.encode(Int32(1), forKey: Self.activeFieldKey)
+            coder.encode(Int32(1), forKey: StateRestoration.Keys.activeField)
             
         } else if rootView.descriptionTextView.isFirstResponder {
-            coder.encode(Int32(2), forKey: Self.activeFieldKey)
+            coder.encode(Int32(2), forKey: StateRestoration.Keys.activeField)
             
         } else {
-            coder.encode(Int32(0), forKey: Self.activeFieldKey)  // No field was active
+            // No field was active
+            coder.encode(Int32(0), forKey: StateRestoration.Keys.activeField)
         }
     }
 
@@ -397,26 +409,30 @@ extension ActivityDetailViewController {
         
         // Decode the editing state only if we were editing an existing activity.
         if case .existingActivity = flow {
-            wasEditing = coder.decodeBool(forKey: Self.activityDetailViewControllerIsEditingKey)
+            wasEditing = coder.decodeBool(
+                forKey: StateRestoration.Keys.activityDetailViewControllerIsEditing)
         }
         
         // Restore any unsaved data if editing was in progress.
-        let activityHasUnsavedChanges = coder.decodeBool(forKey: Self.activityHasUnsavedChangesKey)
+        let activityHasUnsavedChanges =
+            coder.decodeBool(forKey: StateRestoration.Keys.activityHasUnsavedChanges)
+        
         if activityHasUnsavedChanges {
-            if let name = coder.decodeObject(forKey: Self.editedNameKey) as? String {
+            if let name = coder.decodeObject(forKey: StateRestoration.Keys.editedName) as? String {
                 activityBuilder.name = name
             }
-            if let description = coder.decodeObject(forKey: Self.editedDescriptionKey) as? String {
+            if let description = coder.decodeObject(forKey: StateRestoration.Keys.editedDescription)
+               as? String {
                 activityBuilder.description = description
             }
-            let rawStatus = coder.decodeInteger(forKey: Self.editedStatusKey)
+            let rawStatus = coder.decodeInteger(forKey: StateRestoration.Keys.editedStatus)
             if let status = Activity.Status(rawValue: rawStatus) {
                 activityBuilder.status = status
             }
         }
 
         // Decode the identity of the last active field (if any).
-        let activeField = coder.decodeInteger(forKey: Self.activeFieldKey)
+        let activeField = coder.decodeInteger(forKey: StateRestoration.Keys.activeField)
         switch activeField {
         case 1:
             lastActiveField = rootView.nameField
@@ -439,13 +455,43 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
         coder: NSCoder
     ) -> UIViewController? {
 
-        if let activityID = coder.decodeObject(forKey: Self.activityIDKey) as? String,
+        if let activityID = coder.decodeObject(forKey: StateRestoration.Keys.activityID) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
             return self.init(for: .existingActivity(activity),
                              activityRepository: GlobalToDoListActivityRepository)
         } else {
             return self.init(for: .newActivity,
                              activityRepository: GlobalToDoListActivityRepository)
+        }
+    }
+}
+
+// MARK: - Constants
+extension ActivityDetailViewController {
+    
+    struct Constants {
+        static let titleForNewActivity                     = "New Activity"
+        static let titleForExistingActivity                = "Details"
+        static let saveButtonItemTitle                     = "Add"
+        static let saveConfirmationAlertTitle              = "Confirmation"
+        static let saveConfirmationAlertMessage            = "Are you sure?"
+        static let saveConfirmationAlertYesActionTitle     = "Yes"
+        static let saveConfirmationAlertNoActionTitle      = "No"
+        static let cancelConfirmationAlertYesActionTitle   = "Discard Changes"
+        static let cancelConfirmationAlertNoActionTitle    = "Cancel"
+    }
+    
+    struct StateRestoration {
+        static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
+        
+        struct Keys {
+            static let activityID                              = "activityID"
+            static let activityDetailViewControllerIsEditing   = "activityDetailViewControllerIsEditing"
+            static let activityHasUnsavedChanges               = "activityHasUnsavedChanges"
+            static let editedName                              = "editedName"
+            static let editedDescription                       = "editedDescription"
+            static let editedStatus                            = "editedStatus"
+            static let activeField                             = "activeField"
         }
     }
 }

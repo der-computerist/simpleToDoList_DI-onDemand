@@ -44,6 +44,16 @@ public final class DiskCaretaker {
     public static func createDocumentURL(withFileName fileName: String) -> URL {
         let fileManager = FileManager.default
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documentsURL.appendingPathComponent(fileName).appendingPathExtension("plist")
+        return documentsURL
+            .appendingPathComponent(fileName)
+            .appendingPathExtension(Constants.fileExtension)
+    }
+}
+
+// MARK: - Constants
+extension DiskCaretaker {
+    
+    struct Constants {
+        static let fileExtension = "plist"
     }
 }

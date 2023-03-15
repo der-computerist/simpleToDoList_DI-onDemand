@@ -92,7 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let restorationIdentifier = identifierComponents.last
         
         switch restorationIdentifier {
-        case ActivitiesViewController.viewControllerIdentifier:
+        case ActivitiesViewController.StateRestoration.viewControllerIdentifier:
             viewController = window?.rootViewController?.children[0].children[0]
         default:
             break
