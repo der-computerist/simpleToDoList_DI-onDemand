@@ -45,7 +45,7 @@ public final class LandingViewController: NiblessViewController {
         
         super.init()
         
-        restorationIdentifier = StateRestoration.viewControllerIdentifier
+        restorationIdentifier = Restoration.viewControllerIdentifier
         navigationItem.title = Constants.title
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = addButtonItem
@@ -97,14 +97,13 @@ extension LandingViewController {
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
         
-        coder.encode(activitiesViewController,
-            forKey: StateRestoration.Keys.activitiesViewController)
-        coder.encode(isEditing, forKey: StateRestoration.Keys.landingViewControllerIsEditing)
+        coder.encode(activitiesViewController, forKey: Restoration.Keys.activitiesViewController)
+        coder.encode(isEditing, forKey: Restoration.Keys.landingViewControllerIsEditing)
     }
     
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
-        isEditing = coder.decodeBool(forKey: StateRestoration.Keys.landingViewControllerIsEditing)
+        isEditing = coder.decodeBool(forKey: Restoration.Keys.landingViewControllerIsEditing)
     }
 }
 
@@ -115,7 +114,7 @@ extension LandingViewController {
         static let title = "To Do List"
     }
     
-    struct StateRestoration {
+    struct Restoration {
         static let viewControllerIdentifier = String(describing: LandingViewController.self)
         
         struct Keys {

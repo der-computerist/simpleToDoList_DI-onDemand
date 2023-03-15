@@ -29,7 +29,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
     public init(activityRepository: NSObject & ActivityRepository) {
         self.activityRepository = activityRepository
         super.init(style: .plain)
-        restorationIdentifier = StateRestoration.viewControllerIdentifier
+        restorationIdentifier = Restoration.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -39,7 +39,7 @@ public final class ActivitiesViewController: NiblessTableViewController {
         tableView.dataSource = self  // For some reason, this is needed for
                                      // `UIDataSourceModelAssociation` methods to be called.
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        tableView.restorationIdentifier = StateRestoration.tableViewIdentifier
+        tableView.restorationIdentifier = Restoration.tableViewIdentifier
         observation = observeActivities(on: activityRepository)
     }
     
@@ -146,7 +146,7 @@ extension ActivitiesViewController {
         static let cellReuseIdentifier = "UITableViewCell"
     }
     
-    struct StateRestoration {
+    struct Restoration {
         static let viewControllerIdentifier   = String(describing: ActivitiesViewController.self)
         static let tableViewIdentifier        = viewControllerIdentifier + "TableView"
     }

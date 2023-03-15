@@ -22,7 +22,7 @@ public final class MainViewController: NiblessNavigationController {
         self.landingViewController = landingViewController
         self.activityRepository = activityRepository
         super.init()
-        restorationIdentifier = StateRestoration.viewControllerIdentifier
+        restorationIdentifier = Restoration.viewControllerIdentifier
     }
     
     // MARK: View lifecycle
@@ -44,7 +44,7 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
-        navController.restorationIdentifier = StateRestoration.navControllerIdentifier
+        navController.restorationIdentifier = Restoration.navControllerIdentifier
         navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
@@ -60,7 +60,7 @@ public final class MainViewController: NiblessNavigationController {
         detailViewController.delegate = self
         
         let navController = NiblessNavigationController(rootViewController: detailViewController)
-        navController.restorationIdentifier = StateRestoration.navControllerIdentifier
+        navController.restorationIdentifier = Restoration.navControllerIdentifier
         navController.restorationClass = type(of: self)
         navController.presentationController?.delegate = detailViewController
         
@@ -108,14 +108,14 @@ extension MainViewController {
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
         coder.encode(activityDetailViewController,
-            forKey: StateRestoration.Keys.activityDetailViewController)
+            forKey: Restoration.Keys.activityDetailViewController)
     }
 
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
         
         if let activityDetailVC = coder.decodeObject(of: ActivityDetailViewController.self,
-           forKey: StateRestoration.Keys.activityDetailViewController) {
+           forKey: Restoration.Keys.activityDetailViewController) {
             activityDetailViewController = activityDetailVC
         }
     }
@@ -132,7 +132,7 @@ extension MainViewController: UIViewControllerRestoration {
         let restorationIdentifier = identifierComponents.last
         
         switch restorationIdentifier {
-        case StateRestoration.navControllerIdentifier:
+        case Restoration.navControllerIdentifier:
             let navController = NiblessNavigationController()
             navController.restorationIdentifier = restorationIdentifier
             navController.restorationClass = self
@@ -148,7 +148,7 @@ extension MainViewController: UIViewControllerRestoration {
 // MARK: - Constants
 extension MainViewController {
     
-    struct StateRestoration {
+    struct Restoration {
         static let viewControllerIdentifier  = String(describing: MainViewController.self)
         static let navControllerIdentifier   = String(describing: NiblessNavigationController.self)
         
