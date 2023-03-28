@@ -108,14 +108,14 @@ extension MainViewController {
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
         coder.encode(activityDetailViewController,
-            forKey: Restoration.Keys.activityDetailViewController)
+            forKey: Restoration.Key.activityDetailViewController)
     }
 
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
         
         if let activityDetailVC = coder.decodeObject(of: ActivityDetailViewController.self,
-           forKey: Restoration.Keys.activityDetailViewController) {
+           forKey: Restoration.Key.activityDetailViewController) {
             activityDetailViewController = activityDetailVC
         }
     }
@@ -152,7 +152,7 @@ extension MainViewController {
         static let viewControllerIdentifier  = String(describing: MainViewController.self)
         static let navControllerIdentifier   = String(describing: NiblessNavigationController.self)
         
-        struct Keys {
+        struct Key {
             static let activityDetailViewController = "activityDetailViewController"
         }
     }

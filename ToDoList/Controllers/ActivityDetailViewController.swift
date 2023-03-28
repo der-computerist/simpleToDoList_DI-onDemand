@@ -375,28 +375,28 @@ extension ActivityDetailViewController {
 
         // Preserve the activity ID and editing state only if we are editing an existing activity.
         if case .existingActivity = flow {
-            coder.encode(activity.id, forKey: Restoration.Keys.activityID)
-            coder.encode(isEditing, forKey: Restoration.Keys.activityDetailViewControllerIsEditing)
+            coder.encode(activity.id, forKey: Restoration.Key.activityID)
+            coder.encode(isEditing, forKey: Restoration.Key.activityDetailViewControllerIsEditing)
         }
         
         // Write out any temporary data if editing is in progress.
         if activityBuilder.hasChanges() {
             coder.encode(activityBuilder.hasChanges(),
-                forKey: Restoration.Keys.activityHasUnsavedChanges)
-            coder.encode(activityBuilder.name, forKey: Restoration.Keys.editedName)
-            coder.encode(activityBuilder.description, forKey: Restoration.Keys.editedDescription)
-            coder.encode(activityBuilder.status.rawValue, forKey: Restoration.Keys.editedStatus)
+                forKey: Restoration.Key.activityHasUnsavedChanges)
+            coder.encode(activityBuilder.name, forKey: Restoration.Key.editedName)
+            coder.encode(activityBuilder.description, forKey: Restoration.Key.editedDescription)
+            coder.encode(activityBuilder.status.rawValue, forKey: Restoration.Key.editedStatus)
         }
         
         // Keep track of the active field.
         if rootView.nameField.isFirstResponder {
-            coder.encode(Int32(1), forKey: Restoration.Keys.activeField)
+            coder.encode(Int32(1), forKey: Restoration.Key.activeField)
             
         } else if rootView.descriptionTextView.isFirstResponder {
-            coder.encode(Int32(2), forKey: Restoration.Keys.activeField)
+            coder.encode(Int32(2), forKey: Restoration.Key.activeField)
             
         } else {
-            coder.encode(Int32(0), forKey: Restoration.Keys.activeField)  // No field was active
+            coder.encode(Int32(0), forKey: Restoration.Key.activeField)  // No field was active
         }
     }
 
@@ -406,29 +406,29 @@ extension ActivityDetailViewController {
         // Decode the editing state only if we were editing an existing activity.
         if case .existingActivity = flow {
             wasEditing = coder.decodeBool(
-                forKey: Restoration.Keys.activityDetailViewControllerIsEditing)
+                forKey: Restoration.Key.activityDetailViewControllerIsEditing)
         }
         
         // Restore any unsaved data if editing was in progress.
         let activityHasUnsavedChanges =
-            coder.decodeBool(forKey: Restoration.Keys.activityHasUnsavedChanges)
+            coder.decodeBool(forKey: Restoration.Key.activityHasUnsavedChanges)
         
         if activityHasUnsavedChanges {
-            if let name = coder.decodeObject(forKey: Restoration.Keys.editedName) as? String {
+            if let name = coder.decodeObject(forKey: Restoration.Key.editedName) as? String {
                 activityBuilder.name = name
             }
-            if let description = coder.decodeObject(forKey: Restoration.Keys.editedDescription)
+            if let description = coder.decodeObject(forKey: Restoration.Key.editedDescription)
                as? String {
                 activityBuilder.description = description
             }
-            let rawStatus = coder.decodeInteger(forKey: Restoration.Keys.editedStatus)
+            let rawStatus = coder.decodeInteger(forKey: Restoration.Key.editedStatus)
             if let status = Activity.Status(rawValue: rawStatus) {
                 activityBuilder.status = status
             }
         }
 
         // Decode the identity of the last active field (if any).
-        let activeField = coder.decodeInteger(forKey: Restoration.Keys.activeField)
+        let activeField = coder.decodeInteger(forKey: Restoration.Key.activeField)
         switch activeField {
         case 1:
             lastActiveField = rootView.nameField
@@ -451,7 +451,7 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
         coder: NSCoder
     ) -> UIViewController? {
 
-        if let activityID = coder.decodeObject(forKey: Restoration.Keys.activityID) as? String,
+        if let activityID = coder.decodeObject(forKey: Restoration.Key.activityID) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
             return self.init(for: .existingActivity(activity),
                              activityRepository: GlobalToDoListActivityRepository)
@@ -474,7 +474,7 @@ extension ActivityDetailViewController {
     struct Restoration {
         static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
         
-        struct Keys {
+        struct Key {
             static let activityID                              = "activityID"
             static let activityDetailViewControllerIsEditing   = "activityDetailViewControllerIsEditing"
             static let activityHasUnsavedChanges               = "activityHasUnsavedChanges"

@@ -97,13 +97,13 @@ extension LandingViewController {
     public override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
         
-        coder.encode(activitiesViewController, forKey: Restoration.Keys.activitiesViewController)
-        coder.encode(isEditing, forKey: Restoration.Keys.landingViewControllerIsEditing)
+        coder.encode(activitiesViewController, forKey: Restoration.Key.activitiesViewController)
+        coder.encode(isEditing, forKey: Restoration.Key.landingViewControllerIsEditing)
     }
     
     public override func decodeRestorableState(with coder: NSCoder) {
         super.decodeRestorableState(with: coder)
-        isEditing = coder.decodeBool(forKey: Restoration.Keys.landingViewControllerIsEditing)
+        isEditing = coder.decodeBool(forKey: Restoration.Key.landingViewControllerIsEditing)
     }
 }
 
@@ -117,7 +117,7 @@ extension LandingViewController {
     struct Restoration {
         static let viewControllerIdentifier = String(describing: LandingViewController.self)
         
-        struct Keys {
+        struct Key {
             static let activitiesViewController         = "activitiesViewController"
             static let landingViewControllerIsEditing   = "landingViewControllerIsEditing"
         }
