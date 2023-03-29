@@ -466,9 +466,9 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
 extension ActivityDetailViewController {
     
     struct Constants {
-        static let titleForNewActivity                     = "New Activity"
-        static let titleForExistingActivity                = "Details"
-        static let saveButtonItemTitle                     = "Add"
+        static let titleForNewActivity        = "New Activity"
+        static let titleForExistingActivity   = "Details"
+        static let saveButtonItemTitle        = "Add"
     }
     
     struct Restoration {
