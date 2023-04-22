@@ -17,15 +17,16 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: - Properties
     public weak var delegate: ActivityDetailViewControllerDelegate?
-    
-    private let flow: Flow
-    private let activityRepository: ActivityRepository
-    private var activity: Activity
-    private lazy var activityBuilder = ActivityBuilder(activity: activity) {
+
+    lazy var activityBuilder = ActivityBuilder(activity: activity) {
         didSet {
             viewIfLoaded?.setNeedsLayout()
         }
     }
+    
+    private var activity: Activity
+    private var activityDetailStrategy: ActivityDetailStrategy!
+    private let activityRepository: ActivityRepository
     private var isFirstLayout = true
 
     private var rootView: ActivityDetailRootView! {
@@ -42,22 +43,12 @@ public final class ActivityDetailViewController: NiblessViewController {
         return buttonItem
     }()
     
-    private lazy var saveButtonItem: UIBarButtonItem = {
-        let buttonItem = UIBarButtonItem(
-            title: Constants.saveButtonItemTitle,
-            style: .done,
-            target: self,
-            action: #selector(handleSavePressed(sender:))
-        )
-        return buttonItem
-    }()
-    
     // MARK: State Restoration
     /**
      If state restoration occurred, this flag indicates whether the view controller was
      in editing mode or not when the app was suspended.
      */
-    private var wasEditing = false
+    var wasEditing = false
     
     /**
      If state restoration occurred, this variable holds a reference to which field was
@@ -66,28 +57,32 @@ public final class ActivityDetailViewController: NiblessViewController {
     private var lastActiveField: UIView?
 
     // MARK: - Methods
-    public init(for flow: Flow, activityRepository: ActivityRepository) {
-        self.flow = flow
+    public init(activity: Activity?, activityRepository: ActivityRepository) {
         self.activityRepository = activityRepository
         
-        if let existingActivity = self.flow.activity {
-            activity = existingActivity
+        if let existingActivity = activity {
+            self.activity = existingActivity
         } else {
-            activity = Activity(name: "",
-                                description: "",
-                                status: .pending,
-                                id: UUID().uuidString,
-                                dateCreated: Date())
+            self.activity = Activity(name: "",
+                                     description: "",
+                                     status: .pending,
+                                     id: UUID().uuidString,
+                                     dateCreated: Date())
         }
         
         super.init()
         
+        if activity == nil {
+            activityDetailStrategy = NewActivityStrategy(for: self)
+        } else {
+            activityDetailStrategy = ExistingActivityStrategy(for: self)
+        }
+        
         restorationIdentifier = Restoration.viewControllerIdentifier
         restorationClass = type(of: self)
-        navigationItem.title = self.flow.title
+        navigationItem.title = activityDetailStrategy.title
         navigationItem.leftBarButtonItem = cancelButtonItem
-        navigationItem.rightBarButtonItem =
-            self.flow == .newActivity ? saveButtonItem : editButtonItem
+        navigationItem.rightBarButtonItem = activityDetailStrategy.rightBarButtonItem
     }
     
     // MARK: View lifecycle
@@ -107,21 +102,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        switch flow {
-        case .newActivity:
-            // If there are unsaved changes to the activity name, enable the Save button.
-            saveButtonItem.isEnabled = activityBuilder.hasNameChanges()
-        case .existingActivity:
-            /*
-             - While out of editing mode, the "Edit/Done" button item always remains enabled.
-             - After entering editing mode, the "Edit/Done" button will remain disabled as long
-               as there are no edits. As soon as edits are made, it will become enabled. It will
-               disable itself again if the activity name becomes empty.
-             */
-            editButtonItem.isEnabled =
-                !isEditing || (activityBuilder.hasChanges() != activityBuilder.name.isEmpty)
-        }
-        
+        activityDetailStrategy.enableOrDisableRightBarButtonItem()
         // If there are unsaved changes overall, disable the ability to dismiss
         // using the pull-down gesture.
         isModalInPresentation = activityBuilder.hasChanges()
@@ -130,18 +111,12 @@ public final class ActivityDetailViewController: NiblessViewController {
     public override func viewDidLayoutSubviews() {
         if isFirstLayout {
             defer { isFirstLayout = false }
-            
-            switch flow {
-            case .newActivity:
-                // When creating a new activity, present the keyboard as soon as the view
-                // begins to appear.
-                showKeyboard()
-            case .existingActivity:
-                // If state restoration occurred, restore the editing state of the
-                // view controller.
-                if wasEditing { isEditing = wasEditing }
-            }
+            activityDetailStrategy.prepareForPresentation()
         }
+    }
+    
+    func showKeyboard() {
+        (lastActiveField ?? rootView.nameField).becomeFirstResponder()
     }
     
     // MARK: Actions
@@ -192,9 +167,10 @@ public final class ActivityDetailViewController: NiblessViewController {
     
     // MARK: Private
     private func setUpController() {
-        rootView.statusStackView.isHidden = flow.hidesActivityStatus
-        rootView.nameField.isEnabled = flow.enablesNameField
-        rootView.descriptionTextView.isUserInteractionEnabled = flow.enablesDescriptionField
+        rootView.statusStackView.isHidden = activityDetailStrategy.hidesActivityStatus()
+        rootView.nameField.isEnabled = activityDetailStrategy.enablesNameField()
+        rootView.descriptionTextView.isUserInteractionEnabled =
+            activityDetailStrategy.enablesDescriptionField()
     }
     
     private func wireController() {
@@ -262,10 +238,6 @@ public final class ActivityDetailViewController: NiblessViewController {
         rootView.descriptionTextView.isUserInteractionEnabled = editing
         rootView.doneSwitch.isEnabled = editing
     }
-    
-    private func showKeyboard() {
-        (lastActiveField ?? rootView.nameField).becomeFirstResponder()
-    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -313,60 +285,6 @@ extension ActivityDetailViewController: UIAdaptivePresentationControllerDelegate
     }
 }
 
-// MARK: - Flow
-extension ActivityDetailViewController {
-    
-    public enum Flow: Equatable {
-        case newActivity
-        case existingActivity(Activity)
-        
-        var activity: Activity? {
-            switch self {
-            case let .existingActivity(activity):
-                return activity
-            case .newActivity:
-                return nil
-            }
-        }
-        
-        var title: String {
-            switch self {
-            case .existingActivity:
-                return Constants.titleForExistingActivity
-            case .newActivity:
-                return Constants.titleForNewActivity
-            }
-        }
-        
-        var hidesActivityStatus: Bool {
-            switch self {
-            case .existingActivity:
-                return false
-            case .newActivity:
-                return true
-            }
-        }
-        
-        var enablesNameField: Bool {
-            switch self {
-            case .existingActivity:
-                return false
-            case .newActivity:
-                return true
-            }
-        }
-        
-        var enablesDescriptionField: Bool {
-            switch self {
-            case .existingActivity:
-                return false
-            case .newActivity:
-                return true
-            }
-        }
-    }
-}
-
 // MARK: - State Restoration
 extension ActivityDetailViewController {
 
@@ -374,7 +292,7 @@ extension ActivityDetailViewController {
         super.encodeRestorableState(with: coder)
 
         // Preserve the activity ID and editing state only if we are editing an existing activity.
-        if case .existingActivity = flow {
+        if activityDetailStrategy is ExistingActivityStrategy {
             coder.encode(activity.id, forKey: Restoration.Key.activityID)
             coder.encode(isEditing, forKey: Restoration.Key.activityDetailViewControllerIsEditing)
         }
@@ -404,7 +322,7 @@ extension ActivityDetailViewController {
         super.decodeRestorableState(with: coder)
         
         // Decode the editing state only if we were editing an existing activity.
-        if case .existingActivity = flow {
+        if activityDetailStrategy is ExistingActivityStrategy {
             wasEditing = coder.decodeBool(
                 forKey: Restoration.Key.activityDetailViewControllerIsEditing)
         }
@@ -453,10 +371,10 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
 
         if let activityID = coder.decodeObject(forKey: Restoration.Key.activityID) as? String,
            let activity = GlobalToDoListActivityRepository.activity(fromIdentifier: activityID) {
-            return self.init(for: .existingActivity(activity),
+            return self.init(activity: activity,
                              activityRepository: GlobalToDoListActivityRepository)
         } else {
-            return self.init(for: .newActivity,
+            return self.init(activity: nil,
                              activityRepository: GlobalToDoListActivityRepository)
         }
     }
@@ -464,12 +382,6 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
 
 // MARK: - Constants
 extension ActivityDetailViewController {
-    
-    struct Constants {
-        static let titleForNewActivity        = "New Activity"
-        static let titleForExistingActivity   = "Details"
-        static let saveButtonItemTitle        = "Add"
-    }
     
     struct Restoration {
         static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)

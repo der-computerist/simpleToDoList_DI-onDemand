@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		CD225E7A285BAF85002774E9 /* DiskCaretaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD225E79285BAF85002774E9 /* DiskCaretaker.swift */; };
 		CD2BEF1629777FCB00F3232C /* UIAlertController+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2BEF1529777FCB00F3232C /* UIAlertController+Tests.swift */; };
+		CD3A2FE329DE632000F750A7 /* ActivityDetailStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3A2FE229DE632000F750A7 /* ActivityDetailStrategy.swift */; };
+		CD3A2FEB29DE634200F750A7 /* NewActivityStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3A2FEA29DE634200F750A7 /* NewActivityStrategy.swift */; };
+		CD3A2FF029DE635000F750A7 /* ExistingActivityStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3A2FEF29DE635000F750A7 /* ExistingActivityStrategy.swift */; };
 		CD465F5E2970A8C7009FB98B /* ActivityUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD465F5D2970A8C7009FB98B /* ActivityUpdateTests.swift */; };
 		CD4948A6274FC75F00D05F5F /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4948A5274FC75F00D05F5F /* Color.swift */; };
 		CD495A39273568530056FCB0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD495A38273568530056FCB0 /* AppDelegate.swift */; };
@@ -59,6 +62,9 @@
 /* Begin PBXFileReference section */
 		CD225E79285BAF85002774E9 /* DiskCaretaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskCaretaker.swift; sourceTree = "<group>"; };
 		CD2BEF1529777FCB00F3232C /* UIAlertController+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Tests.swift"; sourceTree = "<group>"; };
+		CD3A2FE229DE632000F750A7 /* ActivityDetailStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailStrategy.swift; sourceTree = "<group>"; };
+		CD3A2FEA29DE634200F750A7 /* NewActivityStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewActivityStrategy.swift; sourceTree = "<group>"; };
+		CD3A2FEF29DE635000F750A7 /* ExistingActivityStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingActivityStrategy.swift; sourceTree = "<group>"; };
 		CD465F5D2970A8C7009FB98B /* ActivityUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityUpdateTests.swift; sourceTree = "<group>"; };
 		CD494898274FA9D600D05F5F /* RevealServer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RevealServer.xcframework; sourceTree = "<group>"; };
 		CD4948A5274FC75F00D05F5F /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -143,6 +149,16 @@
 				CD2BEF1529777FCB00F3232C /* UIAlertController+Tests.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		CD3A2FE129DE62F900F750A7 /* Strategies */ = {
+			isa = PBXGroup;
+			children = (
+				CD3A2FE229DE632000F750A7 /* ActivityDetailStrategy.swift */,
+				CD3A2FEA29DE634200F750A7 /* NewActivityStrategy.swift */,
+				CD3A2FEF29DE635000F750A7 /* ExistingActivityStrategy.swift */,
+			);
+			path = Strategies;
 			sourceTree = "<group>";
 		};
 		CD494897274FA9D600D05F5F /* Frameworks */ = {
@@ -322,6 +338,7 @@
 		CDDD37722819F2CA00DE3303 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				CD3A2FE129DE62F900F750A7 /* Strategies */,
 				CDDE238127E3F14B00CA383D /* MainViewController.swift */,
 				CDE16EEA279F56F700F3DFAE /* LandingViewController.swift */,
 				CD7EE440280104FE00490DDD /* ActivitiesViewController.swift */,
@@ -511,9 +528,11 @@
 				CDB8ADE827888687006BEE17 /* ToDoListActivityRepository.swift in Sources */,
 				CDE16EE5279F540500F3DFAE /* ViewControllerContainment.swift in Sources */,
 				CD7EE442280104FE00490DDD /* ActivitiesViewController.swift in Sources */,
+				CD3A2FE329DE632000F750A7 /* ActivityDetailStrategy.swift in Sources */,
 				CDE16EE02797687000F3DFAE /* NiblessTableViewController.swift in Sources */,
 				CD495AA22735891A0056FCB0 /* ActivityRepository.swift in Sources */,
 				CD9D759A27B0C0C900533BBE /* UIAlertController+BugFix.swift in Sources */,
+				CD3A2FF029DE635000F750A7 /* ExistingActivityStrategy.swift in Sources */,
 				CD495A8F273581A90056FCB0 /* ActivityDetailViewController.swift in Sources */,
 				CD225E7A285BAF85002774E9 /* DiskCaretaker.swift in Sources */,
 				CDDD377D2819F4D300DE3303 /* LandingRootView.swift in Sources */,
@@ -521,6 +540,7 @@
 				CD495A85273575C30056FCB0 /* NiblessNavigationController.swift in Sources */,
 				CDCB6F1F29359121000CDEBD /* FakeActivityDataStore.swift in Sources */,
 				CDF23AAB2785C81100730912 /* FileActivityDataStore.swift in Sources */,
+				CD3A2FEB29DE634200F750A7 /* NewActivityStrategy.swift in Sources */,
 				CD4948A6274FC75F00D05F5F /* Color.swift in Sources */,
 				CD495A39273568530056FCB0 /* AppDelegate.swift in Sources */,
 				CD495A9A273588190056FCB0 /* ActivityDataStore.swift in Sources */,

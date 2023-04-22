@@ -38,7 +38,7 @@ public final class MainViewController: NiblessNavigationController {
     
     private func presentActivityCreationScreen() {
         let detailViewController = ActivityDetailViewController(
-            for: .newActivity,
+            activity: nil,
             activityRepository: activityRepository
         )
         detailViewController.delegate = self
@@ -54,7 +54,7 @@ public final class MainViewController: NiblessNavigationController {
     
     private func presentActivityUpdateScreen(activity: Activity) {
         let detailViewController = ActivityDetailViewController(
-            for: .existingActivity(activity),
+            activity: activity,
             activityRepository: activityRepository
         )
         detailViewController.delegate = self
