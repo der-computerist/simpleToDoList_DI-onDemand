@@ -57,6 +57,6 @@ public class ExistingActivityStrategy: ActivityDetailStrategy {
 extension ExistingActivityStrategy {
     
     struct Constants {
-        static let title = "Detail"
+        static let title = "Details"
     }
 }
