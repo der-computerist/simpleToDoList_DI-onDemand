@@ -149,6 +149,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
                                  dateCreated: Date())
         activityRepository.update(activity: activity6)
 
+        // We need to wait for the table view to reload its data before we can run our tests.
         expectation = expectation(description: "Table view reloads data")
         DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
             defer { self.expectation?.fulfill() }
@@ -173,6 +174,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
                              dateCreated: activity6.dateCreated)
         activityRepository.update(activity: activity6)
 
+        // We need to wait for the table view to reload its data before we can run our tests.
         expectation = expectation(description: "Table view reloads data")
         DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
             defer { self.expectation?.fulfill() }
@@ -192,6 +194,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
         // Test removal
         activityRepository.delete(activity: activity6)
 
+        // We need to wait for the table view to delete its row before we can run our tests.
         expectation = expectation(description: "Table view deletes row")
         DispatchQueue.main.async {
             defer { self.expectation?.fulfill() }

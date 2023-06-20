@@ -81,6 +81,8 @@ final class LandingViewControllerTests: XCTestCase {
             landingViewController.children[0] as? ActivitiesViewController
         )
         landingViewController.setEditing(true, animated: false)
+        
+        XCTAssertTrue(landingViewController.isEditing)
         XCTAssertTrue(activitiesVC.isEditing)
         XCTAssertTrue(activitiesVC.tableView.isEditing)
     }
@@ -90,6 +92,8 @@ final class LandingViewControllerTests: XCTestCase {
             landingViewController.children[0] as? ActivitiesViewController
         )
         landingViewController.setEditing(false, animated: false)
+        
+        XCTAssertFalse(landingViewController.isEditing)
         XCTAssertFalse(activitiesVC.isEditing)
         XCTAssertFalse(activitiesVC.tableView.isEditing)
     }

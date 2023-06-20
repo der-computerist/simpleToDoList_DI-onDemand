@@ -139,9 +139,9 @@ final class ActivityCreationTests: XCTestCase {
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
-        ) { [weak self] in
+        ) { [unowned self] in
             guard
-                let alert = self?.activityDetailViewController.presentedViewController
+                let alert = activityDetailViewController.presentedViewController
                     as? UIAlertController
             else {
                 return false
@@ -189,9 +189,9 @@ final class ActivityCreationTests: XCTestCase {
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
-        ) { [weak self] in
+        ) { [unowned self] in
             guard
-                let alert = self?.activityDetailViewController.presentedViewController
+                let alert = activityDetailViewController.presentedViewController
                     as? UIAlertController
             else {
                 return false
@@ -225,9 +225,9 @@ final class ActivityCreationTests: XCTestCase {
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
-        ) { [weak self] in
+        ) { [unowned self] in
             guard
-                let alert = self?.activityDetailViewController.presentedViewController
+                let alert = activityDetailViewController.presentedViewController
                     as? UIAlertController
             else {
                 return false
@@ -266,9 +266,9 @@ final class ActivityCreationTests: XCTestCase {
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
-        ) { [weak self] in
+        ) { [unowned self] in
             guard
-                let alert = self?.activityDetailViewController.presentedViewController
+                let alert = activityDetailViewController.presentedViewController
                     as? UIAlertController
             else {
                 return false
@@ -317,9 +317,9 @@ final class ActivityCreationTests: XCTestCase {
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
             evaluatedWith: activityDetailViewController
-        ) { [weak self] in
+        ) { [unowned self] in
             guard
-                let alert = self?.activityDetailViewController.presentedViewController
+                let alert = activityDetailViewController.presentedViewController
                     as? UIAlertController
             else {
                 return false
