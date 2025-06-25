@@ -138,8 +138,8 @@ extension ActivitiesViewController: UIDataSourceModelAssociation {
 extension ActivitiesViewController {
     
     struct Assets {
-        static let doneActivityImage      = UIImage(named: "Checked")
-        static let pendingActivityImage   = UIImage(named: "Unchecked")
+        static let doneActivityImage = UIImage(named: "Checked")
+        static let pendingActivityImage = UIImage(named: "Unchecked")
     }
     
     struct Constants {
@@ -147,7 +147,7 @@ extension ActivitiesViewController {
     }
     
     struct Restoration {
-        static let viewControllerIdentifier   = String(describing: ActivitiesViewController.self)
-        static let tableViewIdentifier        = viewControllerIdentifier + "TableView"
+        static let viewControllerIdentifier = String(describing: ActivitiesViewController.self)
+        static let tableViewIdentifier = viewControllerIdentifier + "TableView"
     }
 }

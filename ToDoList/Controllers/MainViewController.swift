@@ -149,8 +149,8 @@ extension MainViewController: UIViewControllerRestoration {
 extension MainViewController {
     
     struct Restoration {
-        static let viewControllerIdentifier  = String(describing: MainViewController.self)
-        static let navControllerIdentifier   = String(describing: NiblessNavigationController.self)
+        static let viewControllerIdentifier = String(describing: MainViewController.self)
+        static let navControllerIdentifier = String(describing: NiblessNavigationController.self)
         
         struct Key {
             static let activityDetailViewController = "activityDetailViewController"

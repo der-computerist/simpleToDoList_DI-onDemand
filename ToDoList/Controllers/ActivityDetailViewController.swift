@@ -387,25 +387,25 @@ extension ActivityDetailViewController {
         static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
         
         struct Key {
-            static let activityID                              = "activityID"
-            static let activityDetailViewControllerIsEditing   = "activityDetailViewControllerIsEditing"
-            static let activityHasUnsavedChanges               = "activityHasUnsavedChanges"
-            static let editedName                              = "editedName"
-            static let editedDescription                       = "editedDescription"
-            static let editedStatus                            = "editedStatus"
-            static let activeField                             = "activeField"
+            static let activityID = "activityID"
+            static let activityDetailViewControllerIsEditing = "activityDetailViewControllerIsEditing"
+            static let activityHasUnsavedChanges = "activityHasUnsavedChanges"
+            static let editedName = "editedName"
+            static let editedDescription = "editedDescription"
+            static let editedStatus = "editedStatus"
+            static let activeField = "activeField"
         }
     }
     
     struct SaveConfirmationAlert {
-        static let title            = "Confirmation"
-        static let message          = "Are you sure?"
-        static let yesActionTitle   = "Yes"
-        static let noActionTitle    = "No"
+        static let title = "Confirmation"
+        static let message = "Are you sure?"
+        static let yesActionTitle = "Yes"
+        static let noActionTitle = "No"
     }
     
     struct CancelConfirmationAlert {
-        static let yesActionTitle   = "Discard Changes"
-        static let noActionTitle    = "Cancel"
+        static let yesActionTitle = "Discard Changes"
+        static let noActionTitle = "Cancel"
     }
 }

@@ -118,8 +118,8 @@ extension LandingViewController {
         static let viewControllerIdentifier = String(describing: LandingViewController.self)
         
         struct Key {
-            static let activitiesViewController         = "activitiesViewController"
-            static let landingViewControllerIsEditing   = "landingViewControllerIsEditing"
+            static let activitiesViewController = "activitiesViewController"
+            static let landingViewControllerIsEditing = "landingViewControllerIsEditing"
         }
     }
 }
