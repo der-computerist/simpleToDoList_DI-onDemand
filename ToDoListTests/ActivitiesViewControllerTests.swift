@@ -140,73 +140,98 @@ final class ActivitiesViewControllerTests: XCTestCase {
         XCTAssertNil(activityRepository.activity(fromIdentifier: uuid3))
     }
     
-    func test_modelObservation() {
-        // Test insertion
-        var activity6 = Activity(name: "Play Uncharted: Drake's Fortune",
-                                 description: "On the PlayStation 5",
-                                 status: .pending,
-                                 id: UUID().uuidString,
-                                 dateCreated: Date())
-        activityRepository.update(activity: activity6)
+    func test_modelObservation() throws {
+        // Replace the table view with a spy
+        let spyTableView = ReloadDetectingTableView(frame: .zero, style: .plain)
+        spyTableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
+        spyTableView.didReload = { self.expectation?.fulfill() }
+        spyTableView.didDeleteRows = { self.expectation?.fulfill() }
 
-        // We need to wait for the table view to reload its data before we can run our tests.
-        expectation = expectation(description: "Table view reloads data")
-        DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
-            defer { self.expectation?.fulfill() }
-            
-            guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a table view, but found nil.")
-                return
-            }
-            let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
-            XCTAssert(sectionZeroRowCount == 6)
-            let sixthCell = tableView.cellForRow(at: IndexPath(row: 5, section: 0))
-            XCTAssert(sixthCell?.textLabel?.text == "Play Uncharted: Drake's Fortune")
-            XCTAssert(sixthCell?.imageView?.image == UIImage(named: "Unchecked"))
-        }
-        waitForExpectations(timeout: tableViewReloadTimeout * 2)
-
-        // Test replacement
-        activity6 = Activity(name: "Play Uncharted 2: Among Thieves",
-                             description: activity6.activityDescription,
-                             status: activity6.status,
-                             id: activity6.id,
-                             dateCreated: activity6.dateCreated)
-        activityRepository.update(activity: activity6)
-
-        // We need to wait for the table view to reload its data before we can run our tests.
-        expectation = expectation(description: "Table view reloads data")
-        DispatchQueue.main.asyncAfter(deadline: .now() + tableViewReloadTimeout) {
-            defer { self.expectation?.fulfill() }
-            
-            guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a table view, but found nil.")
-                return
-            }
-            let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
-            XCTAssert(sectionZeroRowCount == 6)
-            let sixthCell = tableView.cellForRow(at: IndexPath(row: 5, section: 0))
-            XCTAssert(sixthCell?.textLabel?.text == "Play Uncharted 2: Among Thieves")
-            XCTAssert(sixthCell?.imageView?.image == UIImage(named: "Unchecked"))
-        }
-        waitForExpectations(timeout: tableViewReloadTimeout * 2)
+        activitiesViewController.tableView = spyTableView
+        activitiesViewController.loadViewIfNeeded()
         
-        // Test removal
+        let tableView = try XCTUnwrap(
+            self.activitiesViewController.tableView, "Expected a table view, but found none"
+        )
+        var newCell: UITableViewCell?
+        
+        //===---------------------------------------------------------------------------------===//
+        //  Test insertion
+        //===---------------------------------------------------------------------------------===//
+        // Insert activity
+        var activity6 = Activity(
+            name: "Play Uncharted: Drake's Fortune",
+            description: "On the PlayStation 5",
+            status: .pending,
+            id: UUID().uuidString,
+            dateCreated: Date()
+        )
+        activityRepository.update(activity: activity6)
+
+        // Wait for the table view to reload
+        expectation = expectation(description: "Table view did reload")
+        waitForExpectations(timeout: timeout)
+        
+        // Execute assertions
+        expectation = expectation(description: "Async assertions executed")
+        
+        DispatchQueue.main.async {
+            let newCellIdx = IndexPath(row: 5, section: 0)
+            newCell = tableView.dataSource?.tableView(tableView, cellForRowAt: newCellIdx)
+            XCTAssert(tableView.numberOfRows(inSection: 0) == 6)
+            XCTAssert(newCell?.textLabel?.text == "Play Uncharted: Drake's Fortune")
+            XCTAssert(newCell?.imageView?.image == UIImage(named: "Unchecked"))
+            
+            self.expectation?.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout)
+
+        //===---------------------------------------------------------------------------------===//
+        //  Test replacement
+        //===---------------------------------------------------------------------------------===//
+        // Replace activity
+        activity6 = Activity(
+            name: "Play Uncharted 2: Among Thieves",
+            description: activity6.activityDescription,
+            status: activity6.status,
+            id: activity6.id,
+            dateCreated: activity6.dateCreated
+        )
+        activityRepository.update(activity: activity6)
+        
+        // Wait for the table view to reload
+        expectation = expectation(description: "Table view did reload")
+        waitForExpectations(timeout: timeout)
+
+        // Execute assertions
+        expectation = expectation(description: "Async assertions executed")
+        
+        DispatchQueue.main.async {
+            let newCellIdx = IndexPath(row: 5, section: 0)
+            newCell = tableView.dataSource?.tableView(tableView, cellForRowAt: newCellIdx)
+            XCTAssert(tableView.numberOfRows(inSection: 0) == 6)
+            XCTAssert(newCell?.textLabel?.text == "Play Uncharted 2: Among Thieves")
+            XCTAssert(newCell?.imageView?.image == UIImage(named: "Unchecked"))
+            
+            self.expectation?.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout)
+        
+        //===---------------------------------------------------------------------------------===//
+        //  Test removal
+        //===---------------------------------------------------------------------------------===//
+        // Remove activity
         activityRepository.delete(activity: activity6)
 
-        // We need to wait for the table view to delete its row before we can run our tests.
-        expectation = expectation(description: "Table view deletes row")
-        DispatchQueue.main.async {
-            defer { self.expectation?.fulfill() }
-            
-            guard let tableView = self.activitiesViewController.tableView else {
-                XCTFail("Expected a table view, but found nil.")
-                return
-            }
-            let sectionZeroRowCount = tableView.numberOfRows(inSection: 0)
-            XCTAssert(sectionZeroRowCount == 5)
-        }
+        // Wait for the table view to delete the row
+        expectation = expectation(description: "Table view did delete row")
         waitForExpectations(timeout: timeout)
+        
+        // Execute assertions
+        let rowCount = tableView.numberOfRows(inSection: 0)
+        XCTAssert(rowCount == 5)
     }
     
     // MARK: Private
@@ -241,5 +266,34 @@ final class ActivitiesViewControllerTests: XCTestCase {
         
         window.makeKeyAndVisible()
         return (appDelegate, mainVC, landingVC, activitiesVC)
+    }
+}
+
+// MARK: - Supporting types
+/// A `UITableView` subclass meant specifically for testing.
+///
+/// It allows us to run tests _after_ the table view has finished refreshing its UI.
+final class ReloadDetectingTableView: UITableView {
+    /// A closure to be called once the table view has finished reloading.
+    var didReload: (() -> Void)?
+    /// A closure to be called once the table view has finished deleting rows.
+    var didDeleteRows: (() -> Void)?
+    /// Number of times `reloadData()` has been called.
+    private var reloadCount = 0
+    
+    override func reloadData() {
+        super.reloadData()
+        
+        // Ignore the first call, which is a false positive invoked
+        // as part of loading the table view for the first time.
+        reloadCount += 1
+        if reloadCount > 1 {
+            didReload?()
+        }
+    }
+    
+    override func deleteRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        super.deleteRows(at: indexPaths, with: animation)
+        didDeleteRows?()
     }
 }
