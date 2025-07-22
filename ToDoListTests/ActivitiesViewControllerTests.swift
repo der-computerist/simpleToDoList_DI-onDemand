@@ -61,6 +61,17 @@ final class ActivitiesViewControllerTests: XCTestCase {
     }
     
     func test_tableView_layout() throws {
+        // Wait for the table view to do its first layout pass.
+        expectation = expectation(description: "Table view did perform initial layout")
+        
+        DispatchQueue.main.async {
+            self.activitiesViewController.tableView.layoutIfNeeded()
+            self.expectation?.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout)
+        
+        // Test table view layout
         let sectionsCount = activitiesViewController.tableView.numberOfSections
         XCTAssert(sectionsCount == 1)
         
