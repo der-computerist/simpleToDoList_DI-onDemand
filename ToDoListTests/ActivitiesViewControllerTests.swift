@@ -18,7 +18,6 @@ final class ActivitiesViewControllerTests: XCTestCase {
     var activitiesViewController: ActivitiesViewController!
     var expectation: XCTestExpectation?
     let timeout = 2.0
-    let tableViewReloadTimeout = 5.0
 
     // MARK: - Methods
     override func setUp() {
