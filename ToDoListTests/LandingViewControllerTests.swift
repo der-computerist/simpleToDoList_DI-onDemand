@@ -130,32 +130,44 @@ final class LandingViewControllerTests: XCTestCase {
         var result: XCTWaiter.Result
 
         // Pre-insertion
-        kvoExpectation = XCTKVOExpectation(keyPath: "text",
-                                           object: activitiesCountLabel,
-                                           expectedValue: "Total: 5")
+        kvoExpectation = XCTKVOExpectation(
+            keyPath: "text",
+            object: activitiesCountLabel,
+            expectedValue: "Total: 5"
+        )
         result = XCTWaiter().wait(for: [kvoExpectation], timeout: kvoTimeout)
         XCTAssert(result == .completed)
         
+        //===---------------------------------------------------------------------------------===//
         // Test insertion
-        var activity6 = Activity(name: "Play Uncharted: Drake's Fortune",
-                                 description: "On the PlayStation 5",
-                                 status: .pending,
-                                 id: UUID().uuidString,
-                                 dateCreated: Date())
+        //===---------------------------------------------------------------------------------===//
+        var activity6 = Activity(
+            name: "Play Uncharted: Drake's Fortune",
+            description: "On the PlayStation 5",
+            status: .pending,
+            id: UUID().uuidString,
+            dateCreated: Date()
+        )
         activityRepository.update(activity: activity6)
         
-        kvoExpectation = XCTKVOExpectation(keyPath: "text",
-                                           object: activitiesCountLabel,
-                                           expectedValue: "Total: 6")
+        kvoExpectation = XCTKVOExpectation(
+            keyPath: "text",
+            object: activitiesCountLabel,
+            expectedValue: "Total: 6"
+        )
         result = XCTWaiter().wait(for: [kvoExpectation], timeout: kvoTimeout)
         XCTAssert(result == .completed)
 
+        //===---------------------------------------------------------------------------------===//
         // Test replacement
-        activity6 = Activity(name: "Play Uncharted 2: Among Thieves",
-                             description: activity6.activityDescription,
-                             status: activity6.status,
-                             id: activity6.id,
-                             dateCreated: activity6.dateCreated)
+        //===---------------------------------------------------------------------------------===//
+        activity6 = Activity(
+            name: "Play Uncharted 2: Among Thieves",
+            description: activity6.activityDescription,
+            status: activity6.status,
+            id: activity6.id,
+            dateCreated: activity6.dateCreated
+        )
         activityRepository.update(activity: activity6)
         
         kvoExpectation = XCTKVOExpectation(keyPath: "text", object: activitiesCountLabel)
@@ -163,12 +175,16 @@ final class LandingViewControllerTests: XCTestCase {
         XCTAssert(result == .timedOut)  // because no KVO notification is expected
         XCTAssert(activitiesCountLabel.text == "Total: 6")
 
+        //===---------------------------------------------------------------------------------===//
         // Test removal
+        //===---------------------------------------------------------------------------------===//
         activityRepository.delete(activity: activity6)
         
-        kvoExpectation = XCTKVOExpectation(keyPath: "text",
-                                           object: activitiesCountLabel,
-                                           expectedValue: "Total: 5")
+        kvoExpectation = XCTKVOExpectation(
+            keyPath: "text",
+            object: activitiesCountLabel,
+            expectedValue: "Total: 5"
+        )
         result = XCTWaiter().wait(for: [kvoExpectation], timeout: kvoTimeout)
         XCTAssert(result == .completed)
     }
