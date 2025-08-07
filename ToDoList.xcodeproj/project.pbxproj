@@ -719,6 +719,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aliaga.ToDoList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TEST";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -760,6 +761,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aliaga.ToDoListTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ToDoList.app/ToDoList";
@@ -925,6 +927,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"OTHER_SWIFT_FLAGS[arch=*]" = "-DTEST";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aliaga.ToDoListTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

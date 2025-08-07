@@ -137,6 +137,9 @@ final class ActivitiesViewControllerTests: XCTestCase {
     }
     
     func test_deleteRow_shouldDeleteActivity() {
+        // Disable model observation
+        activitiesViewController.invalidateObservation()
+        
         // Confirm activity exists before
         XCTAssertNotNil(activityRepository.activity(fromIdentifier: uuid3))
         

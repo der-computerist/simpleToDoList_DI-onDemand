@@ -151,3 +151,18 @@ extension ActivitiesViewController {
         static let tableViewIdentifier = viewControllerIdentifier + "TableView"
     }
 }
+
+// MARK: - Testing
+#if TEST
+extension ActivitiesViewController {
+    
+    /// Test hook to stop model observation.
+    ///
+    /// Intented to be used by tests that are only interested in validating that view actions
+    /// trigger the expected model changes.  This is necessary because, if we don't invalidate
+    /// the model observation, some of these tests can become flaky.
+    func invalidateObservation() {
+        observation?.invalidate()
+    }
+}
+#endif
