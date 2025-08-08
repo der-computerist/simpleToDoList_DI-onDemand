@@ -132,7 +132,16 @@ final class ActivitiesViewControllerTests: XCTestCase {
         XCTAssert(activityDetailRootView.descriptionTextView.text == "On the Xbox Series X")
         XCTAssertFalse(activityDetailRootView.doneSwitch.isOn)
         
-        activitiesViewController.dismiss(animated: false, completion: nil)
+        // Dismiss presented screen
+        expectation = expectation(description: "Activity Update screen dismissed")
+        
+        DispatchQueue.main.async {
+            self.activitiesViewController.dismiss(animated: false) { [unowned self] in
+                self.expectation?.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: timeout)
     }
     
     func test_deleteRow_shouldDeleteActivity() {
