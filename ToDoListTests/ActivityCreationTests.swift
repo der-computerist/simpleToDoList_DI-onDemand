@@ -113,6 +113,13 @@ final class ActivityCreationTests: XCTestCase {
         activityDetailViewController.textViewDidChange(descriptionTextView)
         rootView.layoutIfNeeded()
         XCTAssertFalse(addButton.isEnabled)
+        
+        // Wait for pending UI updates to finalize
+        expectation = expectation(description: "UI did finish refreshing")
+        DispatchQueue.main.async {
+            self.expectation?.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
     }
     
     func test_saveNewActivity_withCorrectNameAndDescription_shouldDisplayConfirmationMessage_and_registerNewActivity() throws {

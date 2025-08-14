@@ -134,13 +134,11 @@ final class ActivitiesViewControllerTests: XCTestCase {
         
         // Dismiss presented screen
         expectation = expectation(description: "Activity Update screen dismissed")
-        
         DispatchQueue.main.async {
             self.activitiesViewController.dismiss(animated: false) { [unowned self] in
                 self.expectation?.fulfill()
             }
         }
-        
         waitForExpectations(timeout: timeout)
     }
     
