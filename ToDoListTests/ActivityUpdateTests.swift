@@ -30,6 +30,13 @@ final class ActivityUpdateTests: XCTestCase {
 
     override func tearDown() {
         activityRepository = nil
+        
+        // Wait for pending UI updates to finalize
+        expectation = expectation(description: "UI did finish refreshing")
+        DispatchQueue.main.async {
+            self.expectation?.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
     }
 
     // MARK: Test Methods
