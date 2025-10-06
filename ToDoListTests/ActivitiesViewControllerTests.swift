@@ -81,31 +81,31 @@ final class ActivitiesViewControllerTests: XCTestCase {
             activitiesViewController.tableView.cellForRow(at: IndexPath(row: 0, section: 0))
         )
         XCTAssert(firstCell.textLabel?.text == "Play Forza Horizon 5")
-        XCTAssert(firstCell.imageView?.image == UIImage(named: "Unchecked") )
+        XCTAssert(firstCell.imageView?.image == UIImage(named: "Unchecked"))
         
         let secondCell = try XCTUnwrap(
             activitiesViewController.tableView.cellForRow(at: IndexPath(row: 1, section: 0))
         )
         XCTAssert(secondCell.textLabel?.text == "Play Super Mario Odyssey")
-        XCTAssert(secondCell.imageView?.image == UIImage(named: "Unchecked") )
+        XCTAssert(secondCell.imageView?.image == UIImage(named: "Unchecked"))
         
         let thirdCell = try XCTUnwrap(
             activitiesViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0))
         )
         XCTAssert(thirdCell.textLabel?.text == "Play The Last of Us Part I")
-        XCTAssert(thirdCell.imageView?.image == UIImage(named: "Unchecked") )
+        XCTAssert(thirdCell.imageView?.image == UIImage(named: "Unchecked"))
         
         let fourthCell = try XCTUnwrap(
             activitiesViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0))
         )
         XCTAssert(fourthCell.textLabel?.text == "Play Grand Theft Auto V")
-        XCTAssert(fourthCell.imageView?.image == UIImage(named: "Checked") )
+        XCTAssert(fourthCell.imageView?.image == UIImage(named: "Checked"))
         
         let fifthCell = try XCTUnwrap(
             activitiesViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0))
         )
         XCTAssert(fifthCell.textLabel?.text == "Play Metroid Dread")
-        XCTAssert(fifthCell.imageView?.image == UIImage(named: "Checked") )
+        XCTAssert(fifthCell.imageView?.image == UIImage(named: "Checked"))
     }
     
     func test_selectActivity_shouldPresentActivityUpdateScreen_withPrePopulatedFields() throws {
