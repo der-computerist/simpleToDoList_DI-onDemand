@@ -118,7 +118,14 @@ final class LandingViewControllerTests: XCTestCase {
         XCTAssert(activityDetailRootView.descriptionTextView.text == "")
         XCTAssertTrue(activityDetailRootView.statusStackView.isHidden)
         
-        landingViewController.dismiss(animated: false, completion: nil)
+        // Dismiss presented screen
+        expectation = expectation(description: "Activity Creation screen dismissed")
+        DispatchQueue.main.async {
+            self.landingViewController.dismiss(animated: false) { [unowned self] in
+                expectation?.fulfill()
+            }
+        }
+        waitForExpectations(timeout: timeout)
     }
     
     func test_modelObservation() {
