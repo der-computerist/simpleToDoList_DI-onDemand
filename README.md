@@ -1,4 +1,4 @@
-# To Do List
+# To Do List (MVC)
 A sample application of the Cocoa MVC architecture.
 
 This is a solution to a programming exercise that consists on creating a simple "To Do List" application.
