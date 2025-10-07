@@ -26,12 +26,19 @@ final class ActivityUpdateTests: XCTestCase {
         appDelegate = tuple.0
         mainViewController = tuple.1
         activityDetailViewController = tuple.2
+        
+        // Flush pending UI updates
+        expectation = expectation(description: "UI did finish refreshing")
+        DispatchQueue.main.async {
+            self.expectation?.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
     }
 
     override func tearDown() {
         activityRepository = nil
         
-        // Wait for pending UI updates to finalize
+        // Flush pending UI updates
         expectation = expectation(description: "UI did finish refreshing")
         DispatchQueue.main.async {
             self.expectation?.fulfill()
@@ -162,9 +169,9 @@ final class ActivityUpdateTests: XCTestCase {
             replacementString: "Play Forza Motorsport"
         )
 
-        // Tap on the "Done" button
+        // Tap "Done" button
         activityDetailViewController.setEditing(false, animated: false)
-        
+
         // Expect "Confirmation" alert controller to be presented
         expectation = expectation(
             for: NSPredicate(format: "presentedViewController != nil"),
