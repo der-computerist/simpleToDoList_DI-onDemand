@@ -15,14 +15,17 @@ public let GlobalToDoListActivityRepository: NSObject & ActivityRepository = {
 public class ToDoListActivityRepository: NSObject, ActivityRepository {
 
     // MARK: - Properties
-    public private(set) lazy var activities: [Activity] = dataStore.readActivities() {
+    @objc
+    public private(set) dynamic lazy var activities: [Activity] = dataStore.readActivities() {
         didSet {
             if activities.count != oldValue.count {
                 updateActivitiesCount()
             }
         }
     }
-    @objc public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
+    
+    @objc
+    public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
 
     private let dataStore: ActivityDataStore
     
