@@ -194,7 +194,9 @@ public final class ActivityDetailViewController: NiblessViewController {
             title: SaveConfirmationAlert.yesActionTitle,
             style: .default
         ) { _ in
-            self.saveAndDismiss()
+            alert.dismiss(animated: true) {
+                self.saveAndDismiss()
+            }
         }
         let noAction = UIAlertAction(
             title: SaveConfirmationAlert.noActionTitle,
