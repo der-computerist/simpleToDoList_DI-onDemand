@@ -25,7 +25,7 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     }
     
     @objc
-    public private(set) dynamic lazy var activitiesCount = calculateActivitiesCount()
+    public private(set) dynamic lazy var activitiesCount = activities.count
 
     private let dataStore: ActivityDataStore
     
@@ -65,16 +65,10 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     }
     
     public func activity(fromIdentifier activityID: ActivityID) -> Activity? {
-        let filteredActivities = activities.filter({ $0.id == activityID })
-        if filteredActivities.isEmpty { return nil }
-        return filteredActivities.first
+        activities.first(where: { $0.id == activityID })
     }
     
     // MARK: Private
-    private func calculateActivitiesCount() -> Int {
-        activities.count
-    }
-    
     private func updateActivitiesCount() {
         activitiesCount = activities.count
     }
