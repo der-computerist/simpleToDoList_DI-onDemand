@@ -11,11 +11,12 @@ public typealias ActivityID = String
 
 public class Activity: NSObject, Codable {
     
+    // MARK: - Nested types
     public enum Status: Int, Codable {
         case pending = 0
         case done = 1
     }
-
+    
     // MARK: - Properties
     public let name: String
     public let activityDescription: String?
@@ -23,13 +24,23 @@ public class Activity: NSObject, Codable {
     public let id: ActivityID
     public let dateCreated: Date
     
-    // MARK: - Methods
+    // MARK: - Initialization
     init(name: String, description: String?, status: Status, id: ActivityID, dateCreated: Date) {
         self.name = name
         self.activityDescription = description
         self.status = status
         self.id = id
         self.dateCreated = dateCreated
+    }
+    
+    public static var emptyActivity: Activity {
+        Activity(
+            name: "",
+            description: "",
+            status: .pending,
+            id: UUID().uuidString,
+            dateCreated: Date()
+        )
     }
 }
 

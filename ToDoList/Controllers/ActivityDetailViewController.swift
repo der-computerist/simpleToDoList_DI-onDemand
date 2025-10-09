@@ -63,11 +63,7 @@ public final class ActivityDetailViewController: NiblessViewController {
         if let existingActivity = activity {
             self.activity = existingActivity
         } else {
-            self.activity = Activity(name: "",
-                                     description: "",
-                                     status: .pending,
-                                     id: UUID().uuidString,
-                                     dateCreated: Date())
+            self.activity = Activity.emptyActivity
         }
         
         super.init()
