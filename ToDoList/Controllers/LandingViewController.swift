@@ -110,14 +110,14 @@ extension LandingViewController {
 // MARK: - Constants
 extension LandingViewController {
     
-    struct Constants {
+    enum Constants {
         static let title = "To Do List"
     }
     
-    struct Restoration {
+    enum Restoration {
         static let viewControllerIdentifier = String(describing: LandingViewController.self)
         
-        struct Key {
+        enum Key {
             static let activitiesViewController = "activitiesViewController"
             static let landingViewControllerIsEditing = "landingViewControllerIsEditing"
         }

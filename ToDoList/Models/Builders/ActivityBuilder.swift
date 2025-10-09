@@ -92,7 +92,7 @@ extension ActivityBuilder.Error: LocalizedError {
 // MARK: - Constants
 extension ActivityBuilder {
     
-    struct Constants {
+    enum Constants {
         static let nameMaxCharacters = 50
         static let descriptionMaxCharacters = 200
     }
@@ -100,7 +100,7 @@ extension ActivityBuilder {
 
 extension ActivityBuilder.Error {
     
-    struct Constants {
+    enum Constants {
         static let errorTitle = NSLocalizedString(
             "Activity Creation Error",
             comment: "ActivityCreationError.title"

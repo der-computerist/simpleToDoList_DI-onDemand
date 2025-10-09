@@ -53,7 +53,7 @@ public final class DiskCaretaker {
 // MARK: - Constants
 extension DiskCaretaker {
     
-    struct Constants {
+    enum Constants {
         static let fileExtension = "plist"
     }
 }

@@ -103,13 +103,13 @@ public final class LandingRootView: NiblessView {
 // MARK: - Constants
 extension LandingRootView {
     
-    struct AccessibilityIdentifiers {
+    enum AccessibilityIdentifiers {
         static let rootView                  = "rootView"
         static let activitiesCountLabel      = "activitiesCountLabel"
         static let activitiesContainerView   = "activitiesContainerView"
     }
     
-    struct ConstraintIdentifiers {
+    enum ConstraintIdentifiers {
         static let activitiesCountLabelToTop           = "labelToTop"
         static let activitiesCountLabelToTrailing      = "labelToTrailing"
         static let activitiesContainerViewToTop        = "containerToTop"
@@ -118,7 +118,7 @@ extension LandingRootView {
         static let activitiesContainerViewToBottom     = "containerToBottom"
     }
     
-    struct Metrics {
+    enum Metrics {
         static let standardSpacing   = CGFloat(8.0)
         static let largeSpacing      = CGFloat(16.0)
     }

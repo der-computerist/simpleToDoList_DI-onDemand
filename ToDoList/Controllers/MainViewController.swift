@@ -148,11 +148,11 @@ extension MainViewController: UIViewControllerRestoration {
 // MARK: - Constants
 extension MainViewController {
     
-    struct Restoration {
+    enum Restoration {
         static let viewControllerIdentifier = String(describing: MainViewController.self)
         static let navControllerIdentifier = String(describing: NiblessNavigationController.self)
         
-        struct Key {
+        enum Key {
             static let activityDetailViewController = "activityDetailViewController"
         }
     }

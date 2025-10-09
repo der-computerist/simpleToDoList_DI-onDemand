@@ -34,7 +34,7 @@ public class FileActivityDataStore: ActivityDataStore {
 // MARK: - Constants
 extension FileActivityDataStore {
     
-    struct Constants {
+    enum Constants {
         static let fileName = "activities"
     }
 }

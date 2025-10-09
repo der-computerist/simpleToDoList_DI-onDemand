@@ -385,10 +385,10 @@ extension ActivityDetailViewController: UIViewControllerRestoration {
 // MARK: - Constants
 extension ActivityDetailViewController {
     
-    struct Restoration {
+    enum Restoration {
         static let viewControllerIdentifier = String(describing: ActivityDetailViewController.self)
         
-        struct Key {
+        enum Key {
             static let activityID = "activityID"
             static let activityDetailViewControllerIsEditing = "activityDetailViewControllerIsEditing"
             static let activityHasUnsavedChanges = "activityHasUnsavedChanges"
@@ -399,14 +399,14 @@ extension ActivityDetailViewController {
         }
     }
     
-    struct SaveConfirmationAlert {
+    enum SaveConfirmationAlert {
         static let title = "Confirmation"
         static let message = "Are you sure?"
         static let yesActionTitle = "Yes"
         static let noActionTitle = "No"
     }
     
-    struct CancelConfirmationAlert {
+    enum CancelConfirmationAlert {
         static let yesActionTitle = "Discard Changes"
         static let noActionTitle = "Cancel"
     }

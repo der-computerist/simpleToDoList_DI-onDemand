@@ -137,16 +137,16 @@ extension ActivitiesViewController: UIDataSourceModelAssociation {
 // MARK: - Constants
 extension ActivitiesViewController {
     
-    struct Assets {
+    enum Assets {
         static let doneActivityImage = UIImage(named: "Checked")
         static let pendingActivityImage = UIImage(named: "Unchecked")
     }
     
-    struct Constants {
+    enum Constants {
         static let cellReuseIdentifier = "UITableViewCell"
     }
     
-    struct Restoration {
+    enum Restoration {
         static let viewControllerIdentifier = String(describing: ActivitiesViewController.self)
         static let tableViewIdentifier = viewControllerIdentifier + "TableView"
     }

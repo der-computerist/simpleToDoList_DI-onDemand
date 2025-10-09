@@ -24,7 +24,7 @@ extension UIViewController {
 // MARK: - Constants
 extension UIViewController {
     
-    struct ErrorAlert {
+    enum ErrorAlert {
         static let okActionTitle = "OK"
     }
 }

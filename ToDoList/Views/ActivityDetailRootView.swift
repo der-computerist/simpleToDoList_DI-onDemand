@@ -202,7 +202,7 @@ public final class ActivityDetailRootView: NiblessView {
 // MARK: - Constants
 extension ActivityDetailRootView {
     
-    struct AccessibilityIdentifiers {
+    enum AccessibilityIdentifiers {
         static let rootView               = "rootView"
         static let formStackView          = "formStackView"
         static let nameStackView          = "nameStackView"
@@ -216,13 +216,13 @@ extension ActivityDetailRootView {
         static let doneSwitch             = "doneSwitch"
     }
     
-    struct Constants {
+    enum Constants {
         static let nameLabelText          = "Name"
         static let descriptionLabelText   = "Description"
         static let doneLabelText          = "Done"
     }
     
-    struct ConstraintIdentifiers {
+    enum ConstraintIdentifiers {
         static let formStackViewToLeading       = "formToLeading"
         static let formStackViewToTrailing      = "formToTrailing"
         static let formStackViewToTop           = "formToTop"
@@ -232,7 +232,7 @@ extension ActivityDetailRootView {
         static let doneSwitchLeadingAlignment   = "doneSwitchLeadingAlignment"
     }
     
-    struct Metrics {
+    enum Metrics {
         static let standardSpacing                   = CGFloat(8.0)
         static let largeSpacing                      = CGFloat(16.0)
         static let descriptionTextViewBorderWidth    = CGFloat(1.0)

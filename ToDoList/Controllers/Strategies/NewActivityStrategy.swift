@@ -55,7 +55,7 @@ public class NewActivityStrategy: ActivityDetailStrategy {
 
 extension NewActivityStrategy {
     
-    struct Constants {
+    enum Constants {
         static let title                 = "New Activity"
         static let saveButtonItemTitle   = "Add"
     }

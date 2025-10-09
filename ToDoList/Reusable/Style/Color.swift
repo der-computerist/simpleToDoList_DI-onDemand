@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct Color {
+public enum Color {
     
     public static let background = UIColor.systemBackground
 }
