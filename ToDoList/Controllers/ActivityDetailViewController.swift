@@ -176,7 +176,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     private func updateViewFromActivity() {
         rootView.nameField.text = activityBuilder.name
         rootView.descriptionTextView.text = activityBuilder.description
-        rootView.doneSwitch.isOn = activityBuilder.status == .done ? true : false
+        rootView.doneSwitch.isOn = activityBuilder.status == .done
     }
     
     private func confirmSave() {
@@ -227,7 +227,7 @@ public final class ActivityDetailViewController: NiblessViewController {
     }
     
     private func saveAndDismiss() {
-        activityRepository.update(activity: activity)
+        activityRepository.updateOrAdd(activity: activity)
         delegate?.activityDetailViewControllerDidFinish(self)
     }
     

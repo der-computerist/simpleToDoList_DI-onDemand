@@ -186,7 +186,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
             id: UUID().uuidString,
             dateCreated: Date()
         )
-        activityRepository.update(activity: activity6)
+        activityRepository.updateOrAdd(activity: activity6)
 
         // Wait for the table view to reload
         expectation = expectation(description: "Table view did reload")
@@ -218,7 +218,7 @@ final class ActivitiesViewControllerTests: XCTestCase {
             id: activity6.id,
             dateCreated: activity6.dateCreated
         )
-        activityRepository.update(activity: activity6)
+        activityRepository.updateOrAdd(activity: activity6)
         
         // Wait for the table view to reload
         expectation = expectation(description: "Table view did reload")

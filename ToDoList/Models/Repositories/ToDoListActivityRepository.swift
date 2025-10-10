@@ -44,7 +44,7 @@ public class ToDoListActivityRepository: NSObject, ActivityRepository {
     }
     
     // MARK: - Methods
-    public func update(activity: Activity) {
+    public func updateOrAdd(activity: Activity) {
         if let index = activities.firstIndex(of: activity) {
             // If the activity already exists, update it
             kvoActivities[index] = activity

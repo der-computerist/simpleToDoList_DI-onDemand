@@ -155,7 +155,7 @@ final class LandingViewControllerTests: XCTestCase {
             id: UUID().uuidString,
             dateCreated: Date()
         )
-        activityRepository.update(activity: activity6)
+        activityRepository.updateOrAdd(activity: activity6)
         
         kvoExpectation = XCTKVOExpectation(
             keyPath: "text",
@@ -175,7 +175,7 @@ final class LandingViewControllerTests: XCTestCase {
             id: activity6.id,
             dateCreated: activity6.dateCreated
         )
-        activityRepository.update(activity: activity6)
+        activityRepository.updateOrAdd(activity: activity6)
         
         kvoExpectation = XCTKVOExpectation(keyPath: "text", object: activitiesCountLabel)
         result = XCTWaiter().wait(for: [kvoExpectation], timeout: kvoTimeout)

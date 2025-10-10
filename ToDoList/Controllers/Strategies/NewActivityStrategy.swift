@@ -24,11 +24,12 @@ public class NewActivityStrategy: ActivityDetailStrategy {
     
     private unowned let owningViewController: ActivityDetailViewController
 
-    // MARK: - Methods
+    // MARK: - Initialization
     public init(for owningViewController: ActivityDetailViewController) {
         self.owningViewController = owningViewController
     }
     
+    // MARK: - Methods
     public func enableOrDisableRightBarButtonItem() {
         // If there are unsaved changes to the activity name, enable the Save button.
         rightBarButtonItem.isEnabled = owningViewController.activityBuilder.hasNameChanges()
@@ -53,6 +54,7 @@ public class NewActivityStrategy: ActivityDetailStrategy {
     }
 }
 
+// MARK: - Constants
 extension NewActivityStrategy {
     
     enum Constants {

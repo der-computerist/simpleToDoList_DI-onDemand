@@ -14,11 +14,12 @@ public class ExistingActivityStrategy: ActivityDetailStrategy {
     public lazy var rightBarButtonItem = owningViewController.editButtonItem
     private unowned let owningViewController: ActivityDetailViewController
 
-    // MARK: - Methods
+    // MARK: - Initialization
     public init(for owningViewController: ActivityDetailViewController) {
         self.owningViewController = owningViewController
     }
     
+    // MARK: - Methods
     public func enableOrDisableRightBarButtonItem() {
         /*
          - While out of editing mode, the "Edit/Done" button item always remains enabled.
@@ -54,6 +55,7 @@ public class ExistingActivityStrategy: ActivityDetailStrategy {
     }
 }
 
+// MARK: - Constants
 extension ExistingActivityStrategy {
     
     enum Constants {
